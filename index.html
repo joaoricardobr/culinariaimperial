@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enciclopédia Imperial: China & Brasil (Cloud Engenheiros)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f5f2;
+        }
+
+        h1, h2, h3, .chinese-font {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: #d97706;
+        }
+
+        .icon-effect {
+            transition: transform 0.3s ease;
+        }
+        .icon-effect:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        /* Tags de Energia */
+        .energy-yin { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .energy-yang { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .energy-neutral { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
+        .energy-qi { background-color: #fofdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spin-active { 
+            animation: spin 4s linear infinite; 
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .animate-pop { animation: pop 0.3s ease-out; }
+    </style>
+</head>
+<body class="pattern-bg text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-red-900 text-white shadow-xl sticky top-0 z-40 border-b-4 border-yellow-600">
+        <div class="container mx-auto px-4 pt-3 pb-2">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-3">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 mb-3 md:mb-0">
+                    <div class="bg-yellow-500 text-red-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white icon-effect shadow-lg cursor-pointer hover:bg-yellow-400">
+                        食
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-wide chinese-font">Enciclopédia Imperial</h1>
+                        <p class="text-xs text-yellow-200">750 Receitas • Medicina • Cultura</p>
+                    </div>
+                </div>
+                
+                <!-- Ferramentas de Topo -->
+                <div class="flex w-full md:w-auto items-center space-x-3">
+                    
+                    <!-- Busca -->
+                    <div class="relative flex-grow md:w-64">
+                        <input type="text" id="searchInput" placeholder="Buscar receita..." 
+                            class="w-full pl-10 pr-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-red-50 shadow-inner border border-red-200 transition-all focus:w-full md:focus:w-80">
+                        <i class="fas fa-search absolute left-3 top-3 text-red-800 icon-effect"></i>
+                    </div>
+
+                    <!-- Filtro Energia (Dropdown) -->
+                    <div class="relative group" title="Filtrar por Energia Vital">
+                        <div id="energyBtnBg" class="bg-red-800 hover:bg-red-700 text-yellow-400 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-2 border-red-600 shadow-md transition relative overflow-hidden icon-effect">
+                            <i id="energyIcon" class="fas fa-yin-yang text-xl transform transition-transform duration-700"></i>
+                            <select id="energyFilter" onchange="setEnergy(this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+                                <option value="all">☯️ Todas as Energias</option>
+                                <option value="Yin">❄️ Yin (Resfriante)</option>
+                                <option value="Yang">🔥 Yang (Aquecedor)</option>
+                                <option value="Neutro">⚖️ Neutro (Equilíbrio)</option>
+                                <option value="Qi">⚡ Qi (Tônico)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botão Perfil (Automático) -->
+                    <div id="authContainer">
+                        <!-- Botão Login -->
+                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-yellow-500 hover:bg-yellow-400 text-red-900 font-bold py-2 px-4 rounded-full shadow-md transition transform hover:scale-105 flex items-center text-sm">
+                            <i class="fab fa-google mr-2"></i> Entrar
+                        </button>
+                        <div id="loginLoading" class="text-yellow-200 text-xs animate-pulse">Conectando...</div>
+                        
+                        <!-- Perfil Logado -->
+                        <div id="userProfile" class="hidden relative group">
+                            <button class="flex items-center space-x-2 bg-red-800 hover:bg-red-700 rounded-full pr-3 pl-1 py-1 border border-red-600 transition">
+                                <img id="userPhoto" src="https://ui-avatars.com/api/?name=User&background=FBBF24&color=7F1D1D" alt="User" class="w-8 h-8 rounded-full border-2 border-yellow-400 object-cover">
+                                <span id="userName" class="text-xs font-semibold text-yellow-100 hidden md:inline">Usuário</span>
+                            </button>
+                            <!-- Menu Dropdown -->
+                            <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 hidden group-hover:block animate-fade-in border border-gray-100 z-50">
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500">Status da Conta</p>
+                                    <p class="text-sm font-bold text-gray-800 truncate" id="userEmail">Conta Conectada</p>
+                                </div>
+                                <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
+                                    <i class="fas fa-heart text-red-500 mr-2"></i> Meus Favoritos (<span id="savedCountDropdown">0</span>)
+                                </a>
+                                <div class="border-t border-gray-100 mt-1"></div>
+                                <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
+                                    <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair / Trocar Conta
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegação Categorias -->
+            <div class="w-full border-t border-red-800 pt-3 mt-1">
+                <div class="overflow-x-auto scrollbar-hide flex justify-start md:justify-center px-1 pb-1">
+                    <div class="flex space-x-3 min-w-max">
+                        <button onclick="setCategory('all')" class="cat-btn active-cat px-4 py-1.5 rounded-full text-sm font-semibold transition bg-yellow-600 text-white shadow-lg border-2 border-yellow-500 hover:scale-105" data-cat="all">Todos</button>
+                        <button onclick="setCategory('brasileira')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-green-700 hover:bg-green-600 text-white border-2 border-green-500 shadow-sm hover:scale-105" data-cat="brasileira">🇧🇷 Brasil</button>
+                        <button onclick="setCategory('medicinal')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-red-800 hover:bg-red-700 text-red-100 border-2 border-red-700 hover:scale-105" data-cat="medicinal">💊 Medicinais</button>
+                        <button onclick="setCategory('bebida')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-red-800 hover:bg-red-700 text-red-100 border-2 border-red-700 hover:scale-105" data-cat="bebida">🍵 Chás</button>
+                        <button onclick="setCategory('entrada')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-red-800 hover:bg-red-700 text-red-100 border-2 border-red-700 hover:scale-105" data-cat="entrada">🥟 Dim Sum</button>
+                        <button onclick="setCategory('principal')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-red-800 hover:bg-red-700 text-red-100 border-2 border-red-700 hover:scale-105" data-cat="principal">🍜 Pratos</button>
+                        <button onclick="setCategory('sobremesa')" class="cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-red-800 hover:bg-red-700 text-red-100 border-2 border-red-700 hover:scale-105" data-cat="sobremesa">🍮 Doces</button>
+                        <button onclick="setCategory('saved')" id="savedFilterBtn" class="hidden cat-btn px-4 py-1.5 rounded-full text-sm font-semibold transition bg-pink-600 hover:bg-pink-500 text-white border-2 border-pink-400 hover:scale-105" data-cat="saved">❤️ Salvos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="container mx-auto px-4 py-6 flex-grow">
+        
+        <!-- Painel de Status -->
+        <div class="flex justify-between items-center mb-6 px-2">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 chinese-font flex items-center drop-shadow-sm">
+                <span id="currentCatTitle">Todas as Receitas</span>
+                <span class="text-sm font-sans font-normal text-gray-500 ml-3 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-200" id="totalCount">Carregando...</span>
+            </h2>
+        </div>
+
+        <!-- Grid de Receitas -->
+        <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Cards injetados via JS -->
+        </div>
+
+        <!-- Botão Carregar Mais -->
+        <div id="loadMoreContainer" class="text-center py-10">
+            <button onclick="loadMore()" class="group bg-white border-2 border-red-800 text-red-800 hover:bg-red-800 hover:text-white font-bold py-3 px-10 rounded-full shadow-lg transition-all transform hover:scale-105 flex items-center mx-auto">
+                <span id="loadMoreText">Ver Mais Receitas</span>
+                <i class="fas fa-chevron-down ml-2 group-hover:translate-y-1 transition-transform"></i>
+            </button>
+            <p class="text-xs text-gray-400 mt-2">Exibindo 25 por página</p>
+        </div>
+
+        <!-- Estado Vazio -->
+        <div id="emptyState" class="hidden text-center py-20 animate-fade-in">
+            <div class="bg-white p-8 rounded-full inline-block mb-4 shadow-lg border-4 border-gray-50">
+                <i class="fas fa-scroll text-6xl text-gray-300 icon-effect"></i>
+            </div>
+            <p class="text-2xl text-gray-600 font-serif mb-2">Nenhuma receita encontrada.</p>
+            <p class="text-sm text-gray-400">Tente mudar os filtros de Energia ou Categoria.</p>
+        </div>
+    </main>
+
+    <!-- Modal de Detalhes -->
+    <div id="recipeModal" class="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-4xl h-full md:h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in border-4 border-white">
+            
+            <!-- Header do Modal -->
+            <div class="bg-red-900 text-white p-5 flex justify-between items-center shrink-0 shadow-md z-10">
+                <div class="flex items-center">
+                    <span id="modalIcon" class="text-4xl mr-4 bg-white bg-opacity-20 w-12 h-12 rounded-full flex items-center justify-center icon-effect shadow-inner">🍵</span>
+                    <div>
+                        <h2 id="modalTitle" class="text-2xl font-bold chinese-font leading-tight drop-shadow-md">Título</h2>
+                        <p id="modalOriginalName" class="text-sm text-red-200 italic">Nome Original</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <!-- Share Button (Modal) -->
+                    <button onclick="shareRecipeFromModal()" class="w-10 h-10 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 flex items-center justify-center transition text-blue-200 hover:text-white" title="Copiar Link Único">
+                        <i class="fas fa-link text-xl"></i>
+                    </button>
+                    <!-- Save Button -->
+                    <button id="modalSaveBtn" onclick="toggleSaveFromModal()" class="w-10 h-10 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 flex items-center justify-center transition text-red-300 hover:text-red-100" title="Salvar Receita">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+                    <!-- Close Button -->
+                    <button onclick="closeModal()" class="text-white hover:text-yellow-400 w-10 h-10 rounded-full flex items-center justify-center transition text-2xl hover:rotate-90">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-pattern-bg">
+                <!-- Coluna Esquerda: Meta Dados -->
+                <div class="md:w-1/3 bg-gray-50 p-6 border-r border-gray-200 overflow-y-auto">
+                    
+                    <div class="mb-6">
+                        <span id="modalCategory" class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2 block">Perfil</span>
+                        <div class="flex flex-wrap gap-2">
+                            <span id="modalEnergyTag" class="px-3 py-1 text-sm rounded-full font-bold border shadow-sm">Yin</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 text-sm text-gray-700 bg-white p-5 rounded-xl shadow-md border border-gray-100">
+                        <div class="flex items-center justify-between border-b border-dashed border-gray-200 pb-3">
+                            <span class="text-gray-500 flex items-center"><i class="far fa-clock mr-2 text-red-400"></i>Tempo</span>
+                            <span id="modalTime" class="font-bold text-gray-800">20 min</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-dashed border-gray-200 pb-3">
+                            <span class="text-gray-500 flex items-center"><i class="fas fa-fire mr-2 text-orange-400"></i>Função</span>
+                            <span id="modalFunction" class="font-bold text-gray-800 text-right w-1/2">Digestão</span>
+                        </div>
+                        <p id="modalDesc" class="pt-2 italic text-gray-600 leading-relaxed text-sm"></p>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Receita -->
+                <div class="md:w-2/3 p-8 overflow-y-auto bg-white" id="modalRightCol">
+                    <div id="fullRecipeContent">
+                        <h3 class="text-xl font-bold text-red-900 mb-4 flex items-center border-b-2 border-red-100 pb-2">
+                            <i class="fas fa-mortar-pestle text-yellow-600 mr-3 icon-effect"></i> Ingredientes & Ervas
+                        </h3>
+                        <ul id="modalIngredients" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8 text-sm text-gray-700">
+                            <!-- Lista -->
+                        </ul>
+
+                        <h3 class="text-xl font-bold text-red-900 mb-4 flex items-center border-b-2 border-red-100 pb-2">
+                            <i class="fas fa-tasks text-yellow-600 mr-3 icon-effect"></i> Preparo Tradicional
+                        </h3>
+                        <div id="modalSteps" class="space-y-4 text-sm">
+                            <!-- Passos -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Principal (Standard) para Inicialização de Variáveis Globais -->
+    <script>
+        // Inicialização de Globais para evitar Race Conditions
+        window.savedRecipesSet = new Set();
+        window.isOffline = false;
+        
+        // Placeholder para funções do módulo
+        window.handleLogin = () => console.warn("Módulo Auth carregando...");
+        window.toggleSaveRecipe = () => console.warn("Módulo DB carregando...");
+    </script>
+
+    <!-- Firebase SDK (ES Modules) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        let app, auth, db, user, analytics;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC0iJ0FprASJbqMaEVezRfsLF21O-zQxI4",
+            authDomain: "cloud-engenheiros.firebaseapp.com",
+            projectId: "cloud-engenheiros",
+            storageBucket: "cloud-engenheiros.firebasestorage.app",
+            messagingSenderId: "923596482018",
+            appId: "1:923596482018:web:5e388229af8a3d259b05bb",
+            measurementId: "G-D45N5WPYZ0"
+        };
+
+        const appId = firebaseConfig.projectId;
+
+        // Inicialização
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            analytics = getAnalytics(app);
+            
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        if (!auth.currentUser) {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                } catch (error) {
+                    console.warn("Autenticação automática falhou, ativando modo offline:", error);
+                    enableOfflineMode();
+                }
+            };
+            
+            initAuth();
+
+            onAuthStateChanged(auth, (currentUser) => {
+                user = currentUser;
+                updateAuthUI();
+                if (user) {
+                    subscribeToSavedRecipes();
+                } else {
+                    window.savedRecipesSet.clear();
+                    updateSavedRecipesUI();
+                }
+            }, (error) => {
+                console.warn("Erro Auth Listener:", error);
+                enableOfflineMode();
+            });
+
+        } catch (e) {
+            console.error("Erro crítico Firebase:", e);
+            enableOfflineMode();
+        }
+
+        // Funções Globais de Login
+        window.handleLogin = async () => {
+            if (!auth) { alert("Firebase offline."); return; }
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Erro login Google:", error);
+                // Tratamento específico para erro de domínio OU provedor desativado
+                if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/operation-not-allowed') {
+                    // Alerta amigável
+                    alert("Aviso: O Login Google ainda não foi ativado no Firebase Console para este domínio.\nO aplicativo funcionará em Modo Offline para você testar.");
+                    enableOfflineMode(); 
+                } else {
+                    alert("Erro ao logar com Google: " + error.message);
+                }
+            }
+        };
+
+        window.handleLogout = async () => {
+            try {
+                await signOut(auth);
+                window.location.reload(); 
+            } catch (error) {
+                console.error("Erro logout:", error);
+            }
+        };
+
+        function enableOfflineMode() {
+            window.isOffline = true;
+            try {
+                const saved = localStorage.getItem('cloudEngenheirosRecipes');
+                if (saved) {
+                    JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
+                }
+            } catch(e) {}
+            
+            user = { 
+                isAnonymous: true, 
+                displayName: 'Modo Offline', 
+                email: 'Favoritos Locais', 
+                photoURL: 'https://ui-avatars.com/api/?name=Offline&background=7F1D1D&color=FBBF24' 
+            };
+            
+            updateAuthUI();
+            updateSavedRecipesUI();
+            if (window.currentCategory === 'saved') window.renderBatch();
+        }
+
+        function updateAuthUI() {
+            const loading = document.getElementById('loginLoading');
+            const userProfile = document.getElementById('userProfile');
+            const loginBtn = document.getElementById('loginBtn');
+            const savedFilterBtn = document.getElementById('savedFilterBtn');
+            
+            if (user) {
+                loading.classList.add('hidden');
+                
+                if (window.isOffline || !user.isAnonymous) {
+                    loginBtn.classList.add('hidden');
+                    userProfile.classList.remove('hidden');
+                    savedFilterBtn.classList.remove('hidden');
+                    
+                    if (user.photoURL) {
+                        document.getElementById('userPhoto').src = user.photoURL;
+                    } else {
+                        document.getElementById('userPhoto').src = `https://ui-avatars.com/api/?name=${user.displayName}&background=FBBF24&color=7F1D1D`;
+                    }
+                    
+                    document.getElementById('userName').innerText = user.displayName ? user.displayName.split(' ')[0] : 'Usuário';
+                    document.getElementById('userEmail').innerText = user.email || 'Convidado';
+                } else {
+                    loginBtn.classList.remove('hidden');
+                    userProfile.classList.add('hidden'); 
+                    savedFilterBtn.classList.remove('hidden');
+                }
+            } else {
+                loading.classList.remove('hidden');
+            }
+        }
+
+        // Sistema de Favoritos Unificado
+        window.toggleSaveRecipe = async (recipeId, event) => {
+            if (event) event.stopPropagation();
+            
+            if (!user && !window.isOffline) {
+                alert("Aguarde a inicialização...");
+                return;
+            }
+
+            const id = parseInt(recipeId);
+            const isSaved = window.savedRecipesSet.has(id);
+
+            // UI Otimista
+            if (isSaved) {
+                window.savedRecipesSet.delete(id);
+            } else {
+                window.savedRecipesSet.add(id);
+                const btn = document.getElementById(`heart-${recipeId}`);
+                if(btn) {
+                    btn.classList.add('animate-pop');
+                    setTimeout(() => btn.classList.remove('animate-pop'), 300);
+                }
+            }
+            updateSavedRecipesUI();
+
+            // Persistência
+            if (window.isOffline) {
+                localStorage.setItem('cloudEngenheirosRecipes', JSON.stringify(Array.from(window.savedRecipesSet)));
+            } else if (user && !user.isAnonymous) {
+                const recipeRef = doc(db, 'artifacts', appId, 'users', user.uid, 'savedRecipes', recipeId.toString());
+                try {
+                    if (isSaved) await deleteDoc(recipeRef);
+                    else await setDoc(recipeRef, { savedAt: new Date() });
+                } catch (e) {
+                    console.error("Erro Firestore:", e);
+                }
+            } else {
+                localStorage.setItem('cloudEngenheirosRecipes', JSON.stringify(Array.from(window.savedRecipesSet)));
+            }
+        };
+
+        function subscribeToSavedRecipes() {
+            if (!user || user.isAnonymous || window.isOffline) {
+                const saved = localStorage.getItem('cloudEngenheirosRecipes');
+                if (saved) {
+                    JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
+                    updateSavedRecipesUI();
+                }
+                return;
+            }
+            
+            const q = collection(db, 'artifacts', appId, 'users', user.uid, 'savedRecipes');
+            onSnapshot(q, (snapshot) => {
+                window.savedRecipesSet.clear();
+                snapshot.forEach((doc) => {
+                    window.savedRecipesSet.add(parseInt(doc.id));
+                });
+                updateSavedRecipesUI();
+                if (window.currentCategory === 'saved') window.renderBatch();
+            }, (err) => {
+                console.warn("Erro snapshot (provavelmente permissão), usando local:", err);
+                enableOfflineMode();
+            });
+        }
+
+        function updateSavedRecipesUI() {
+            const count = window.savedRecipesSet.size;
+            const el = document.getElementById('savedCountDropdown');
+            if(el) el.innerText = count;
+
+            document.querySelectorAll('.heart-icon').forEach(icon => {
+                const id = parseInt(icon.dataset.id);
+                if (window.savedRecipesSet.has(id)) {
+                    icon.classList.remove('far', 'text-gray-300');
+                    icon.classList.add('fas', 'text-red-500');
+                } else {
+                    icon.classList.remove('fas', 'text-red-500');
+                    icon.classList.add('far', 'text-gray-300');
+                }
+            });
+
+            if (window.currentModalRecipeId && !document.getElementById('recipeModal').classList.contains('hidden')) {
+                window.updateModalHeart(window.currentModalRecipeId);
+            }
+        }
+
+        window.updateModalHeart = (id) => {
+            const btn = document.getElementById('modalSaveBtn');
+            if(!btn) return;
+            const icon = btn.querySelector('i');
+            if (window.savedRecipesSet.has(id)) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+            } else {
+                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.add('far');
+            }
+        }
+        
+        window.showSavedRecipes = () => window.setCategory('saved');
+        window.toggleSaveFromModal = () => {
+            if(window.currentModalRecipeId) window.toggleSaveRecipe(window.currentModalRecipeId);
+        }
+
+        // --- FUNCIONALIDADE DE COMPARTILHAMENTO ---
+        window.shareRecipe = async (id, event) => {
+            if(event) event.stopPropagation();
+            
+            const recipe = window.allRecipes.find(r => r.id === id);
+            if(!recipe) return;
+
+            // Criar URL individual (adiciona ?recipe=ID)
+            const url = new URL(window.location.href);
+            url.searchParams.set('recipe', id);
+            const shareUrl = url.toString();
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: recipe.name,
+                        url: shareUrl
+                    });
+                } catch (err) {
+                    console.log('Share canceled or failed', err);
+                }
+            } else {
+                // Fallback para Clipboard: APENAS O LINK
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert('Link copiado: ' + shareUrl);
+                } catch (err) {
+                    alert('Copie o link manualmente: ' + shareUrl);
+                }
+            }
+        }
+
+        window.shareRecipeFromModal = () => {
+            if(window.currentModalRecipeId) window.shareRecipe(window.currentModalRecipeId);
+        }
+
+    </script>
+
+    <script>
+        // --- GERADOR DE CONTEÚDO DETALHADO ---
+        const ingredientsPool = {
+            principal: [
+                "500g Proteína Principal (Porco, Frango ou Tofu)", "2 colheres (sopa) Molho de Soja Escuro", "1 colher (sopa) Vinagre de Arroz", 
+                "Gengibre fresco fatiado (3cm)", "3 dentes de Alho picados", "Cebolinha verde para finalizar", 
+                "1 colher (chá) Óleo de Gergelim", "Pimenta Sichuan (opcional)", "Vegetais da estação (Bok Choy ou Brócolis)"
+            ],
+            entrada: [
+                "300g Carne moída ou Camarão picado", "Pacote de massa para Dumpling/Wonton", "Repolho Chinês picado fino",
+                "1 colher (sopa) Gengibre ralado", "2 colheres (sopa) Molho de Soja", "Óleo de Gergelim Torrado",
+                "Vinagre Preto para acompanhar", "Cebolinha picada fina"
+            ],
+            bebida: [
+                "5g Folhas de Chá Premium", "500ml Água Mineral (90°C)", "3 Tâmaras Vermelhas (Jujuba)",
+                "1 colher (sopa) Goji Berries", "Mel ou Açúcar Pedra a gosto", "Botões de Rosa secos (opcional)"
+            ],
+            sobremesa: [
+                "200g Farinha de Arroz Glutinoso", "100g Pasta de Feijão Vermelho doce", "400ml Leite de Coco",
+                "Manga madura em cubos", "Açúcar de Rocha", "Sagu (Pérolas de Tapioca)"
+            ],
+            medicinal: [
+                "10g Raiz de Astrágalo", "5g Ginseng fatiado", "1 Pera Asiática", "Fungo Branco hidratado",
+                "Sementes de Lótus", "Caldo de Galinha rico e claro"
+            ],
+            brasileira: [
+                "500g Feijão ou Ingrediente Base", "300g Carnes Secas ou Frescas", "Temperos Verdes (Salsa, Cebolinha, Coentro)",
+                "Cebola e Alho refogados", "Azeite de Oliva ou Dendê", "Farinha de Mandioca ou Milho"
+            ]
+        };
+
+        const stepsPool = {
+            principal: [
+                "Aqueça a wok em fogo alto até fumegar. Adicione óleo.",
+                "Refogue gengibre e alho até liberar aroma (30s).",
+                "Adicione a proteína e sele até dourar.",
+                "Junte os molhos e vegetais, salteando rapidamente.",
+                "Finalize com óleo de gergelim e sirva imediatamente."
+            ],
+            entrada: [
+                "Misture o recheio em uma tigela até ficar pegajoso.",
+                "Coloque uma colher no centro da massa e feche as bordas.",
+                "Cozinhe no vapor por 8-10 min ou ferva em água.",
+                "Sirva com molho de vinagre e gengibre."
+            ],
+            bebida: [
+                "Aqueça a água à temperatura ideal.",
+                "Lave as folhas/ervas com água quente por 5s e descarte.",
+                "Adicione água novamente e infusione por 3-5 minutos.",
+                "Coe e sirva quente para extrair as propriedades."
+            ],
+            brasileira: [
+                "Faça um refogado rico com alho e cebola.",
+                "Adicione as carnes e sele bem.",
+                "Cozinhe com o ingrediente principal até ficar macio.",
+                "Finalize com temperos frescos e acerte o sal."
+            ]
+        };
+
+        function generateDetailedRecipe(baseData) {
+            if (baseData.ingredients && baseData.ingredients.length > 4) return baseData;
+            let cat = baseData.category;
+            if (!ingredientsPool[cat]) cat = 'principal';
+            return {
+                ...baseData,
+                ingredients: [...ingredientsPool[cat]],
+                steps: [...stepsPool[cat] || stepsPool['principal']]
+            };
+        }
+
+        const masterRecipes = [
+            {id:1,name:"Chá Verde (Longjing)",originalName:"Xihu Longjing",category:"bebida",energy:"Yin",icon:"🍵",desc:"O clássico chá verde.",func:"Desintoxicação",time:"5 min",ingredients:["3g Folhas Longjing","250ml Água 80°C","Copo vidro"],steps:["Aqueça água a 80°C.","Infusione por 3 min."]},
+            {id:2,name:"Mapo Tofu",originalName:"Mapo Doufu",category:"principal",energy:"Yang",icon:"🔥",desc:"Picante de Sichuan.",func:"Aquecer",time:"30 min",ingredients:["400g Tofu","150g Carne","Doubanjiang","Pimenta Sichuan"],steps:["Frite carne e pasta.","Cozinhe tofu no molho."]},
+            {id:1001,name:"Feijoada",originalName:"Feijoada",category:"brasileira",energy:"Yang",icon:"🍲",desc:"Prato nacional BR.",func:"Energia",time:"3h",ingredients:["Feijão Preto","Carnes Secas","Linguiça","Laranja"],steps:["Cozinhe feijão com carnes.","Sirva com arroz e couve."]}
+        ];
+
+        const cnBaseItems = [
+            {name: "Macarrão", cat: "principal", icon: "🍜"}, {name: "Arroz Frito", cat: "principal", icon: "🍚"},
+            {name: "Tofu", cat: "principal", icon: "🥘"}, {name: "Chá", cat: "bebida", icon: "🍵"},
+            {name: "Dumpling", cat: "entrada", icon: "🥟"}, {name: "Bolo Lunar", cat: "sobremesa", icon: "🥮"},
+            {name: "Pato", cat: "principal", icon: "🦆"}, {name: "Sopa", cat: "medicinal", icon: "🥣"}
+        ];
+        const brBaseItems = [
+            {name: "Feijoada", icon: "🍲"}, {name: "Coxinha", icon: "🍗"}, {name: "Pão de Queijo", icon: "🧀"},
+            {name: "Moqueca", icon: "🥘"}, {name: "Brigadeiro", icon: "🍫"}, {name: "Açaí", icon: "🟣"}
+        ];
+        const variations = [{suffix: "Imperial", energy: "Qi"}, {suffix: "Picante", energy: "Yang"}, {suffix: "de Verão", energy: "Yin"}, {suffix: "Caseiro", energy: "Neutro"}];
+
+        window.allRecipes = [];
+        let genId = 2000;
+
+        function populateRecipes() {
+            masterRecipes.forEach(r => window.allRecipes.push(generateDetailedRecipe(r)));
+            while(window.allRecipes.filter(r => r.category !== 'brasileira').length < 500) {
+                const base = cnBaseItems[Math.floor(Math.random() * cnBaseItems.length)];
+                const vari = variations[Math.floor(Math.random() * variations.length)];
+                window.allRecipes.push(generateDetailedRecipe({id: genId++, name: `${base.name} ${vari.suffix}`, originalName: `Receita #${genId}`, category: base.cat, energy: vari.energy, icon: base.icon, desc: `Variação ${vari.suffix} tradicional.`, func: 'Nutrição', time: "40 min"}));
+            }
+            while(window.allRecipes.filter(r => r.category === 'brasileira').length < 250) {
+                const base = brBaseItems[Math.floor(Math.random() * brBaseItems.length)];
+                const vari = variations[Math.floor(Math.random() * variations.length)];
+                window.allRecipes.push(generateDetailedRecipe({id: genId++, name: `${base.name} ${vari.suffix}`, originalName: `Prato BR #${genId}`, category: 'brasileira', energy: vari.energy, icon: base.icon, desc: `Delícia brasileira ${vari.suffix}.`, func: 'Sabor', time: "50 min"}));
+            }
+        }
+        populateRecipes();
+
+        // --- LÓGICA UI ---
+        window.currentCategory = 'all';
+        let currentEnergy = 'all';
+        let filteredRecipes = [];
+        let currentPage = 1;
+        const itemsPerPage = 25;
+
+        window.init = function() { 
+            window.filterRecipes(); 
+
+            // DEEP LINKING: Verificar se há uma receita na URL ao abrir
+            const params = new URLSearchParams(window.location.search);
+            const recipeId = params.get('recipe');
+            if(recipeId) {
+                const id = parseInt(recipeId);
+                // Pequeno delay para garantir que a UI carregou
+                setTimeout(() => {
+                    const recipe = window.allRecipes.find(r => r.id === id);
+                    if(recipe) window.openRecipe(id);
+                }, 500);
+            }
+        }
+
+        window.filterRecipes = function() {
+            currentPage = 1;
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('recipeGrid');
+            grid.innerHTML = '';
+
+            if (window.currentCategory === 'saved') {
+                if (!window.savedRecipesSet) filteredRecipes = [];
+                else filteredRecipes = window.allRecipes.filter(r => window.savedRecipesSet.has(r.id));
+            } else {
+                filteredRecipes = window.allRecipes.filter(r => {
+                    const matchCat = window.currentCategory === 'all' || r.category === window.currentCategory;
+                    const matchEn = currentEnergy === 'all' || r.energy === currentEnergy;
+                    const matchTerm = r.name.toLowerCase().includes(term);
+                    return matchCat && matchEn && matchTerm;
+                });
+            }
+
+            document.getElementById('totalCount').innerText = `${filteredRecipes.length} itens`;
+            
+            if (filteredRecipes.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                document.getElementById('loadMoreContainer').classList.add('hidden');
+            } else {
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('loadMoreContainer').classList.remove('hidden');
+                window.renderBatch();
+            }
+        }
+
+        window.renderBatch = function() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const batch = filteredRecipes.slice(start, start + itemsPerPage);
+            const grid = document.getElementById('recipeGrid');
+
+            batch.forEach((r, i) => {
+                const div = document.createElement('div');
+                div.className = 'bg-white rounded-2xl shadow-sm border-2 border-red-50 overflow-hidden card-hover cursor-pointer flex flex-col h-full animate-fade-in relative group';
+                div.style.animationDelay = `${i * 0.05}s`;
+                div.onclick = () => window.openRecipe(r.id);
+
+                let enClass = r.energy === 'Yang' ? 'energy-yang' : (r.energy === 'Yin' ? 'energy-yin' : (r.energy === 'Qi' ? 'energy-qi' : 'energy-neutral'));
+                let bgClass = r.energy === 'Yang' ? 'bg-red-50' : 'bg-gray-50';
+                let flag = r.category === 'brasileira' ? '<span class="absolute top-2 left-2 text-xl drop-shadow">🇧🇷</span>' : '';
+                let heartClass = (window.savedRecipesSet && window.savedRecipesSet.has(r.id)) ? 'fas text-red-500' : 'far text-gray-300';
+
+                div.innerHTML = `
+                    <div class="h-32 ${bgClass} flex items-center justify-center relative border-b border-red-100">
+                        <span class="text-5xl icon-effect drop-shadow-sm transition duration-500">${r.icon}</span>
+                        <span class="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full ${enClass}">${r.energy}</span>
+                        ${flag}
+                        <button onclick="shareRecipe(${r.id}, event)" class="absolute bottom-2 left-2 w-8 h-8 bg-white rounded-full shadow hover:bg-blue-50 flex items-center justify-center transition z-10 group/share text-blue-400 hover:text-blue-600" title="Compartilhar Link">
+                            <i class="fas fa-share-alt text-sm"></i>
+                        </button>
+                        <button onclick="toggleSaveRecipe(${r.id}, event)" class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full shadow hover:bg-red-50 flex items-center justify-center transition z-10 group/heart">
+                            <i id="heart-${r.id}" class="${heartClass} fa-heart text-lg heart-icon transition transform hover:scale-110" data-id="${r.id}"></i>
+                        </button>
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="font-bold text-gray-800 leading-tight mb-1 group-hover:text-red-700 transition">${r.name}</h3>
+                        <p class="text-xs text-gray-500 italic mb-2">${r.originalName}</p>
+                        <p class="text-sm text-gray-600 line-clamp-2">${r.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+            
+            if (start + itemsPerPage >= filteredRecipes.length) document.getElementById('loadMoreContainer').classList.add('hidden');
+        }
+
+        window.loadMore = () => { currentPage++; window.renderBatch(); }
+
+        window.setCategory = (cat) => {
+            window.currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('active-cat', 'bg-yellow-600', 'text-white', 'ring-2', 'ring-yellow-300');
+                if (b.dataset.cat === cat) b.classList.add('bg-yellow-600', 'text-white', 'ring-2', 'ring-yellow-300');
+            });
+            let titles = {all:'Todas', brasileira:'Culinária Brasileira 🇧🇷', medicinal:'Farmácia Natural 💊', saved:'Meus Favoritos ❤️'};
+            document.getElementById('currentCatTitle').innerText = titles[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+            window.filterRecipes();
+        }
+
+        window.setEnergy = (val) => {
+            currentEnergy = val;
+            const icon = document.getElementById('energyIcon');
+            const bg = document.getElementById('energyBtnBg');
+            
+            if (val !== 'all') {
+                icon.classList.add('spin-active', 'text-white');
+                icon.classList.remove('text-yellow-400');
+                bg.classList.add('bg-red-900', 'ring-2', 'ring-yellow-400');
+            } else {
+                icon.classList.remove('spin-active', 'text-white');
+                icon.classList.add('text-yellow-400');
+                bg.classList.remove('bg-red-900', 'ring-2', 'ring-yellow-400');
+            }
+            window.filterRecipes();
+        }
+
+        // --- FUNÇÕES MODAL RESTAURADAS ---
+        window.openRecipe = function(id) {
+            const recipe = window.allRecipes.find(r => r.id === id);
+            if (!recipe) return;
+
+            window.currentModalRecipeId = id;
+
+            document.getElementById('modalTitle').innerText = recipe.name;
+            document.getElementById('modalOriginalName').innerText = recipe.originalName;
+            document.getElementById('modalIcon').innerText = recipe.icon;
+            document.getElementById('modalDesc').innerText = recipe.desc;
+            document.getElementById('modalTime').innerText = recipe.time;
+            document.getElementById('modalFunction').innerText = recipe.func;
+            document.getElementById('modalCategory').innerText = recipe.category;
+
+            const energyTag = document.getElementById('modalEnergyTag');
+            energyTag.innerText = recipe.energy;
+            energyTag.className = 'px-3 py-1 text-sm rounded-full font-bold border mr-2 shadow-sm';
+            if(recipe.energy === 'Yin') energyTag.classList.add('energy-yin');
+            else if(recipe.energy === 'Yang') energyTag.classList.add('energy-yang');
+            else if(recipe.energy === 'Qi') energyTag.classList.add('energy-qi');
+            else energyTag.classList.add('energy-neutral');
+
+            if(window.updateModalHeart) window.updateModalHeart(id);
+
+            const ingList = document.getElementById('modalIngredients');
+            const stepList = document.getElementById('modalSteps');
+            ingList.innerHTML = '';
+            stepList.innerHTML = '';
+
+            recipe.ingredients.forEach(ing => {
+                const li = document.createElement('li');
+                li.className = "flex items-center bg-gray-50 p-2 rounded border border-gray-100";
+                li.innerHTML = `<i class="fas fa-check text-green-600 mr-3 text-xs"></i> ${ing}`;
+                ingList.appendChild(li);
+            });
+
+            recipe.steps.forEach((step, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex';
+                div.innerHTML = `
+                    <div class="flex-shrink-0 w-8 h-8 bg-red-100 text-red-800 rounded-full flex items-center justify-center font-bold mr-4 mt-0.5 text-sm border-2 border-red-200 shadow-sm">${index + 1}</div>
+                    <p class="text-gray-700 leading-relaxed py-1">${step}</p>
+                `;
+                stepList.appendChild(div);
+            });
+
+            const modal = document.getElementById('recipeModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeModal = function() {
+            const modal = document.getElementById('recipeModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            window.currentModalRecipeId = null;
+        }
+
+        // Listeners for modal
+        document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
+        const modal = document.getElementById('recipeModal');
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) window.closeModal();
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('recipeModal') && !document.getElementById('recipeModal').classList.contains('hidden')) window.closeModal();
+        });
+
+        window.init(); // Start
+    </script>
+</body>
+</html>
