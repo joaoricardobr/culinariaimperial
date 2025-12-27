@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enciclopédia Imperial: China & Brasil (Cloud Engenheiros)</title>
+    <!-- Ícone da Aba (Favicon) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>食</text></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -19,7 +22,7 @@
         }
 
         .pattern-bg {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
         .card-hover {
@@ -78,13 +81,13 @@
         <div class="container mx-auto px-4 pt-3 pb-2">
             <div class="flex flex-col md:flex-row justify-between items-center mb-3">
                 
-                <!-- Logo -->
-                <div class="flex items-center space-x-3 mb-3 md:mb-0">
-                    <div class="bg-yellow-500 text-red-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white icon-effect shadow-lg cursor-pointer hover:bg-yellow-400">
+                <!-- Logo (Botão Home) -->
+                <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer group" onclick="resetApp()" title="Voltar ao Início">
+                    <div class="bg-yellow-500 text-red-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white icon-effect shadow-lg group-hover:bg-yellow-400 transition">
                         食
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-wide chinese-font">Enciclopédia Imperial</h1>
+                        <h1 class="text-2xl font-bold tracking-wide chinese-font group-hover:text-yellow-200 transition">Enciclopédia Imperial</h1>
                         <p class="text-xs text-yellow-200">750 Receitas • Medicina • Cultura</p>
                     </div>
                 </div>
@@ -283,6 +286,18 @@
         // Placeholder para funções do módulo
         window.handleLogin = () => console.warn("Módulo Auth carregando...");
         window.toggleSaveRecipe = () => console.warn("Módulo DB carregando...");
+        
+        // Função de Reset (Home)
+        window.resetApp = () => {
+            window.setCategory('all');
+            document.getElementById('searchInput').value = '';
+            window.setEnergy('all'); // Reseta filtro de energia também
+            // Fecha modal se aberto
+            const modal = document.getElementById('recipeModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                window.closeModal();
+            }
+        };
     </script>
 
     <!-- Firebase SDK (ES Modules) -->
@@ -357,13 +372,15 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Erro login Google:", error);
-                // Tratamento específico para erro de domínio OU provedor desativado
-                if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/operation-not-allowed') {
-                    // Alerta amigável
-                    alert("Aviso: O Login Google ainda não foi ativado no Firebase Console para este domínio.\nO aplicativo funcionará em Modo Offline para você testar.");
-                    enableOfflineMode(); 
+                // Tratamento detalhado de erros
+                if (error.code === 'auth/operation-not-allowed') {
+                    alert("⚠️ LOGIN GOOGLE DESATIVADO\n\nO provedor 'Google' não está habilitado no seu painel Firebase.\n\nComo corrigir:\n1. Vá ao Firebase Console > Authentication.\n2. Clique em 'Sign-in method'.\n3. Ative o 'Google'.\n\nAtivando MODO OFFLINE para você continuar usando.");
+                    enableOfflineMode();
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    alert("⚠️ DOMÍNIO NÃO AUTORIZADO\n\nEste domínio não está na lista de autorizados do Firebase.\n\nAtivando MODO OFFLINE.");
+                    enableOfflineMode();
                 } else {
-                    alert("Erro ao logar com Google: " + error.message);
+                    alert("Erro ao logar: " + error.message);
                 }
             }
         };
@@ -534,7 +551,7 @@
             if(window.currentModalRecipeId) window.toggleSaveRecipe(window.currentModalRecipeId);
         }
 
-        // --- FUNCIONALIDADE DE COMPARTILHAMENTO ---
+        // --- FUNCIONALIDADE DE COMPARTILHAMENTO ATUALIZADA ---
         window.shareRecipe = async (id, event) => {
             if(event) event.stopPropagation();
             
@@ -544,22 +561,23 @@
             // Criar URL individual (adiciona ?recipe=ID)
             const url = new URL(window.location.href);
             url.searchParams.set('recipe', id);
+            // Remove outros parâmetros indesejados se existirem
             const shareUrl = url.toString();
 
+            // Compartilhar APENAS O LINK (sem texto extra)
             if (navigator.share) {
                 try {
                     await navigator.share({
-                        title: recipe.name,
                         url: shareUrl
                     });
                 } catch (err) {
                     console.log('Share canceled or failed', err);
                 }
             } else {
-                // Fallback para Clipboard: APENAS O LINK
+                // Fallback para Clipboard
                 try {
                     await navigator.clipboard.writeText(shareUrl);
-                    alert('Link copiado: ' + shareUrl);
+                    alert('Link da receita copiado:\n' + shareUrl);
                 } catch (err) {
                     alert('Copie o link manualmente: ' + shareUrl);
                 }
