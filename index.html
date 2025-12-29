@@ -11,11 +11,30 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'imperial-red': '#8B0000',
+                        'imperial-gold': '#DAA520',
+                        'cream': '#FDFBF7',
+                        'stone-dark': '#292524'
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
-        body { font-family: 'Lato', sans-serif; background-color: #f8f9fa; color: #1a202c; }
-        h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+        body { font-family: 'Lato', sans-serif; background-color: #f8f9fa; color: #292524; }
+        .serif-font { font-family: 'Playfair Display', serif; }
 
         .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
@@ -24,9 +43,9 @@
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
         .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -39,7 +58,14 @@
         video:fullscreen { object-fit: contain; }
 
         /* Estilo para abas do admin */
-        .admin-tab.active { border-bottom: 2px solid #dc2626; color: #dc2626; background: white; }
+        .admin-tab.active { border-bottom: 2px solid #8B0000; color: #8B0000; background: white; }
+        
+        /* Modal Styles Refined */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.5);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -51,7 +77,7 @@
                 
                 <!-- Logo -->
                 <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer group" onclick="window.resetApp()">
-                    <div class="w-12 h-12 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-2xl shadow-lg group-hover:bg-red-800 transition">
+                    <div class="w-12 h-12 rounded-full bg-imperial-red text-white flex items-center justify-center font-bold text-2xl shadow-lg group-hover:bg-red-800 transition ring-2 ring-offset-2 ring-imperial-gold">
                         食
                     </div>
                     <div>
@@ -64,19 +90,19 @@
                 <div class="flex w-full md:w-auto items-center space-x-3">
                     <div class="relative flex-grow md:w-80">
                         <input type="text" id="searchInput" placeholder="O que você quer cozinhar hoje?" 
-                            class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-red-500 focus:bg-white transition text-sm">
+                            class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-imperial-red focus:bg-white transition text-sm">
                         <i class="fas fa-search absolute left-3.5 top-3 text-gray-400"></i>
                     </div>
 
                     <!-- Auth -->
                     <div id="authContainer">
-                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-red-600 text-white hover:bg-red-700 font-bold py-2 px-4 rounded-full text-sm shadow">
+                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-imperial-red text-white hover:bg-red-800 font-bold py-2 px-4 rounded-full text-sm shadow transition">
                             <i class="fab fa-google mr-2"></i> Entrar
                         </button>
                         <div id="loginLoading" class="text-xs text-gray-400 animate-pulse">Conectando...</div>
                         
                         <div id="userProfile" class="hidden relative group cursor-pointer">
-                            <img id="userPhoto" src="" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
+                            <img id="userPhoto" src="" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover ring-2 ring-gray-100">
                             <!-- Menu Usuario (Ponte Invisivel) -->
                             <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
                                 <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 animate-fade-in">
@@ -84,7 +110,7 @@
                                         <p class="text-xs text-gray-500">Bem-vindo,</p>
                                         <p class="text-sm font-bold truncate" id="userName">Visitante</p>
                                     </div>
-                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-red-600 font-bold">
+                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm hover:bg-red-50 text-imperial-red font-bold">
                                         <i class="fas fa-heart mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
                                     </a>
                                     <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-gray-700">Sair</a>
@@ -108,85 +134,85 @@
 
     <!-- Conteúdo Principal -->
     <main class="container mx-auto px-4 py-8 flex-grow">
-        <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
+        <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
             <div>
-                <h2 class="text-3xl font-bold text-gray-900 serif-font" id="currentCatTitle">Catálogo Completo</h2>
-                <p class="text-sm text-gray-500 mt-1">
-                    <span id="dbStatus" class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                <h2 class="text-3xl font-bold text-stone-900 serif-font" id="currentCatTitle">Catálogo Completo</h2>
+                <p class="text-sm text-gray-500 mt-1 flex items-center">
+                    <span id="dbStatus" class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
                     Sincronizado na Nuvem
                 </p>
             </div>
-            <span class="text-xs font-semibold bg-gray-200 text-gray-700 px-3 py-1 rounded-full" id="totalCount">Carregando...</span>
+            <span class="text-xs font-semibold bg-cream text-stone-600 px-3 py-1 rounded-full border border-stone-200" id="totalCount">Carregando...</span>
         </div>
 
         <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 
         <div id="loadMoreContainer" class="text-center py-12 hidden">
-            <button onclick="loadMore()" class="bg-white border border-gray-300 text-gray-700 hover:text-red-700 font-bold py-3 px-8 rounded-full shadow-sm transition">Carregar Mais Receitas</button>
+            <button onclick="loadMore()" class="bg-white border border-stone-300 text-stone-600 hover:text-imperial-red hover:border-imperial-red font-bold py-3 px-10 rounded-full shadow-sm transition hover:shadow-md">Carregar Mais Receitas</button>
         </div>
         
         <div id="emptyState" class="hidden text-center py-24">
             <i class="fas fa-search text-4xl text-gray-300 mb-2"></i>
-            <p class="text-gray-500">Nenhuma receita encontrada para sua busca.</p>
+            <p class="text-gray-500 font-serif italic">Nenhuma receita encontrada para sua busca.</p>
         </div>
     </main>
 
     <!-- Footer Profissional -->
-    <footer class="bg-gray-900 text-gray-300 pt-12 pb-6 mt-12 border-t border-gray-800">
+    <footer class="bg-stone-900 text-stone-400 pt-16 pb-8 mt-12 border-t border-stone-800">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <!-- Sobre -->
                 <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-xl">食</div>
-                        <h3 class="text-xl font-bold text-white serif-font">Enciclopédia Imperial</h3>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-imperial-red text-white flex items-center justify-center font-bold text-xl ring-2 ring-imperial-gold ring-offset-2 ring-offset-stone-900">食</div>
+                        <h3 class="text-xl font-bold text-stone-100 serif-font">Enciclopédia Imperial</h3>
                     </div>
-                    <p class="text-sm text-gray-400 mb-4">
-                        Sua fonte definitiva de receitas globais. Da culinária chinesa milenar aos clássicos brasileiros.
+                    <p class="text-sm text-stone-400 mb-6 leading-relaxed">
+                        Sua fonte definitiva de receitas globais. Da culinária chinesa milenar aos clássicos brasileiros, explorando sabores e tradições.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-pinterest text-xl"></i></a>
+                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-youtube text-xl"></i></a>
+                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-pinterest text-xl"></i></a>
                     </div>
                 </div>
 
                 <!-- Categorias -->
                 <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Explorar</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" onclick="window.setCategory('brasileira')" class="hover:text-red-500 transition">Receitas Brasileiras</a></li>
-                        <li><a href="#" onclick="window.setCategory('chinesa')" class="hover:text-red-500 transition">Receitas Chinesas</a></li>
-                        <li><a href="#" onclick="window.setCategory('sobremesa')" class="hover:text-red-500 transition">Doces & Sobremesas</a></li>
-                        <li><a href="#" onclick="window.setCategory('medicinal')" class="hover:text-red-500 transition">Saúde & Bem-estar</a></li>
+                    <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-widest border-b border-stone-800 pb-2 inline-block">Explorar</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#" onclick="window.setCategory('brasileira')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Receitas Brasileiras</a></li>
+                        <li><a href="#" onclick="window.setCategory('chinesa')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Receitas Chinesas</a></li>
+                        <li><a href="#" onclick="window.setCategory('sobremesa')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Doces & Sobremesas</a></li>
+                        <li><a href="#" onclick="window.setCategory('medicinal')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Saúde & Bem-estar</a></li>
                     </ul>
                 </div>
 
                 <!-- Links Úteis -->
                 <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Institucional</h4>
-                    <ul class="space-y-2 text-sm">
+                    <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-widest border-b border-stone-800 pb-2 inline-block">Institucional</h4>
+                    <ul class="space-y-3 text-sm">
                         <li><a href="#" class="hover:text-white transition">Sobre Nós</a></li>
                         <li><a href="#" class="hover:text-white transition">Política de Privacidade</a></li>
                         <li><a href="#" class="hover:text-white transition">Termos de Uso</a></li>
-                        <li><a href="#" onclick="toggleAdminPanel()" class="text-gray-600 hover:text-red-500 transition text-xs"><i class="fas fa-lock mr-1"></i> Área Administrativa</a></li>
+                        <li><a href="#" onclick="toggleAdminPanel()" class="text-stone-600 hover:text-imperial-red transition text-xs"><i class="fas fa-lock mr-1"></i> Área Administrativa</a></li>
                     </ul>
                 </div>
 
                 <!-- Contato -->
                 <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Contato</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-2 text-red-600"></i> Av. das Nações, 1000<br>São Paulo, SP</li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-2 text-red-600"></i> contato@imperial.com</li>
-                        <li class="flex items-center"><i class="fas fa-phone mr-2 text-red-600"></i> (11) 9999-9999</li>
+                    <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-widest border-b border-stone-800 pb-2 inline-block">Contato</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-imperial-red"></i> <span class="text-stone-400">Av. das Nações, 1000<br>São Paulo, SP</span></li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-imperial-red"></i> <a href="mailto:contato@imperial.com" class="hover:text-white transition">contato@imperial.com</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
+            <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-stone-600">
                 <p>&copy; 2024 Enciclopédia Imperial. Todos os direitos reservados.</p>
+                <p class="mt-2 md:mt-0">Feito com <i class="fas fa-heart text-imperial-red mx-1"></i> para o mundo.</p>
             </div>
         </div>
     </footer>
@@ -296,73 +322,77 @@
     </div>
 
     <!-- Modal Receita -->
-    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
-        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
+    <div id="recipeModal" class="fixed inset-0 bg-stone-900 bg-opacity-95 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
+        <div class="bg-cream rounded-none md:rounded-3xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative border border-stone-200">
             
-            <!-- Header Modal Imagem (Altura Reduzida) -->
-            <div class="relative h-48 md:h-56 shrink-0 bg-gray-100 group cursor-zoom-in" onclick="window.toggleZoom()">
+            <!-- Header Modal Imagem (Altura Ajustada) -->
+            <div class="relative h-56 md:h-64 shrink-0 bg-stone-100 group cursor-zoom-in" onclick="window.toggleZoom()">
                 <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('modalFallback').classList.remove('hidden')">
                 
                 <!-- Fallback Animado -->
-                <div id="modalFallback" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
-                    <lord-icon id="modalLordIcon" src="" trigger="loop" delay="1000" colors="primary:#e83a30,secondary:#f4a261" style="width:100px;height:100px"></lord-icon>
+                <div id="modalFallback" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-stone-50">
+                    <lord-icon id="modalLordIcon" src="" trigger="loop" delay="1000" colors="primary:#8B0000,secondary:#DAA520" style="width:100px;height:100px"></lord-icon>
                 </div>
 
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent"></div>
                 <button onclick="event.stopPropagation(); window.closeModal()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/80 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-md z-20"><i class="fas fa-times text-lg"></i></button>
 
-                <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10 pointer-events-none">
-                    <div class="flex items-center space-x-3 mb-1">
-                        <span id="modalCategoryTag" class="px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">Cat</span>
-                        <div class="flex text-yellow-400 text-sm" id="modalRating"></div>
+                <div class="absolute bottom-0 left-0 w-full p-8 text-white z-10 pointer-events-none">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span id="modalCategoryTag" class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider rounded border border-white/30">Cat</span>
+                        <div class="flex text-imperial-gold text-sm" id="modalRating"></div>
                     </div>
-                    <h2 id="modalTitle" class="text-2xl md:text-4xl font-bold serif-font leading-tight drop-shadow-lg">Título</h2>
+                    <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-xl text-shadow">Título</h2>
                 </div>
             </div>
 
-            <!-- Toolbar (Ferramentas) -->
-            <div class="bg-white border-b border-gray-100 px-6 py-3 flex justify-between items-center shrink-0">
-                <div class="flex space-x-4 text-sm font-bold text-gray-600">
-                    <span><i class="far fa-clock text-red-500 mr-2"></i> <span id="modalTime"></span></span>
-                    <span class="hidden md:inline"><i class="fas fa-fire text-orange-500 mr-2"></i> <span id="modalFunction"></span></span>
+            <!-- Toolbar -->
+            <div class="bg-white border-b border-stone-200 px-8 py-4 flex justify-between items-center shrink-0">
+                <div class="flex space-x-6 text-sm font-bold text-stone-600">
+                    <span class="flex items-center"><i class="far fa-clock text-imperial-red mr-2"></i> <span id="modalTime"></span></span>
+                    <span class="hidden md:flex items-center"><i class="fas fa-fire text-orange-500 mr-2"></i> <span id="modalFunction"></span></span>
                 </div>
-                <div class="flex space-x-2">
-                    <button id="ttsBtn" onclick="window.toggleTTS()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-600 transition text-sm font-bold" title="Ouvir">
+                <div class="flex space-x-3">
+                    <button id="ttsBtn" onclick="window.toggleTTS()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition text-sm font-bold" title="Ouvir">
                         <i class="fas fa-volume-up"></i> <span class="hidden md:inline">Ouvir</span>
                     </button>
-                    <button onclick="window.toggleZoom()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition text-sm font-bold" title="Zoom">
-                        <i class="fas fa-search-plus"></i> <span class="hidden md:inline">Zoom</span>
+                    <button onclick="window.toggleZoom()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition text-sm font-bold" title="Zoom">
+                        <i class="fas fa-search-plus"></i>
                     </button>
-                    <button onclick="window.shareRecipeFromModal()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition text-sm font-bold" title="Compartilhar">
-                        <i class="fas fa-share-alt"></i> <span class="hidden md:inline">Share</span>
+                    <button onclick="window.shareRecipeFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition text-sm font-bold" title="Compartilhar">
+                        <i class="fas fa-share-alt"></i>
                     </button>
-                    <button onclick="window.toggleSaveRecipe(window.currentModalRecipeId)" id="modalSaveBtn" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-pink-50 text-gray-600 hover:text-pink-600 transition text-sm font-bold" title="Salvar">
-                        <i class="far fa-heart"></i> <span class="hidden md:inline">Salvar</span>
+                    <button onclick="window.toggleSaveRecipe(window.currentModalRecipeId)" id="modalSaveBtn" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-pink-50 text-stone-600 hover:text-pink-600 transition text-sm font-bold" title="Salvar">
+                        <i class="far fa-heart"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- Conteúdo (Layout Ajustado para Prioridade de Texto) -->
-            <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-white" id="modalScrollContainer">
+            <!-- Conteúdo (Layout Sofisticado) -->
+            <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-cream" id="modalScrollContainer">
                 
                 <!-- Coluna Esquerda: Vídeo e Ingredientes -->
-                <div class="md:w-1/3 bg-gray-50 p-6 border-r border-gray-100 overflow-y-auto custom-scroll" id="modalLeftCol">
+                <div class="md:w-1/3 bg-white p-8 border-r border-stone-100 overflow-y-auto custom-scroll" id="modalLeftCol">
                     <!-- Vídeo Embutido -->
-                    <div class="mb-6 rounded-lg overflow-hidden shadow border border-gray-200 bg-black">
+                    <div class="mb-8 rounded-xl overflow-hidden shadow-lg border border-stone-200 bg-black relative group">
                         <video id="modalVideo" controls class="w-full aspect-video" poster="">
                             <source src="https://videos.pexels.com/video-files/2882090/2882090-hd_1920_1080_24fps.mp4" type="video/mp4">
                         </video>
                     </div>
                     
-                    <h3 class="font-bold text-gray-900 text-lg mb-3 border-b pb-2 border-gray-200"><i class="fas fa-shopping-basket mr-2 text-red-600"></i> Ingredientes</h3>
-                    <ul id="modalIngredients" class="space-y-2 text-sm text-gray-700"></ul>
+                    <h3 class="font-serif font-bold text-imperial-red text-2xl mb-4 border-b border-stone-200 pb-2">
+                        Ingredientes
+                    </h3>
+                    <ul id="modalIngredients" class="space-y-3 text-sm text-stone-700"></ul>
                 </div>
 
                 <!-- Coluna Direita: Modo de Preparo -->
-                <div class="md:w-2/3 p-6 overflow-y-auto custom-scroll" id="modalRightCol">
-                    <h3 class="font-bold text-gray-900 text-lg mb-4 border-b pb-2 border-gray-200"><i class="fas fa-fire-alt mr-2 text-red-600"></i> Modo de Preparo</h3>
-                    <p id="modalDesc" class="text-gray-500 italic mb-6 text-sm bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400"></p>
-                    <div id="modalSteps" class="space-y-6 text-gray-800 leading-relaxed text-base"></div>
+                <div class="md:w-2/3 p-8 overflow-y-auto custom-scroll" id="modalRightCol">
+                    <h3 class="font-serif font-bold text-imperial-red text-2xl mb-4 border-b border-stone-200 pb-2">
+                        Modo de Preparo
+                    </h3>
+                    <p id="modalDesc" class="text-stone-600 italic mb-8 text-base leading-relaxed bg-stone-50 p-5 rounded-r-xl border-l-4 border-imperial-gold shadow-sm"></p>
+                    <div id="modalSteps" class="space-y-6 text-stone-800 leading-relaxed text-lg font-light"></div>
                 </div>
             </div>
         </div>
@@ -413,9 +443,9 @@
             const btn = document.createElement('button');
             const info = categories[key] || { label: key === 'all' ? 'Todos' : (key === 'saved' ? '❤️ Favoritos' : key) };
             
-            btn.className = `cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 mr-2 mb-1 whitespace-nowrap`;
-            if (key === 'all') btn.classList.add('bg-gray-900', 'text-white', 'border-transparent');
-            if (key === 'saved') btn.classList.add('border-pink-200', 'text-pink-600');
+            btn.className = `cat-btn px-5 py-2 rounded-full text-xs font-bold transition border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 mr-3 mb-1 whitespace-nowrap shadow-sm hover:shadow`;
+            if (key === 'all') btn.classList.add('bg-stone-800', 'text-white', 'border-transparent', 'hover:bg-black');
+            if (key === 'saved') btn.classList.add('border-pink-200', 'text-pink-600', 'hover:bg-pink-50');
             
             btn.innerText = info.label;
             btn.dataset.cat = key;
@@ -451,16 +481,23 @@
         };
 
         const nameModifiers = {
-            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco'],
+            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco', 'Gourmet', 'Clássico', 'Real'],
             origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino'],
             styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado']
         };
 
         function generateUniqueName(category, type) {
-            const adj = nameModifiers.adjectives[Math.floor(Math.random() * nameModifiers.adjectives.length)];
-            const style = nameModifiers.styles[Math.floor(Math.random() * nameModifiers.styles.length)];
-            return `${type} ${adj} ${style}`;
+            const patterns = [
+                () => `${type} ${getRandom(nameModifiers.adjectives)}`,
+                () => `${type} ${getRandom(nameModifiers.origins)}`,
+                () => `${type} ${getRandom(nameModifiers.styles)}`,
+                () => `${getRandom(nameModifiers.adjectives)} ${type}`
+            ];
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+            return pattern();
         }
+
+        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
         function generateRecipe(id, category, type) {
             const catKey = (category === 'brasileira' || category === 'chinesa') ? 'carne' : (ingredientsPool[category] ? category : 'sopa');
@@ -492,7 +529,8 @@
         let genId = 1000;
         function populate() {
             const baseTypes = {
-                suco: ['Suco', 'Vitamina', 'Smoothie'], sopa: ['Sopa', 'Caldo', 'Creme'],
+                suco: ['Suco', 'Vitamina', 'Smoothie', 'Refresco', 'Drink'],
+                sopa: ['Sopa', 'Caldo', 'Creme', 'Consomê'],
                 bolo: ['Bolo', 'Torta', 'Rocambole'], carne: ['Bife', 'Assado', 'Picadinho'],
                 brasileira: ['Feijoada', 'Vatapá', 'Moqueca'], chinesa: ['Yakisoba', 'Pato', 'Rolinho']
             };
@@ -558,7 +596,7 @@
 
             batch.forEach((r, i) => {
                 const el = document.createElement('div');
-                el.className = "bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer group relative animate-fade-in";
+                el.className = "bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden card-hover cursor-pointer group relative animate-fade-in";
                 el.style.animationDelay = `${i*0.02}s`;
                 el.onclick = () => window.openRecipe(r.id);
 
@@ -566,27 +604,27 @@
                 const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' }; 
 
                 el.innerHTML = `
-                    <div class="h-48 relative bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <div class="h-56 relative bg-stone-100 flex items-center justify-center overflow-hidden">
                         <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" 
                              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')">
                         
                         <!-- Fallback Animado Lordicon -->
-                        <div class="hidden absolute inset-0 flex items-center justify-center bg-gray-50">
-                            <lord-icon src="${catInfo.icon}" trigger="loop" delay="2000" colors="primary:#e83a30,secondary:#f4a261" style="width:80px;height:80px"></lord-icon>
+                        <div class="hidden absolute inset-0 flex items-center justify-center bg-stone-50">
+                            <lord-icon src="${catInfo.icon}" trigger="loop" delay="2000" colors="primary:#8B0000,secondary:#DAA520" style="width:80px;height:80px"></lord-icon>
                         </div>
 
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent opacity-60"></div>
                         <div class="absolute top-2 right-2 bg-white/90 px-1.5 rounded text-[10px] font-bold shadow flex items-center">
-                            <i class="fas fa-star text-yellow-500 mr-1"></i> ${r.rating}
+                            <i class="fas fa-star text-imperial-gold mr-1"></i> ${r.rating}
                         </div>
                         
                         <button onclick="window.toggleSaveRecipe('${r.id}', event)" class="absolute bottom-2 right-2 w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition z-10">
-                            <i class="${isFav ? 'fas text-red-500' : 'far text-white'} fa-heart text-lg heart-icon"></i>
+                            <i class="${isFav ? 'fas text-imperial-red' : 'far text-white'} fa-heart text-lg heart-icon transition transform hover:scale-110"></i>
                         </button>
                     </div>
-                    <div class="p-4">
-                        <p class="text-[10px] text-red-600 font-bold uppercase tracking-wider mb-1">${r.category}</p>
-                        <h3 class="font-bold text-gray-800 text-sm leading-tight mb-2 font-serif group-hover:text-red-700 transition">${r.name}</h3>
+                    <div class="p-4 bg-white">
+                        <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider mb-1">${r.category}</p>
+                        <h3 class="font-bold text-stone-800 text-base leading-tight mb-2 font-serif group-hover:text-imperial-red transition">${r.name}</h3>
                     </div>
                 `;
                 grid.appendChild(el);
@@ -599,8 +637,12 @@
         window.setCategory = (c) => { 
             window.currentCategory = c; 
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
-                if(b.dataset.cat === c) b.classList.add('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
+                b.classList.remove('active-cat', 'bg-stone-800', 'text-white', 'border-transparent');
+                b.classList.add('bg-white', 'text-stone-600', 'border-stone-200');
+                if(b.dataset.cat === c) {
+                    b.classList.remove('bg-white', 'text-stone-600', 'border-stone-200');
+                    b.classList.add('active-cat', 'bg-stone-800', 'text-white', 'border-transparent');
+                }
             });
             window.filterRecipes(); 
         };
@@ -717,10 +759,15 @@
             document.getElementById('modalLordIcon').setAttribute('src', catInfo.icon);
 
             const ingList = document.getElementById('modalIngredients');
-            ingList.innerHTML = (r.ingredients || []).map(i => `<li class="border-b py-2">${i}</li>`).join('');
+            ingList.innerHTML = (r.ingredients || []).map(i => `<li class="border-b border-stone-100 py-3 flex items-start"><i class="fas fa-check text-green-600 mt-1 mr-3 text-xs"></i><span>${i}</span></li>`).join('');
             
             const stepList = document.getElementById('modalSteps');
-            stepList.innerHTML = (r.steps || []).map((s, i) => `<div class="mb-4"><span class="font-bold text-red-600 mr-2">${i+1}.</span>${s}</div>`).join('');
+            stepList.innerHTML = (r.steps || []).map((s, i) => `
+                <div class="mb-6 flex">
+                    <div class="flex-shrink-0 w-8 h-8 bg-imperial-red text-white rounded-full flex items-center justify-center font-bold mr-4 text-sm font-serif shadow-sm">${i+1}</div>
+                    <p class="pt-1 text-stone-700 leading-relaxed font-light">${s}</p>
+                </div>
+            `).join('');
 
             window.updateModalHeart(id);
             document.getElementById('recipeModal').classList.remove('hidden');
@@ -893,8 +940,8 @@
              if(!btn) return;
              const icon = btn.querySelector('i');
              const isFav = window.savedRecipesSet.has(String(id)) || window.savedRecipesSet.has(id);
-             icon.className = isFav ? 'fas fa-heart text-xl text-red-500' : 'far fa-heart text-xl';
-             btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-pink-600' : 'bg-gray-100 text-gray-600'}`;
+             icon.className = isFav ? 'fas fa-heart text-xl text-imperial-red' : 'far fa-heart text-xl';
+             btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-imperial-red' : 'bg-stone-100 text-stone-600'}`;
         };
     </script>
 </body>
