@@ -59,13 +59,6 @@
 
         /* Estilo para abas do admin */
         .admin-tab.active { border-bottom: 2px solid #8B0000; color: #8B0000; background: white; }
-        
-        /* Modal Styles Refined */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255,255,255,0.5);
-        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -325,7 +318,7 @@
     <div id="recipeModal" class="fixed inset-0 bg-stone-900 bg-opacity-95 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
         <div class="bg-cream rounded-none md:rounded-3xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative border border-stone-200">
             
-            <!-- Header Modal Imagem (Altura Ajustada) -->
+            <!-- Header Modal Imagem -->
             <div class="relative h-56 md:h-64 shrink-0 bg-stone-100 group cursor-zoom-in" onclick="window.toggleZoom()">
                 <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('modalFallback').classList.remove('hidden')">
                 
@@ -417,22 +410,22 @@
 
         // Configuração de Categorias e Ícones Animados (Lordicon URLs)
         const categories = {
-            'brasileira': { label: '🇧🇷 Brasil', icon: 'https://cdn.lordicon.com/qhgmphtg.json' }, 
-            'chinesa': { label: '🇨🇳 China', icon: 'https://cdn.lordicon.com/ulnswmkk.json' },
-            'natal': { label: '🎄 Natal', icon: 'https://cdn.lordicon.com/fihkmkwt.json' },
-            'suco': { label: '🍹 Sucos', icon: 'https://cdn.lordicon.com/pbrgppbb.json' },
-            'sopa': { label: '🥣 Sopas', icon: 'https://cdn.lordicon.com/gqzfzudq.json' },
-            'bolo': { label: '🍰 Bolos', icon: 'https://cdn.lordicon.com/ivhjpjsw.json' },
-            'carne': { label: '🥩 Carnes', icon: 'https://cdn.lordicon.com/xryjrepg.json' },
-            'ave': { label: '🍗 Aves', icon: 'https://cdn.lordicon.com/hifghsbr.json' },
-            'peixe': { label: '🐟 Peixes', icon: 'https://cdn.lordicon.com/drtetngs.json' },
-            'massa': { label: '🍝 Massas', icon: 'https://cdn.lordicon.com/tqvgdoln.json' },
-            'salada': { label: '🥗 Saladas', icon: 'https://cdn.lordicon.com/sbiheqdr.json' },
-            'sobremesa': { label: '🍮 Doces', icon: 'https://cdn.lordicon.com/yxyampds.json' },
-            'medicinal': { label: '💊 Saúde', icon: 'https://cdn.lordicon.com/puvaffet.json' },
-            'bebida': { label: '🍵 Bebidas', icon: 'https://cdn.lordicon.com/pbrgppbb.json' },
-            'entrada': { label: '🥟 Entradas', icon: 'https://cdn.lordicon.com/gqzfzudq.json' },
-            'principal': { label: '🥘 Pratos', icon: 'https://cdn.lordicon.com/xryjrepg.json' }
+            'brasileira': { label: '🇧🇷 Brasil', icon: 'https://cdn.lordicon.com/qhgmphtg.json', flavor: 'Tradicional' }, 
+            'chinesa': { label: '🇨🇳 China', icon: 'https://cdn.lordicon.com/ulnswmkk.json', flavor: 'Umami' },
+            'natal': { label: '🎄 Natal', icon: 'https://cdn.lordicon.com/fihkmkwt.json', flavor: 'Festivo' },
+            'suco': { label: '🍹 Sucos', icon: 'https://cdn.lordicon.com/pbrgppbb.json', flavor: 'Refrescante' },
+            'sopa': { label: '🥣 Sopas', icon: 'https://cdn.lordicon.com/gqzfzudq.json', flavor: 'Reconfortante' },
+            'bolo': { label: '🍰 Bolos', icon: 'https://cdn.lordicon.com/ivhjpjsw.json', flavor: 'Doce' },
+            'carne': { label: '🥩 Carnes', icon: 'https://cdn.lordicon.com/xryjrepg.json', flavor: 'Salgado' },
+            'ave': { label: '🍗 Aves', icon: 'https://cdn.lordicon.com/hifghsbr.json', flavor: 'Assado' },
+            'peixe': { label: '🐟 Peixes', icon: 'https://cdn.lordicon.com/drtetngs.json', flavor: 'Leve' },
+            'massa': { label: '🍝 Massas', icon: 'https://cdn.lordicon.com/tqvgdoln.json', flavor: 'Italiano' },
+            'salada': { label: '🥗 Saladas', icon: 'https://cdn.lordicon.com/sbiheqdr.json', flavor: 'Saudável' },
+            'sobremesa': { label: '🍮 Doces', icon: 'https://cdn.lordicon.com/yxyampds.json', flavor: 'Sobremesa' },
+            'medicinal': { label: '💊 Saúde', icon: 'https://cdn.lordicon.com/puvaffet.json', flavor: 'Nutritivo' },
+            'bebida': { label: '🍵 Bebidas', icon: 'https://cdn.lordicon.com/pbrgppbb.json', flavor: 'Quente/Frio' },
+            'entrada': { label: '🥟 Entradas', icon: 'https://cdn.lordicon.com/gqzfzudq.json', flavor: 'Aperitivo' },
+            'principal': { label: '🥘 Pratos', icon: 'https://cdn.lordicon.com/xryjrepg.json', flavor: 'Completo' }
         };
 
         // Renderiza Menu
@@ -481,7 +474,7 @@
         };
 
         const nameModifiers = {
-            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco', 'Gourmet', 'Clássico', 'Real'],
+            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco'],
             origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino'],
             styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado']
         };
@@ -518,7 +511,7 @@
                 image: getImageUrl(name, id),
                 iconFallback: categories[category]?.icon || 'https://cdn.lordicon.com/qhgmphtg.json',
                 desc: `Uma deliciosa e autêntica receita de ${category} para sua mesa. Sabor inigualável e preparo especial.`,
-                func: 'Sabor',
+                func: categories[category]?.flavor || 'Sabor',
                 time: `${Math.floor(Math.random() * 40) + 20} min`,
                 ingredients: ingredients,
                 steps: ["Separe os ingredientes.", "Prepare a base do prato.", "Cozinhe em fogo médio por 20 minutos.", "Tempere a gosto.", "Sirva imediatamente."],
@@ -604,7 +597,7 @@
                 const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' }; 
 
                 el.innerHTML = `
-                    <div class="h-56 relative bg-stone-100 flex items-center justify-center overflow-hidden">
+                    <div class="h-48 relative bg-stone-100 flex items-center justify-center overflow-hidden">
                         <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" 
                              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')">
                         
@@ -623,8 +616,15 @@
                         </button>
                     </div>
                     <div class="p-4 bg-white">
-                        <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider mb-1">${r.category}</p>
-                        <h3 class="font-bold text-stone-800 text-base leading-tight mb-2 font-serif group-hover:text-imperial-red transition">${r.name}</h3>
+                        <div class="flex justify-between items-center mb-2">
+                             <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider">${r.category}</p>
+                             <div class="text-[10px] text-stone-400 flex items-center"><i class="far fa-clock mr-1"></i>${r.time}</div>
+                        </div>
+                        <h3 class="font-bold text-stone-800 text-sm leading-tight mb-2 font-serif group-hover:text-imperial-red transition line-clamp-2">${r.name}</h3>
+                        <div class="flex items-center text-xs text-stone-500 pt-2 border-t border-stone-50">
+                             <span class="flex items-center"><i class="fas fa-tag mr-1 text-orange-400"></i> ${r.func || 'Sabor'}</span>
+                             <span class="ml-auto flex items-center"><i class="fas fa-shopping-basket mr-1 text-green-500"></i> ${r.ingredients ? r.ingredients.length : 0}</span>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(el);
@@ -671,7 +671,8 @@
                 desc: document.getElementById('addDesc').value,
                 ingredients: document.getElementById('addIng').value.split('\n'),
                 steps: document.getElementById('addSteps').value.split('\n'),
-                rating: "5.0", time: "45 min"
+                rating: "5.0", time: "45 min",
+                func: categories[cat]?.flavor || "Especial"
             };
             
             window.firebaseRecipes.unshift(newRecipe);
@@ -695,7 +696,7 @@
                 if(!Array.isArray(data)) throw new Error("Deve ser um array");
                 const batch = [];
                 data.forEach(r => {
-                    const rNew = {...r, id: Date.now() + Math.random()};
+                    const rNew = {...r, id: Date.now() + Math.random(), func: categories[r.category]?.flavor || "Sabor"};
                     window.firebaseRecipes.push(rNew);
                     batch.push(rNew);
                 });
@@ -768,6 +769,9 @@
                     <p class="pt-1 text-stone-700 leading-relaxed font-light">${s}</p>
                 </div>
             `).join('');
+            
+            document.getElementById('modalTime').innerText = r.time || "30 min";
+            document.getElementById('modalFunction').innerText = r.func || "Saboroso";
 
             window.updateModalHeart(id);
             document.getElementById('recipeModal').classList.remove('hidden');
