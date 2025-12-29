@@ -218,27 +218,36 @@
     </footer>
 
     <!-- PAINEL ADMINISTRATIVO (Modal) -->
-    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-0 backdrop-blur-sm transition-all duration-300">
+        <div class="bg-white rounded-none md:rounded-xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
             <!-- Admin Header -->
-            <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0">
-                <h2 class="text-xl font-bold flex items-center"><i class="fas fa-database mr-3 text-red-500"></i> Gestão de Receitas</h2>
-                <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+            <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0 border-b border-gray-800">
+                <div class="flex items-center">
+                    <h2 class="text-xl font-bold flex items-center"><i class="fas fa-tools mr-3 text-imperial-red"></i> Painel Administrativo</h2>
+                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.0 Fullscreen</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-white transition"><i class="fas fa-compress text-xl"></i></button>
+                    <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-2xl"></i></button>
+                </div>
             </div>
 
             <!-- Admin Tabs -->
-            <div class="flex border-b border-gray-200 bg-gray-50 shrink-0">
-                <button onclick="switchAdminTab('add')" id="btn-tab-add" class="admin-tab active flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
+            <div class="flex border-b border-gray-200 bg-gray-50 shrink-0 overflow-x-auto">
+                <button onclick="switchAdminTab('add')" id="btn-tab-add" class="admin-tab active flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
                     <i class="fas fa-plus-circle mr-2"></i> Adicionar
                 </button>
-                <button onclick="switchAdminTab('magic')" id="btn-tab-magic" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
-                    <i class="fas fa-magic mr-2"></i> Gerador Mágico
+                <button onclick="switchAdminTab('manage')" id="btn-tab-manage" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
+                    <i class="fas fa-list mr-2"></i> Gerenciar (Sync)
                 </button>
-                <button onclick="switchAdminTab('bulk')" id="btn-tab-bulk" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
-                    <i class="fas fa-file-import mr-2"></i> Importar JSON
+                <button onclick="switchAdminTab('magic')" id="btn-tab-magic" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
+                    <i class="fas fa-magic mr-2"></i> Mágico
                 </button>
-                <button onclick="switchAdminTab('backup')" id="btn-tab-backup" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
-                    <i class="fas fa-sync mr-2"></i> Backup & Sync
+                <button onclick="switchAdminTab('bulk')" id="btn-tab-bulk" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
+                    <i class="fas fa-file-import mr-2"></i> Importar
+                </button>
+                <button onclick="switchAdminTab('backup')" id="btn-tab-backup" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
+                    <i class="fas fa-database mr-2"></i> Backup
                 </button>
             </div>
 
@@ -247,28 +256,70 @@
                 
                 <!-- TAB: Adicionar Manual -->
                 <div id="tab-add" class="admin-content space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" id="addName" placeholder="Nome da Receita (ex: Feijoada Suprema)" class="p-3 border rounded w-full focus:ring-2 focus:ring-red-500">
-                        <select id="addCategory" class="p-3 border rounded w-full bg-white">
-                            <!-- Preenchido via JS -->
-                        </select>
-                    </div>
-                    <input type="text" id="addImage" placeholder="URL da Imagem (https://...)" class="p-3 border rounded w-full">
-                    <textarea id="addDesc" placeholder="Descrição curta e apetitosa..." class="p-3 border rounded w-full h-20"></textarea>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-gray-500">INGREDIENTES (um por linha)</label>
-                            <textarea id="addIng" class="p-3 border rounded w-full h-40 font-mono text-sm" placeholder="- 500g de Feijão&#10;- 2 Cebolas"></textarea>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-bold text-gray-500 mb-1">NOME DA RECEITA</label>
+                                <input type="text" id="addName" placeholder="Ex: Feijoada Suprema" class="p-3 border rounded w-full focus:ring-2 focus:ring-imperial-red outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">CATEGORIA</label>
+                                <select id="addCategory" class="p-3 border rounded w-full bg-white outline-none">
+                                    <!-- Preenchido via JS -->
+                                </select>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-gray-500">MODO DE PREPARO (um por linha)</label>
-                            <textarea id="addSteps" class="p-3 border rounded w-full h-40 font-mono text-sm" placeholder="1. Cozinhe o feijão&#10;2. Refogue a cebola"></textarea>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">URL DA IMAGEM</label>
+                            <input type="text" id="addImage" placeholder="https://..." class="p-3 border rounded w-full outline-none">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">DESCRIÇÃO CURTA</label>
+                            <textarea id="addDesc" placeholder="Uma breve descrição do prato..." class="p-3 border rounded w-full h-20 outline-none resize-none"></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">INGREDIENTES (um por linha)</label>
+                                <textarea id="addIng" class="p-3 border rounded w-full h-48 font-mono text-sm outline-none resize-none" placeholder="- 500g de Feijão&#10;- 2 Cebolas"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">MODO DE PREPARO (um por linha)</label>
+                                <textarea id="addSteps" class="p-3 border rounded w-full h-48 font-mono text-sm outline-none resize-none" placeholder="1. Cozinhe o feijão&#10;2. Refogue a cebola"></textarea>
+                            </div>
+                        </div>
+                        <button onclick="saveRecipe()" class="w-full mt-6 bg-green-600 text-white py-4 rounded font-bold hover:bg-green-700 shadow-lg transform active:scale-95 transition flex justify-center items-center">
+                            <i class="fas fa-save mr-2"></i> Salvar Receita no Banco de Dados
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB: Gerenciar Receitas -->
+                <div id="tab-manage" class="admin-content hidden">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                            <div class="relative w-full max-w-md">
+                                <input type="text" id="adminSearch" oninput="renderAdminList()" placeholder="Filtrar receitas..." class="pl-9 pr-4 py-2 border rounded-full w-full text-sm focus:outline-none focus:ring-1 focus:ring-imperial-red">
+                                <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                            </div>
+                            <span class="text-xs text-gray-500 font-bold" id="adminCountDisplay">0 receitas</span>
+                        </div>
+                        <div class="overflow-y-auto h-[60vh] custom-scroll">
+                            <table class="w-full text-sm text-left text-gray-500">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Imagem</th>
+                                        <th scope="col" class="px-6 py-3">Nome</th>
+                                        <th scope="col" class="px-6 py-3">Categoria</th>
+                                        <th scope="col" class="px-6 py-3 text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecipeList">
+                                    <!-- Lista injetada via JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <button onclick="saveRecipe()" class="w-full bg-green-600 text-white py-4 rounded font-bold hover:bg-green-700 shadow-lg transform active:scale-95 transition">
-                        <i class="fas fa-save mr-2"></i> Salvar na Nuvem
-                    </button>
                 </div>
 
                 <!-- TAB: Gerador Mágico -->
@@ -311,7 +362,7 @@
                                 <input type="file" class="hidden" onchange="restoreBackup(this)">
                             </label>
                             <button onclick="syncGeneratedToFirebase()" class="w-full bg-orange-600 text-white py-3 rounded hover:bg-orange-700 transition">
-                                <i class="fas fa-sync mr-2"></i> Sincronizar Tudo
+                                <i class="fas fa-sync mr-2"></i> Sincronizar Tudo (Firebase)
                             </button>
                         </div>
                     </div>
@@ -339,6 +390,7 @@
 
                 <div class="absolute bottom-0 left-0 w-full p-8 text-white z-10 pointer-events-none">
                     <div class="flex items-center space-x-3 mb-2">
+                        <!-- Removido 'Cat' tag -->
                         <div class="flex text-imperial-gold text-sm" id="modalRating"></div>
                     </div>
                     <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-xl text-shadow">Título</h2>
@@ -370,7 +422,7 @@
             <!-- Conteúdo (Layout Sofisticado) -->
             <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-cream" id="modalScrollContainer">
                 
-                <!-- Coluna Esquerda: Vídeo e Ingredientes -->
+                <!-- Coluna Esquerda: Vídeo e Ingredientes (Descrição estava aqui, removida) -->
                 <div class="md:w-1/3 bg-white p-8 border-r border-stone-100 overflow-y-auto custom-scroll" id="modalLeftCol">
                     <!-- Vídeo Embutido -->
                     <div class="mb-8 rounded-xl overflow-hidden shadow-lg border border-stone-200 bg-black relative group">
@@ -385,16 +437,26 @@
                     <ul id="modalIngredients" class="space-y-3 text-sm text-stone-700"></ul>
                 </div>
 
-                <!-- Coluna Direita: Modo de Preparo -->
+                <!-- Coluna Direita: Modo de Preparo (Exclusivo + Descrição abaixo) -->
                 <div class="md:w-2/3 p-8 overflow-y-auto custom-scroll" id="modalRightCol">
                     <h3 class="font-serif font-bold text-imperial-red text-2xl mb-4 border-b border-stone-200 pb-2">
                         Modo de Preparo
                     </h3>
-                    <p id="modalDesc" class="text-stone-600 italic mb-8 text-base leading-relaxed bg-stone-50 p-5 rounded-r-xl border-l-4 border-imperial-gold shadow-sm"></p>
-                    <div id="modalSteps" class="space-y-6 text-stone-800 leading-relaxed text-lg font-light"></div>
+                    
+                    <!-- Steps -->
+                    <div id="modalSteps" class="space-y-6 text-stone-800 leading-relaxed text-lg font-light mb-10"></div>
+
+                    <!-- Descrição Movida para o Final da Coluna Direita -->
+                    <p id="modalDesc" class="text-stone-600 italic text-base bg-stone-50 p-6 rounded-lg border-l-4 border-imperial-gold shadow-sm mt-8"></p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Zoom Lightbox -->
+    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[70] hidden flex items-center justify-center p-4" onclick="window.toggleZoom()">
+        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
+        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300">&times;</button>
     </div>
 
     <!-- SCRIPT PRINCIPAL (Lógica UI, Dados, Admin) -->
@@ -407,7 +469,7 @@
         window.isOffline = false;
         window.currentModalRecipeId = null;
         window.currentCategory = 'all';
-        window.textZoomLevel = 0; // 0=normal, 1=grande, 2=extra
+        window.textZoomLevel = 0; // 0=normal, 1=medium, 2=large
 
         // Configuração de Categorias e Ícones Animados (Lordicon URLs)
         const categories = {
@@ -547,6 +609,7 @@
             const uniqueGen = window.generatedRecipes.filter(r => !fbIds.has(r.id));
             window.finalRecipeList = [...window.firebaseRecipes, ...uniqueGen];
             window.filterRecipes();
+            window.renderAdminList(); // Atualiza lista do admin
         }
 
         // --- RENDERIZAÇÃO ---
@@ -648,7 +711,19 @@
         // --- PAINEL ADMIN ---
         window.toggleAdminPanel = () => {
             const modal = document.getElementById('adminModal');
-            modal.classList.toggle('hidden');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                // Solicitar Fullscreen
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch(e => console.log(e));
+                }
+                window.renderAdminList();
+            } else {
+                modal.classList.add('hidden');
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(e => console.log(e));
+                }
+            }
         };
 
         window.switchAdminTab = (tab) => {
@@ -657,6 +732,35 @@
             document.querySelectorAll('.admin-tab').forEach(e => e.classList.remove('active'));
             document.getElementById(`btn-tab-${tab}`).classList.add('active');
         };
+        
+        // Renderizar Lista de Gestão (Admin)
+        window.renderAdminList = () => {
+            const listContainer = document.getElementById('adminRecipeList');
+            if(!listContainer) return;
+            
+            const term = document.getElementById('adminSearch').value.toLowerCase();
+            const list = window.finalRecipeList.filter(r => r.name.toLowerCase().includes(term) || String(r.id).includes(term));
+            
+            let html = '';
+            // Renderizar apenas os primeiros 50 para performance
+            list.slice(0, 50).forEach(r => {
+                html += `
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <img class="w-10 h-10 rounded-full object-cover" src="${r.image}" onerror="this.src='https://via.placeholder.com/40'">
+                        </td>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${r.name}</td>
+                        <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">${r.category}</span></td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="alert('Funcionalidade de edição em desenvolvimento')" class="font-medium text-blue-600 hover:underline mr-3">Editar</button>
+                            <button onclick="alert('Exclusão simulada (recarregue para restaurar)')" class="font-medium text-red-600 hover:underline">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            listContainer.innerHTML = html;
+            document.getElementById('adminCountDisplay').innerText = `${list.length} receitas`;
+        }
 
         window.saveRecipe = async () => {
             const name = document.getElementById('addName').value;
@@ -677,7 +781,7 @@
             window.mergeAndRender();
             window.saveRecipeToFirebase(newRecipe);
             alert("Receita Adicionada!");
-            window.toggleAdminPanel();
+            // window.toggleAdminPanel(); // Keep open to add more
         };
 
         window.parseMagicText = () => {
@@ -757,6 +861,10 @@
             const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' };
             document.getElementById('modalLordIcon').setAttribute('src', catInfo.icon);
 
+            // Populate Modal Content
+            // Descrição movida para a coluna da direita, abaixo dos passos
+            document.getElementById('modalDesc').innerText = r.desc;
+            
             const ingList = document.getElementById('modalIngredients');
             ingList.innerHTML = (r.ingredients || []).map(i => `<li class="border-b border-stone-100 py-3 flex items-start"><i class="fas fa-check text-green-600 mt-1 mr-3 text-xs"></i><span>${i}</span></li>`).join('');
             
