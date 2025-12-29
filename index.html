@@ -3,81 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enciclopédia Imperial: 1000 Receitas</title>
-    <!-- Ícone da Aba -->
+    <title>Enciclopédia Imperial: Receitas do Mundo</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>">
     
+    <!-- Bibliotecas -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: #ffffff;
-            color: #1a202c;
-        }
+        body { font-family: 'Lato', sans-serif; background-color: #f8f9fa; color: #1a202c; }
+        h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
 
-        h1, h2, h3, .serif-font {
-            font-family: 'Playfair Display', serif;
-        }
+        .card-hover { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
 
-        /* Efeitos de Card */
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        /* Scrollbar Oculta */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Scrollbar Customizada para o Modal */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e0; 
-            border-radius: 3px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0; 
-        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
 
-        /* Animações */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spin-active { animation: spin 4s linear infinite; }
-
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-        .animate-pop { animation: pop 0.3s ease-out; }
-
-        /* Placeholder de imagem enquanto carrega */
         .img-loading {
-            background-color: #f3f4f6;
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e5e7eb' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        /* Estilo do Vídeo */
-        video:fullscreen {
-            object-fit: contain;
+            background-color: #e2e8f0;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23cbd5e0' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        /* Zoom Lightbox */
-        #zoomModal {
-            transition: opacity 0.3s ease;
-        }
+        video:fullscreen { object-fit: contain; }
+
+        /* Estilo para abas do admin */
+        .admin-tab.active { border-bottom: 2px solid #dc2626; color: #dc2626; background: white; }
     </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col">
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm">
@@ -85,63 +50,44 @@
             <div class="flex flex-col md:flex-row justify-between items-center mb-3">
                 
                 <!-- Logo -->
-                <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer group" onclick="resetApp()" title="Voltar ao Início">
-                    <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-xl shadow-md group-hover:bg-red-800 transition">
+                <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer group" onclick="window.resetApp()">
+                    <div class="w-12 h-12 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-2xl shadow-lg group-hover:bg-red-800 transition">
                         食
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold tracking-tight text-gray-900 serif-font">Enciclopédia Imperial</h1>
-                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">1000 Receitas do Mundo</p>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Gastronomia Global</p>
                     </div>
                 </div>
                 
-                <!-- Busca e Ações -->
+                <!-- Ferramentas -->
                 <div class="flex w-full md:w-auto items-center space-x-3">
-                    
-                    <!-- Busca -->
-                    <div class="relative flex-grow md:w-96">
-                        <input type="text" id="searchInput" placeholder="Procure uma receita, um ingrediente..." 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-red-500 focus:bg-white transition text-sm text-gray-800 placeholder-gray-500">
-                        <i class="fas fa-search absolute left-3.5 top-3.5 text-gray-400"></i>
-                    </div>
-
-                    <!-- Filtro Energia -->
-                    <div class="relative group">
-                        <div id="energyBtnBg" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition relative overflow-hidden">
-                            <i id="energyIcon" class="fas fa-yin-yang text-gray-600 text-lg"></i>
-                            <select id="energyFilter" onchange="setEnergy(this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
-                                <option value="all">Todas as Energias</option>
-                                <option value="Yin">❄️ Yin (Resfriante)</option>
-                                <option value="Yang">🔥 Yang (Aquecedor)</option>
-                                <option value="Neutro">⚖️ Neutro (Equilíbrio)</option>
-                                <option value="Qi">⚡ Qi (Tônico)</option>
-                            </select>
-                        </div>
+                    <div class="relative flex-grow md:w-80">
+                        <input type="text" id="searchInput" placeholder="O que você quer cozinhar hoje?" 
+                            class="w-full pl-10 pr-4 py-2 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-red-500 focus:bg-white transition text-sm">
+                        <i class="fas fa-search absolute left-3.5 top-3 text-gray-400"></i>
                     </div>
 
                     <!-- Auth -->
                     <div id="authContainer">
-                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-gray-900 text-white hover:bg-black font-bold py-2 px-5 rounded-full shadow-md transition transform hover:scale-105 flex items-center text-sm">
+                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-red-600 text-white hover:bg-red-700 font-bold py-2 px-4 rounded-full text-sm shadow">
                             <i class="fab fa-google mr-2"></i> Entrar
                         </button>
-                        <div id="loginLoading" class="w-8 h-8 rounded-full border-2 border-gray-300 border-t-red-600 animate-spin"></div>
+                        <div id="loginLoading" class="text-xs text-gray-400 animate-pulse">Conectando...</div>
                         
-                        <div id="userProfile" class="hidden relative group cursor-pointer h-10 flex items-center">
-                            <img id="userPhoto" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
-                            <!-- Ponte Invisível para manter hover -->
-                            <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block z-50">
+                        <div id="userProfile" class="hidden relative group cursor-pointer">
+                            <img id="userPhoto" src="" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
+                            <!-- Menu Usuario (Ponte Invisivel) -->
+                            <div class="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
                                 <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 animate-fade-in">
-                                    <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                                        <p class="text-xs text-gray-500">Logado como</p>
-                                        <p class="text-sm font-bold text-gray-900 truncate" id="userName">Usuário</p>
+                                    <div class="px-4 py-2 border-b border-gray-100">
+                                        <p class="text-xs text-gray-500">Bem-vindo,</p>
+                                        <p class="text-sm font-bold truncate" id="userName">Visitante</p>
                                     </div>
-                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
-                                        <i class="fas fa-heart text-red-500 mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
+                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-red-600 font-bold">
+                                        <i class="fas fa-heart mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
                                     </a>
-                                    <div class="border-t border-gray-100 mt-1"></div>
-                                    <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                        <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair
-                                    </a>
+                                    <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-gray-700">Sair</a>
                                 </div>
                             </div>
                         </div>
@@ -152,25 +98,8 @@
             <!-- Navegação Categorias -->
             <div class="w-full pt-1 border-t border-gray-100">
                 <div class="overflow-x-auto scrollbar-hide flex justify-start md:justify-center px-1 pb-1">
-                    <div class="flex space-x-2 min-w-max py-2">
-                        <!-- Menu Principal -->
-                        <button onclick="setCategory('all')" class="cat-btn active-cat px-4 py-1.5 rounded-full text-xs font-bold transition bg-gray-900 text-white" data-cat="all">Todos</button>
-                        <button onclick="setCategory('brasileira')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300" data-cat="brasileira">🇧🇷 Brasil</button>
-                        <button onclick="setCategory('chinesa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300" data-cat="chinesa">🇨🇳 China</button>
-                        
-                        <!-- Categorias de Comida -->
-                        <button onclick="setCategory('natal')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="natal">🎄 Natal</button>
-                        <button onclick="setCategory('suco')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="suco">🍹 Sucos</button>
-                        <button onclick="setCategory('sopa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="sopa">🥣 Sopas</button>
-                        <button onclick="setCategory('bolo')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="bolo">🍰 Bolos</button>
-                        <button onclick="setCategory('carne')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="carne">🥩 Carnes</button>
-                        <button onclick="setCategory('ave')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="ave">🍗 Aves</button>
-                        <button onclick="setCategory('peixe')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="peixe">🐟 Peixes</button>
-                        <button onclick="setCategory('massa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="massa">🍝 Massas</button>
-                        <button onclick="setCategory('salada')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="salada">🥗 Saladas</button>
-                        <button onclick="setCategory('sobremesa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="sobremesa">🍮 Doces</button>
-                        <button onclick="setCategory('medicinal')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="medicinal">💊 Saúde</button>
-                        <button onclick="setCategory('saved')" id="savedFilterBtn" class="hidden cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-pink-50 text-pink-600 border border-pink-200 hover:bg-pink-100" data-cat="saved">❤️ Favoritos</button>
+                    <div class="flex space-x-2 min-w-max py-2" id="navCategories">
+                        <!-- Injetado via JS -->
                     </div>
                 </div>
             </div>
@@ -179,361 +108,336 @@
 
     <!-- Conteúdo Principal -->
     <main class="container mx-auto px-4 py-8 flex-grow">
-        
-        <!-- Top 20 Carrossel -->
-        <div id="top20Container" class="mb-12">
-            <h2 class="text-2xl font-bold text-gray-900 serif-font mb-5 flex items-center">
-                <span class="bg-red-100 text-red-600 p-2 rounded-lg mr-3"><i class="fas fa-fire"></i></span>
-                Destaques da Semana
-            </h2>
-            <div class="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4">
-                <div class="flex space-x-5 min-w-max" id="top20List">
-                    <!-- Cards Top 20 Injetados Aqui -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Título da Seção Principal -->
         <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
             <div>
                 <h2 class="text-3xl font-bold text-gray-900 serif-font" id="currentCatTitle">Catálogo Completo</h2>
-                <p class="text-sm text-gray-500 mt-1">Explore sabores autênticos de todo o mundo.</p>
+                <p class="text-sm text-gray-500 mt-1">
+                    <span id="dbStatus" class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                    Sincronizado na Nuvem
+                </p>
             </div>
-            <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1 rounded-full" id="totalCount">Carregando...</span>
+            <span class="text-xs font-semibold bg-gray-200 text-gray-700 px-3 py-1 rounded-full" id="totalCount">Carregando...</span>
         </div>
 
-        <!-- Grid de Receitas -->
-        <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <!-- Cards Principais Injetados Aqui -->
-        </div>
+        <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
 
-        <!-- Botão Carregar Mais -->
-        <div id="loadMoreContainer" class="text-center py-12">
-            <button onclick="loadMore()" class="bg-white border border-gray-300 text-gray-700 hover:border-gray-800 hover:text-gray-900 font-bold py-3 px-8 rounded-full shadow-sm transition-all transform hover:scale-105 inline-flex items-center">
-                Carregar Mais Receitas <i class="fas fa-chevron-down ml-2"></i>
-            </button>
+        <div id="loadMoreContainer" class="text-center py-12 hidden">
+            <button onclick="loadMore()" class="bg-white border border-gray-300 text-gray-700 hover:text-red-700 font-bold py-3 px-8 rounded-full shadow-sm transition">Carregar Mais Receitas</button>
         </div>
-
-        <!-- Estado Vazio -->
+        
         <div id="emptyState" class="hidden text-center py-24">
-            <div class="bg-gray-50 p-8 rounded-full inline-block mb-4">
-                <i class="fas fa-search text-4xl text-gray-300"></i>
-            </div>
-            <h3 class="text-xl font-bold text-gray-700 mb-2">Nenhuma receita encontrada</h3>
-            <p class="text-gray-500">Tente buscar por outro termo ou mude a categoria.</p>
+            <i class="fas fa-search text-4xl text-gray-300 mb-2"></i>
+            <p class="text-gray-500">Nenhuma receita encontrada para sua busca.</p>
         </div>
     </main>
 
-    <!-- Modal de Detalhes -->
-    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
-        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
-            
-            <!-- Header Modal Imagem (com Fallback Icon Colorido e Zoom) -->
-            <div class="relative h-64 md:h-80 shrink-0 bg-gray-200 group cursor-zoom-in" onclick="toggleZoom()">
-                <img id="modalImage" src="" class="w-full h-full object-cover transition duration-300" alt="Receita" onerror="this.style.display='none'; document.getElementById('modalFallbackIcon').classList.remove('hidden');">
-                
-                <!-- Ícone Animado Colorido de Fallback -->
-                <div id="modalFallbackIcon" class="hidden absolute inset-0 bg-gray-50 flex items-center justify-center pointer-events-none">
-                     <i id="modalFallbackIconI" class="text-8xl animate-bounce drop-shadow-lg"></i>
+    <!-- Footer Profissional -->
+    <footer class="bg-gray-900 text-gray-300 pt-12 pb-6 mt-12 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Sobre -->
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-xl">食</div>
+                        <h3 class="text-xl font-bold text-white serif-font">Enciclopédia Imperial</h3>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Sua fonte definitiva de receitas globais. Da culinária chinesa milenar aos clássicos brasileiros.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube text-xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-pinterest text-xl"></i></a>
+                    </div>
                 </div>
 
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                
-                <!-- Ícone de Zoom Overlay -->
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/30 p-4 rounded-full opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none">
-                    <i class="fas fa-search-plus text-white text-3xl"></i>
+                <!-- Categorias -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Explorar</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" onclick="window.setCategory('brasileira')" class="hover:text-red-500 transition">Receitas Brasileiras</a></li>
+                        <li><a href="#" onclick="window.setCategory('chinesa')" class="hover:text-red-500 transition">Receitas Chinesas</a></li>
+                        <li><a href="#" onclick="window.setCategory('sobremesa')" class="hover:text-red-500 transition">Doces & Sobremesas</a></li>
+                        <li><a href="#" onclick="window.setCategory('medicinal')" class="hover:text-red-500 transition">Saúde & Bem-estar</a></li>
+                    </ul>
                 </div>
-                
-                <button onclick="event.stopPropagation(); closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20">
-                    <i class="fas fa-times text-lg"></i>
+
+                <!-- Links Úteis -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Institucional</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Sobre Nós</a></li>
+                        <li><a href="#" class="hover:text-white transition">Política de Privacidade</a></li>
+                        <li><a href="#" class="hover:text-white transition">Termos de Uso</a></li>
+                        <li><a href="#" onclick="toggleAdminPanel()" class="text-gray-600 hover:text-red-500 transition text-xs"><i class="fas fa-lock mr-1"></i> Área Administrativa</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contato -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Contato</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-2 text-red-600"></i> Av. das Nações, 1000<br>São Paulo, SP</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2 text-red-600"></i> contato@imperial.com</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-2 text-red-600"></i> (11) 9999-9999</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
+                <p>&copy; 2024 Enciclopédia Imperial. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PAINEL ADMINISTRATIVO (Modal) -->
+    <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl w-full max-w-5xl h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+            <!-- Admin Header -->
+            <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0">
+                <h2 class="text-xl font-bold flex items-center"><i class="fas fa-database mr-3 text-red-500"></i> Gestão de Receitas</h2>
+                <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="flex border-b border-gray-200 bg-gray-50 shrink-0">
+                <button onclick="switchAdminTab('add')" id="btn-tab-add" class="admin-tab active flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
+                    <i class="fas fa-plus-circle mr-2"></i> Adicionar
                 </button>
+                <button onclick="switchAdminTab('magic')" id="btn-tab-magic" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
+                    <i class="fas fa-magic mr-2"></i> Gerador Mágico
+                </button>
+                <button onclick="switchAdminTab('bulk')" id="btn-tab-bulk" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
+                    <i class="fas fa-file-import mr-2"></i> Importar JSON
+                </button>
+                <button onclick="switchAdminTab('backup')" id="btn-tab-backup" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none">
+                    <i class="fas fa-sync mr-2"></i> Backup & Sync
+                </button>
+            </div>
+
+            <!-- Admin Content -->
+            <div class="p-6 overflow-y-auto bg-gray-50 flex-grow">
+                
+                <!-- TAB: Adicionar Manual -->
+                <div id="tab-add" class="admin-content space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="addName" placeholder="Nome da Receita (ex: Feijoada Suprema)" class="p-3 border rounded w-full focus:ring-2 focus:ring-red-500">
+                        <select id="addCategory" class="p-3 border rounded w-full bg-white">
+                            <!-- Preenchido via JS -->
+                        </select>
+                    </div>
+                    <input type="text" id="addImage" placeholder="URL da Imagem (https://...)" class="p-3 border rounded w-full">
+                    <textarea id="addDesc" placeholder="Descrição curta e apetitosa..." class="p-3 border rounded w-full h-20"></textarea>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-500">INGREDIENTES (um por linha)</label>
+                            <textarea id="addIng" class="p-3 border rounded w-full h-40 font-mono text-sm" placeholder="- 500g de Feijão&#10;- 2 Cebolas"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-500">MODO DE PREPARO (um por linha)</label>
+                            <textarea id="addSteps" class="p-3 border rounded w-full h-40 font-mono text-sm" placeholder="1. Cozinhe o feijão&#10;2. Refogue a cebola"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveRecipe()" class="w-full bg-green-600 text-white py-4 rounded font-bold hover:bg-green-700 shadow-lg transform active:scale-95 transition">
+                        <i class="fas fa-save mr-2"></i> Salvar na Nuvem
+                    </button>
+                </div>
+
+                <!-- TAB: Gerador Mágico -->
+                <div id="tab-magic" class="admin-content hidden space-y-4">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
+                        <h3 class="font-bold text-blue-900 mb-2">Cole qualquer texto de receita aqui!</h3>
+                        <p class="text-sm text-blue-700 mb-4">O sistema tentará identificar automaticamente o título, ingredientes e passos.</p>
+                        <textarea id="magicPaste" class="w-full h-64 p-4 border rounded shadow-inner" placeholder="Cole o texto da receita aqui..."></textarea>
+                        <button onclick="parseMagicText()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 shadow">
+                            <i class="fas fa-wand-magic-sparkles mr-2"></i> Processar Texto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB: Importação em Massa -->
+                <div id="tab-bulk" class="admin-content hidden space-y-4">
+                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
+                        <h3 class="font-bold text-purple-900 mb-2">Importar JSON</h3>
+                        <p class="text-sm text-purple-700 mb-4">Cole um array de objetos JSON para adicionar várias receitas de uma vez.</p>
+                        <textarea id="bulkJson" class="w-full h-64 p-4 border rounded font-mono text-xs bg-gray-900 text-green-400" placeholder='[{"name": "Bolo", "category": "bolo", ...}]'></textarea>
+                        <button onclick="importBulk()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700 shadow">
+                            <i class="fas fa-file-import mr-2"></i> Importar Dados
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB: Backup & Sync -->
+                <div id="tab-backup" class="admin-content hidden text-center pt-10">
+                    <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+                        <i class="fas fa-cloud-upload-alt text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Gestão de Dados</h3>
+                        <p class="text-gray-500 mb-6">Total de Receitas Locais + Nuvem: <span id="adminTotalCount" class="font-bold text-gray-900">0</span></p>
+                        
+                        <div class="space-y-3">
+                            <button onclick="downloadBackup()" class="w-full bg-gray-800 text-white py-3 rounded hover:bg-black transition">
+                                <i class="fas fa-download mr-2"></i> Baixar Backup Completo (.json)
+                            </button>
+                            <label class="block w-full bg-gray-100 text-gray-700 py-3 rounded hover:bg-gray-200 cursor-pointer border border-gray-300 transition">
+                                <i class="fas fa-upload mr-2"></i> Restaurar Backup
+                                <input type="file" class="hidden" onchange="restoreBackup(this)">
+                            </label>
+                            <button onclick="syncGeneratedToFirebase()" class="w-full bg-orange-600 text-white py-3 rounded hover:bg-orange-700 transition">
+                                <i class="fas fa-sync mr-2"></i> Sincronizar Tudo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Receita -->
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
+        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
+            
+            <!-- Header Modal Imagem (Altura Reduzida) -->
+            <div class="relative h-48 md:h-56 shrink-0 bg-gray-100 group cursor-zoom-in" onclick="window.toggleZoom()">
+                <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('modalFallback').classList.remove('hidden')">
+                
+                <!-- Fallback Animado -->
+                <div id="modalFallback" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                    <lord-icon id="modalLordIcon" src="" trigger="loop" delay="1000" colors="primary:#e83a30,secondary:#f4a261" style="width:100px;height:100px"></lord-icon>
+                </div>
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                <button onclick="event.stopPropagation(); window.closeModal()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/80 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-md z-20"><i class="fas fa-times text-lg"></i></button>
 
                 <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10 pointer-events-none">
-                    <div class="flex items-center space-x-2 mb-2">
-                        <span id="modalCategoryTag" class="px-2 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">Categoria</span>
-                        <div class="flex text-yellow-400 text-xs items-center bg-black/40 px-2 py-1 rounded" id="modalRating"></div>
+                    <div class="flex items-center space-x-3 mb-1">
+                        <span id="modalCategoryTag" class="px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">Cat</span>
+                        <div class="flex text-yellow-400 text-sm" id="modalRating"></div>
                     </div>
-                    <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-md">Título da Receita</h2>
+                    <h2 id="modalTitle" class="text-2xl md:text-4xl font-bold serif-font leading-tight drop-shadow-lg">Título</h2>
                 </div>
             </div>
 
-            <!-- Toolbar de Ação -->
-            <div class="bg-white border-b border-gray-100 px-6 py-3 flex flex-wrap justify-between items-center gap-2">
-                <div class="flex space-x-6 text-sm text-gray-600">
-                    <span class="flex items-center"><i class="far fa-clock mr-2 text-red-500"></i> <span id="modalTime" class="font-bold"></span></span>
-                    <span class="flex items-center"><i class="fas fa-utensils mr-2 text-red-500"></i> <span id="modalFunction" class="font-bold"></span></span>
+            <!-- Toolbar (Ferramentas) -->
+            <div class="bg-white border-b border-gray-100 px-6 py-3 flex justify-between items-center shrink-0">
+                <div class="flex space-x-4 text-sm font-bold text-gray-600">
+                    <span><i class="far fa-clock text-red-500 mr-2"></i> <span id="modalTime"></span></span>
+                    <span class="hidden md:inline"><i class="fas fa-fire text-orange-500 mr-2"></i> <span id="modalFunction"></span></span>
                 </div>
                 <div class="flex space-x-2">
-                    <!-- Botão Ouvir Receita (TTS) -->
-                    <button id="ttsBtn" onclick="toggleTTS()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-purple-50 text-purple-600 hover:bg-purple-100 transition text-sm font-bold" title="Ouvir Receita">
-                        <i class="fas fa-volume-high"></i> <span>Ouvir</span>
+                    <button id="ttsBtn" onclick="window.toggleTTS()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-600 transition text-sm font-bold" title="Ouvir">
+                        <i class="fas fa-volume-up"></i> <span class="hidden md:inline">Ouvir</span>
                     </button>
-                    <button onclick="shareRecipeFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition text-sm font-bold">
-                        <i class="fas fa-share-alt"></i> <span>Compartilhar</span>
+                    <button onclick="window.toggleZoom()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition text-sm font-bold" title="Zoom">
+                        <i class="fas fa-search-plus"></i> <span class="hidden md:inline">Zoom</span>
                     </button>
-                    <button id="modalSaveBtn" onclick="toggleSaveFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition text-sm font-bold">
-                        <i class="far fa-heart"></i> <span>Salvar</span>
+                    <button onclick="window.shareRecipeFromModal()" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition text-sm font-bold" title="Compartilhar">
+                        <i class="fas fa-share-alt"></i> <span class="hidden md:inline">Share</span>
+                    </button>
+                    <button onclick="window.toggleSaveRecipe(window.currentModalRecipeId)" id="modalSaveBtn" class="flex items-center space-x-2 px-3 py-2 rounded-full bg-gray-100 hover:bg-pink-50 text-gray-600 hover:text-pink-600 transition text-sm font-bold" title="Salvar">
+                        <i class="far fa-heart"></i> <span class="hidden md:inline">Salvar</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Conteúdo Scroll -->
+            <!-- Conteúdo (Layout Ajustado para Prioridade de Texto) -->
             <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-white" id="modalScrollContainer">
-                <!-- Coluna Esquerda: Ingredientes & Vídeo -->
-                <div id="modalLeftCol" class="md:w-1/3 bg-gray-50 p-8 border-r border-gray-100 overflow-y-auto custom-scroll">
-                    
-                    <!-- Seção de Vídeo -->
-                    <div class="mb-8">
-                         <h3 class="font-bold text-gray-900 text-lg mb-3 flex items-center">
-                            <i class="fas fa-play-circle text-red-600 mr-2"></i> Vídeo do Preparo
-                        </h3>
-                        <div class="rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-black relative group">
-                            <video id="modalVideo" controls class="w-full aspect-video" poster="" playsinline>
-                                <source src="https://videos.pexels.com/video-files/2882090/2882090-hd_1920_1080_24fps.mp4" type="video/mp4">
-                                Seu navegador não suporta vídeos.
-                            </video>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2 italic text-center">Vídeo ilustrativo de preparo culinário.</p>
+                
+                <!-- Coluna Esquerda: Vídeo e Ingredientes -->
+                <div class="md:w-1/3 bg-gray-50 p-6 border-r border-gray-100 overflow-y-auto custom-scroll" id="modalLeftCol">
+                    <!-- Vídeo Embutido -->
+                    <div class="mb-6 rounded-lg overflow-hidden shadow border border-gray-200 bg-black">
+                        <video id="modalVideo" controls class="w-full aspect-video" poster="">
+                            <source src="https://videos.pexels.com/video-files/2882090/2882090-hd_1920_1080_24fps.mp4" type="video/mp4">
+                        </video>
                     </div>
-
-                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center border-t border-gray-200 pt-6">
-                        Ingredientes
-                    </h3>
-                    <ul id="modalIngredients" class="space-y-3 text-sm text-gray-700"></ul>
+                    
+                    <h3 class="font-bold text-gray-900 text-lg mb-3 border-b pb-2 border-gray-200"><i class="fas fa-shopping-basket mr-2 text-red-600"></i> Ingredientes</h3>
+                    <ul id="modalIngredients" class="space-y-2 text-sm text-gray-700"></ul>
                 </div>
 
-                <!-- Coluna Direita: Preparo -->
-                <div id="modalRightCol" class="md:w-2/3 p-8 overflow-y-auto custom-scroll">
-                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
-                        Modo de Preparo
-                    </h3>
-                    <p id="modalDesc" class="text-gray-500 italic mb-8 text-sm bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400"></p>
-                    <div id="modalSteps" class="space-y-8"></div>
+                <!-- Coluna Direita: Modo de Preparo -->
+                <div class="md:w-2/3 p-6 overflow-y-auto custom-scroll" id="modalRightCol">
+                    <h3 class="font-bold text-gray-900 text-lg mb-4 border-b pb-2 border-gray-200"><i class="fas fa-fire-alt mr-2 text-red-600"></i> Modo de Preparo</h3>
+                    <p id="modalDesc" class="text-gray-500 italic mb-6 text-sm bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400"></p>
+                    <div id="modalSteps" class="space-y-6 text-gray-800 leading-relaxed text-base"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Zoom Lightbox -->
-    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[60] hidden flex items-center justify-center p-4" onclick="toggleZoom()">
-        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain shadow-2xl rounded-lg" alt="Zoom">
-        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300 focus:outline-none">&times;</button>
-        <p class="absolute bottom-5 text-white text-sm bg-black/50 px-3 py-1 rounded">Toque na tela ou ESC para fechar</p>
+    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[70] hidden flex items-center justify-center p-4" onclick="window.toggleZoom()">
+        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
+        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300">&times;</button>
     </div>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        let app, auth, db, user;
+    <!-- SCRIPT PRINCIPAL (Lógica UI, Dados, Admin) -->
+    <script>
+        // ESTADO GLOBAL
+        window.generatedRecipes = [];
+        window.finalRecipeList = [];
+        window.firebaseRecipes = [];
         window.savedRecipesSet = new Set();
         window.isOffline = false;
+        window.currentModalRecipeId = null;
+        window.currentCategory = 'all';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC0iJ0FprASJbqMaEVezRfsLF21O-zQxI4",
-            authDomain: "cloud-engenheiros.firebaseapp.com",
-            projectId: "cloud-engenheiros",
-            storageBucket: "cloud-engenheiros.firebasestorage.app",
-            messagingSenderId: "923596482018",
-            appId: "1:923596482018:web:5e388229af8a3d259b05bb"
+        // Configuração de Categorias e Ícones Animados (Lordicon URLs)
+        const categories = {
+            'brasileira': { label: '🇧🇷 Brasil', icon: 'https://cdn.lordicon.com/qhgmphtg.json' }, 
+            'chinesa': { label: '🇨🇳 China', icon: 'https://cdn.lordicon.com/ulnswmkk.json' },
+            'natal': { label: '🎄 Natal', icon: 'https://cdn.lordicon.com/fihkmkwt.json' },
+            'suco': { label: '🍹 Sucos', icon: 'https://cdn.lordicon.com/pbrgppbb.json' },
+            'sopa': { label: '🥣 Sopas', icon: 'https://cdn.lordicon.com/gqzfzudq.json' },
+            'bolo': { label: '🍰 Bolos', icon: 'https://cdn.lordicon.com/ivhjpjsw.json' },
+            'carne': { label: '🥩 Carnes', icon: 'https://cdn.lordicon.com/xryjrepg.json' },
+            'ave': { label: '🍗 Aves', icon: 'https://cdn.lordicon.com/hifghsbr.json' },
+            'peixe': { label: '🐟 Peixes', icon: 'https://cdn.lordicon.com/drtetngs.json' },
+            'massa': { label: '🍝 Massas', icon: 'https://cdn.lordicon.com/tqvgdoln.json' },
+            'salada': { label: '🥗 Saladas', icon: 'https://cdn.lordicon.com/sbiheqdr.json' },
+            'sobremesa': { label: '🍮 Doces', icon: 'https://cdn.lordicon.com/yxyampds.json' },
+            'medicinal': { label: '💊 Saúde', icon: 'https://cdn.lordicon.com/puvaffet.json' },
+            'bebida': { label: '🍵 Bebidas', icon: 'https://cdn.lordicon.com/pbrgppbb.json' },
+            'entrada': { label: '🥟 Entradas', icon: 'https://cdn.lordicon.com/gqzfzudq.json' },
+            'principal': { label: '🥘 Pratos', icon: 'https://cdn.lordicon.com/xryjrepg.json' }
         };
 
-        // Inicialização Segura
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            
-            const initAuth = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        if (!auth.currentUser) await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.warn("Auth falhou, modo offline ativado.");
-                    enableOfflineMode();
-                }
-            };
-            initAuth();
-
-            onAuthStateChanged(auth, (u) => {
-                user = u;
-                updateAuthUI();
-                if (user) subscribeToSavedRecipes();
-                else {
-                    window.savedRecipesSet.clear();
-                    updateSavedRecipesUI();
-                }
-            }, () => enableOfflineMode());
-
-        } catch (e) {
-            enableOfflineMode();
-        }
-
-        // Login Google + Fallback
-        window.handleLogin = async () => {
-            if (!auth) return enableOfflineMode();
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                // Erro de domínio ou operação não permitida -> Fallback Silencioso para Offline
-                if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/unauthorized-domain') {
-                    console.warn("Google Auth indisponível. Ativando Offline.");
-                    enableOfflineMode();
-                } else {
-                    console.error("Erro login:", error);
-                }
-            }
-        };
-
-        window.handleLogout = async () => {
-            try { if (auth) await signOut(auth); window.location.reload(); } catch (e) { window.location.reload(); }
-        };
-
-        function enableOfflineMode() {
-            window.isOffline = true;
-            try {
-                const saved = localStorage.getItem('localFavs');
-                if (saved) JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
-            } catch(e){}
-            
-            user = { isAnonymous: true, displayName: 'Convidado', email: 'Modo Offline', photoURL: null };
-            updateAuthUI();
-            updateSavedRecipesUI();
-            if (window.currentCategory === 'saved') window.renderBatch();
-        }
-
-        function updateAuthUI() {
-            const loading = document.getElementById('loginLoading');
-            const userProfile = document.getElementById('userProfile');
-            const loginBtn = document.getElementById('loginBtn');
-            const savedFilterBtn = document.getElementById('savedFilterBtn');
-            
-            if (user) {
-                loading.classList.add('hidden');
-                
-                if (window.isOffline || !user.isAnonymous) {
-                    loginBtn.classList.add('hidden');
-                    userProfile.classList.remove('hidden');
-                    savedFilterBtn.classList.remove('hidden');
-                    document.getElementById('userPhoto').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Guest'}&background=random`;
-                    document.getElementById('userName').innerText = user.displayName;
-                } else {
-                    loginBtn.classList.remove('hidden');
-                    userProfile.classList.add('hidden'); 
-                    savedFilterBtn.classList.remove('hidden');
-                }
-            } else {
-                loading.classList.remove('hidden');
-            }
-        }
-
-        // Favoritos
-        window.toggleSaveRecipe = async (recipeId, event) => {
-            if (event) event.stopPropagation();
-            if (!user && !window.isOffline) { window.handleLogin(); return; }
-
-            const id = parseInt(recipeId);
-            const isSaved = window.savedRecipesSet.has(id);
-
-            if (isSaved) window.savedRecipesSet.delete(id);
-            else window.savedRecipesSet.add(id);
-            
-            updateSavedRecipesUI();
-
-            // Persistência
-            if (window.isOffline) {
-                localStorage.setItem('localFavs', JSON.stringify(Array.from(window.savedRecipesSet)));
-            } else if (user && !user.isAnonymous) {
-                const ref = doc(db, 'artifacts', firebaseConfig.projectId, 'users', user.uid, 'savedRecipes', id.toString());
-                try {
-                    if (isSaved) await deleteDoc(ref);
-                    else await setDoc(ref, { savedAt: new Date() });
-                } catch (e) {}
-            } else {
-                localStorage.setItem('localFavs', JSON.stringify(Array.from(window.savedRecipesSet)));
-            }
-        };
-
-        function subscribeToSavedRecipes() {
-            if (!user || user.isAnonymous || window.isOffline) {
-                const saved = localStorage.getItem('localFavs');
-                if (saved) JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
-                updateSavedRecipesUI();
-                return;
-            }
-            
-            const q = collection(db, 'artifacts', firebaseConfig.projectId, 'users', user.uid, 'savedRecipes');
-            onSnapshot(q, (snap) => {
-                window.savedRecipesSet.clear();
-                snap.forEach(d => window.savedRecipesSet.add(parseInt(d.id)));
-                updateSavedRecipesUI();
-                if (window.currentCategory === 'saved') window.renderBatch();
-            }, () => enableOfflineMode());
-        }
-
-        function updateSavedRecipesUI() {
-            const count = window.savedRecipesSet.size;
-            const el = document.getElementById('savedCountDropdown');
-            if(el) el.innerText = count;
-
-            document.querySelectorAll('.heart-icon').forEach(icon => {
-                const id = parseInt(icon.dataset.id);
-                const isFav = window.savedRecipesSet.has(id);
-                icon.className = isFav ? 'fas fa-heart text-lg heart-icon text-red-500 animate-pop' : 'far fa-heart text-lg heart-icon text-gray-400';
-            });
-            
-            if(window.currentModalRecipeId) window.updateModalHeart(window.currentModalRecipeId);
-        }
-
-        window.updateModalHeart = (id) => {
-            const btn = document.getElementById('modalSaveBtn');
-            if(!btn) return;
-            const icon = btn.querySelector('i');
-            if (window.savedRecipesSet.has(id)) {
-                icon.className = 'fas fa-heart text-xl text-red-500';
-                btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-pink-50 text-pink-600 transition text-sm font-bold';
-            } else {
-                icon.className = 'far fa-heart text-xl';
-                btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-gray-100 text-gray-600 transition text-sm font-bold';
-            }
-        }
+        // Renderiza Menu
+        const menuContainer = document.getElementById('navCategories');
+        const menuKeys = ['all', 'brasileira', 'chinesa', 'natal', 'bolo', 'carne', 'massa', 'sobremesa', 'suco', 'sopa', 'ave', 'peixe', 'salada', 'medicinal', 'saved'];
         
-        window.showSavedRecipes = () => window.setCategory('saved');
-        window.toggleSaveFromModal = () => {
-            if(window.currentModalRecipeId) window.toggleSaveRecipe(window.currentModalRecipeId);
+        menuKeys.forEach(key => {
+            const btn = document.createElement('button');
+            const info = categories[key] || { label: key === 'all' ? 'Todos' : (key === 'saved' ? '❤️ Favoritos' : key) };
+            
+            btn.className = `cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition border border-gray-200 bg-white text-gray-600 hover:bg-gray-100 mr-2 mb-1 whitespace-nowrap`;
+            if (key === 'all') btn.classList.add('bg-gray-900', 'text-white', 'border-transparent');
+            if (key === 'saved') btn.classList.add('border-pink-200', 'text-pink-600');
+            
+            btn.innerText = info.label;
+            btn.dataset.cat = key;
+            btn.onclick = () => setCategory(key);
+            menuContainer.appendChild(btn);
+        });
+
+        // Popula o select do admin
+        const catSelect = document.getElementById('addCategory');
+        Object.keys(categories).forEach(k => {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.innerText = categories[k].label;
+            catSelect.appendChild(opt);
+        });
+
+        // --- GERAÇÃO DE DADOS (1000 Receitas) ---
+        function getImageUrl(name, id) {
+            const clean = name.replace(/ /g, '%20');
+            return `https://image.pollinations.ai/prompt/professional%20food%20photography%20of%20${clean}%20on%20plate%20pexels%20style%20culinary%20magazine%20high%20detail?width=600&height=400&nologo=true&seed=${id}&model=flux`;
         }
-    </script>
 
-    <script>
-        // --- DADOS E LÓGICA DE GERAÇÃO AVANÇADA ---
-        
-        // Mapa de Ícones e Cores Vibrantes
-        const categoryData = {
-            'suco': { icon: 'fa-glass-water', color: 'text-orange-500' },
-            'sopa': { icon: 'fa-bowl-food', color: 'text-yellow-600' },
-            'bolo': { icon: 'fa-cake-candles', color: 'text-pink-500' },
-            'natal': { icon: 'fa-gifts', color: 'text-red-600' },
-            'carne': { icon: 'fa-drumstick-bite', color: 'text-red-800' },
-            'ave': { icon: 'fa-crow', color: 'text-yellow-700' },
-            'peixe': { icon: 'fa-fish', color: 'text-blue-500' },
-            'massa': { icon: 'fa-pizza-slice', color: 'text-yellow-500' },
-            'salada': { icon: 'fa-leaf', color: 'text-green-500' },
-            'sobremesa': { icon: 'fa-ice-cream', color: 'text-purple-500' },
-            'medicinal': { icon: 'fa-notes-medical', color: 'text-teal-500' },
-            'brasileira': { icon: 'fa-flag', color: 'text-green-600' },
-            'chinesa': { icon: 'fa-dragon', color: 'text-red-700' },
-            'bebida': { icon: 'fa-mug-hot', color: 'text-amber-700' },
-            'entrada': { icon: 'fa-utensils', color: 'text-gray-600' },
-            'principal': { icon: 'fa-plate-wheat', color: 'text-orange-700' }
-        };
-
-        // Pools de Ingredientes
         const ingredientsPool = {
             suco: ["Laranja", "Abacaxi", "Hortelã", "Gengibre", "Couve", "Limão", "Açúcar", "Gelo", "Água de Coco", "Morango"],
             sopa: ["Batata", "Cenoura", "Mandioquinha", "Cebola", "Alho", "Caldo de Carne", "Macarrão", "Frango Desfiado", "Azeite"],
@@ -546,60 +450,24 @@
             salada: ["Alface", "Rúcula", "Tomate Cereja", "Pepino", "Manga", "Queijo Branco", "Azeite", "Mostarda e Mel"]
         };
 
-        const stepsPool = {
-            suco: ["Lave bem as frutas.", "Descasque e corte em pedaços.", "Bata no liquidificador com água ou leite.", "Coe se necessário e adicione gelo.", "Sirva imediatamente em copo alto."],
-            sopa: ["Refogue o alho e a cebola no azeite.", "Adicione os legumes picados e a carne.", "Cubra com água e cozinhe até amaciar.", "Bata no liquidificador para um creme ou sirva em pedaços.", "Acerte o sal e finalize com cheiro verde."],
-            bolo: ["Bata as claras em neve.", "Misture as gemas com açúcar e manteiga.", "Adicione a farinha e o leite alternadamente.", "Incorpore o fermento delicadamente.", "Asse em forno pré-aquecido a 180°C por 40 min."],
-            carne: ["Tempere a carne com sal grosso e pimenta.", "Sele em frigideira bem quente com manteiga.", "Deixe descansar antes de fatiar.", "Sirva acompanhado de farofa e vinagrete."]
-        };
-
-        // --- GERADOR DE NOMES SEM NÚMEROS ---
         const nameModifiers = {
-            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco', 'Gourmet', 'Clássico', 'Real', 'Magnífico', 'Saboroso', 'Leve', 'Rápido', 'Premium', 'Autêntico'],
-            origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino', 'Paulista', 'Asiático', 'Mediterrâneo', 'Tropical'],
-            styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado', 'Caramelizado', 'Temperado', 'Recheado']
+            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco'],
+            origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino'],
+            styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado']
         };
 
         function generateUniqueName(category, type) {
-            const patterns = [
-                () => `${type} ${getRandom(nameModifiers.adjectives)}`,
-                () => `${type} ${getRandom(nameModifiers.origins)}`,
-                () => `${type} ${getRandom(nameModifiers.styles)}`,
-                () => `${getRandom(nameModifiers.adjectives)} ${type}`,
-                () => `${type} com ${getRandom(ingredientsPool[category] || ingredientsPool.carne)}`
-            ];
-            
-            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
-            return pattern();
-        }
-
-        function getRandom(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        // Gerador de URLs de Imagens
-        function getImageUrl(name, id) {
-            const cleanName = name.replace(/ /g, '%20');
-            return `https://image.pollinations.ai/prompt/professional%20food%20photography%20of%20${cleanName}%20on%20a%20plate%20pexels%20style%20culinary%20magazine%204k%20natural%20lighting%20top%20down%20view?width=600&height=400&nologo=true&seed=${id}&model=flux`;
-        }
-        
-        // Helpers de ícone e cor
-        function getCategoryIcon(category) {
-            return categoryData[category]?.icon || 'fa-utensils';
-        }
-        
-        function getCategoryColor(category) {
-            return categoryData[category]?.color || 'text-gray-500';
+            const adj = nameModifiers.adjectives[Math.floor(Math.random() * nameModifiers.adjectives.length)];
+            const style = nameModifiers.styles[Math.floor(Math.random() * nameModifiers.styles.length)];
+            return `${type} ${adj} ${style}`;
         }
 
         function generateRecipe(id, category, type) {
-            const catKey = category === 'brasileira' ? 'carne' : (ingredientsPool[category] ? category : 'sopa');
+            const catKey = (category === 'brasileira' || category === 'chinesa') ? 'carne' : (ingredientsPool[category] ? category : 'sopa');
             const ingSource = ingredientsPool[catKey] || ingredientsPool['carne'];
-            const stepSource = stepsPool[catKey] || stepsPool['carne'];
             
             const ingredients = [];
-            const shuffled = [...ingSource].sort(() => 0.5 - Math.random());
-            ingredients.push(...shuffled.slice(0, Math.floor(Math.random() * 3) + 4));
+            for(let i=0; i<5; i++) ingredients.push(ingSource[Math.floor(Math.random() * ingSource.length)]);
 
             const rating = (Math.random() * (5.0 - 4.2) + 4.2).toFixed(1);
             const name = generateUniqueName(category, type);
@@ -611,146 +479,69 @@
                 category: category,
                 energy: Math.random() > 0.5 ? 'Yang' : 'Yin',
                 image: getImageUrl(name, id),
-                iconFallback: getCategoryIcon(category),
-                colorFallback: getCategoryColor(category),
+                iconFallback: categories[category]?.icon || 'https://cdn.lordicon.com/qhgmphtg.json',
                 desc: `Uma deliciosa e autêntica receita de ${category} para sua mesa. Sabor inigualável e preparo especial.`,
                 func: 'Sabor',
                 time: `${Math.floor(Math.random() * 40) + 20} min`,
                 ingredients: ingredients,
-                steps: stepSource,
+                steps: ["Separe os ingredientes.", "Prepare a base do prato.", "Cozinhe em fogo médio por 20 minutos.", "Tempere a gosto.", "Sirva imediatamente."],
                 rating: rating
             };
         }
 
-        window.allRecipes = [];
-        let genId = 3000;
-
-        // Tipos base para gerar variações
-        const baseTypes = {
-            suco: ['Suco', 'Vitamina', 'Smoothie', 'Refresco', 'Drink'],
-            sopa: ['Sopa', 'Caldo', 'Creme', 'Consomê'],
-            bolo: ['Bolo', 'Torta', 'Rocambole', 'Cupcake'],
-            carne: ['Bife', 'Assado', 'Picadinho', 'Estrogonofe', 'Hambúrguer', 'Almôndega'],
-            ave: ['Frango', 'Peru', 'Chester', 'Galeto', 'Asinha'],
-            peixe: ['Peixe', 'Moqueca', 'Filé', 'Camarão', 'Lula'],
-            massa: ['Macarrão', 'Lasanha', 'Nhoque', 'Pizza', 'Ravioli'],
-            salada: ['Salada', 'Mix de Folhas', 'Vinagrete', 'Bowl'],
-            sobremesa: ['Pudim', 'Mousse', 'Pavê', 'Sorvete', 'Doce', 'Torta'],
-            brasileira: ['Feijoada', 'Baião', 'Vatapá', 'Acarajé', 'Farofa'],
-            chinesa: ['Yakisoba', 'Rolinho', 'Pato', 'Frango Xadrez'],
-            natal: ['Peru', 'Tender', 'Rabanada', 'Salpicão']
-        };
-
-        function populateRecipes() {
-            const categories = [
-                'suco', 'sopa', 'bolo', 'natal', 'carne', 'ave', 'peixe', 'massa', 'salada',
-                'brasileira', 'bebida', 'entrada', 'principal', 'sobremesa', 'medicinal', 'chinesa'
-            ];
+        let genId = 1000;
+        function populate() {
+            const baseTypes = {
+                suco: ['Suco', 'Vitamina', 'Smoothie'], sopa: ['Sopa', 'Caldo', 'Creme'],
+                bolo: ['Bolo', 'Torta', 'Rocambole'], carne: ['Bife', 'Assado', 'Picadinho'],
+                brasileira: ['Feijoada', 'Vatapá', 'Moqueca'], chinesa: ['Yakisoba', 'Pato', 'Rolinho']
+            };
             
-            const targetTotal = 1000;
-            const perCategory = Math.ceil(targetTotal / categories.length);
-
-            categories.forEach(cat => {
-                const types = baseTypes[cat] || baseTypes['carne']; // fallback
-                for(let i=0; i<perCategory; i++) {
+            const cats = Object.keys(categories);
+            const perCat = Math.ceil(1000 / cats.length);
+            
+            cats.forEach(cat => {
+                const types = baseTypes[cat] || ['Prato', 'Delícia', 'Especialidade'];
+                for(let i=0; i<perCat; i++) {
                     const type = types[Math.floor(Math.random() * types.length)];
-                    window.allRecipes.push(generateRecipe(genId++, cat, type));
+                    window.generatedRecipes.push(generateRecipe(genId++, cat, type));
                 }
             });
-            
-            window.allRecipes.sort(() => Math.random() - 0.5);
-        }
-        populateRecipes();
-
-        // --- LÓGICA UI ---
-        
-        function getStarsHTML(rating) {
-            let html = '';
-            for(let i=1; i<=5; i++) {
-                if(i <= rating) html += '<i class="fas fa-star text-yellow-400"></i>';
-                else if(i - 0.5 <= rating) html += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
-                else html += '<i class="far fa-star text-gray-300"></i>';
-            }
-            return html;
+            window.mergeAndRender();
         }
 
-        function renderTop20() {
-            const container = document.getElementById('top20List');
-            const topRecipes = window.allRecipes.slice(0, 20); 
-            
-            topRecipes.forEach(r => {
-                const el = document.createElement('div');
-                el.className = "flex-shrink-0 w-48 cursor-pointer group";
-                el.onclick = () => window.openRecipe(r.id);
-                el.innerHTML = `
-                    <div class="h-48 w-48 rounded-xl overflow-hidden shadow-lg mb-2 relative bg-gray-100 flex items-center justify-center">
-                        <img src="${r.image}" class="w-full h-full object-cover transition transform duration-700 group-hover:scale-110 img-loading" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-                        <div class="hidden absolute inset-0 flex items-center justify-center">
-                            <i class="fas ${r.iconFallback} ${r.colorFallback} text-6xl animate-bounce"></i>
-                        </div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute bottom-2 left-2 text-white">
-                            <div class="text-[10px] font-bold uppercase tracking-wide opacity-90">${r.category}</div>
-                            <div class="text-xs font-bold flex items-center"><i class="fas fa-star text-yellow-400 mr-1"></i> ${r.rating}</div>
-                        </div>
-                    </div>
-                    <p class="text-sm font-bold text-gray-800 truncate leading-tight group-hover:text-red-700 transition">${r.name}</p>
-                `;
-                container.appendChild(el);
-            });
+        window.mergeAndRender = () => {
+            const fbIds = new Set(window.firebaseRecipes.map(r => r.id));
+            const uniqueGen = window.generatedRecipes.filter(r => !fbIds.has(r.id));
+            window.finalRecipeList = [...window.firebaseRecipes, ...uniqueGen];
+            window.filterRecipes();
         }
 
-        // Main Logic
+        // --- RENDERIZAÇÃO ---
         window.currentCategory = 'all';
-        let filteredRecipes = [];
-        let currentPage = 1;
-        const itemsPerPage = 24;
+        let filtered = [];
+        let page = 1;
+        const perPage = 24;
 
-        window.init = function() { 
-            renderTop20();
-            window.filterRecipes(); 
-            
-            const params = new URLSearchParams(window.location.search);
-            const recipeId = params.get('recipe');
-            if(recipeId) {
-                setTimeout(() => {
-                    const r = window.allRecipes.find(x => x.id == recipeId);
-                    if(r) window.openRecipe(r.id);
-                }, 800);
-            }
-        }
-
-        window.filterRecipes = function() {
-            currentPage = 1;
+        window.filterRecipes = () => {
+            page = 1;
             const term = document.getElementById('searchInput').value.toLowerCase();
             const grid = document.getElementById('recipeGrid');
             grid.innerHTML = '';
-
-            if (window.currentCategory === 'saved') {
-                if (!window.savedRecipesSet) filteredRecipes = [];
-                else filteredRecipes = window.allRecipes.filter(r => window.savedRecipesSet.has(r.id));
-            } else {
-                if (window.currentCategory === 'chinesa') {
-                    // Filtra tudo que NÃO é brasileira
-                    filteredRecipes = window.allRecipes.filter(r => {
-                        const isNotBR = r.category !== 'brasileira';
-                        const matchEn = document.getElementById('energyFilter').value === 'all' || r.energy === document.getElementById('energyFilter').value;
-                        const matchTerm = r.name.toLowerCase().includes(term);
-                        return isNotBR && matchEn && matchTerm;
-                    });
-                } else {
-                    filteredRecipes = window.allRecipes.filter(r => {
-                        const matchCat = window.currentCategory === 'all' || r.category === window.currentCategory;
-                        const matchEn = document.getElementById('energyFilter').value === 'all' || r.energy === document.getElementById('energyFilter').value;
-                        const matchTerm = r.name.toLowerCase().includes(term);
-                        return matchCat && matchEn && matchTerm;
-                    });
-                }
-            }
-
-            document.getElementById('totalCount').innerText = `${filteredRecipes.length} receitas`;
             
-            if (filteredRecipes.length === 0) {
+            if(window.currentCategory === 'saved') {
+                filtered = window.finalRecipeList.filter(r => window.savedRecipesSet.has(r.id) || window.savedRecipesSet.has(String(r.id)));
+            } else if(window.currentCategory === 'all') {
+                filtered = window.finalRecipeList;
+            } else {
+                filtered = window.finalRecipeList.filter(r => r.category === window.currentCategory);
+            }
+            
+            if(term) filtered = filtered.filter(r => r.name.toLowerCase().includes(term));
+
+            document.getElementById('totalCount').innerText = `${filtered.length} receitas`;
+            
+            if(filtered.length === 0) {
                 document.getElementById('emptyState').classList.remove('hidden');
                 document.getElementById('loadMoreContainer').classList.add('hidden');
             } else {
@@ -758,246 +549,353 @@
                 document.getElementById('loadMoreContainer').classList.remove('hidden');
                 window.renderBatch();
             }
-        }
+        };
 
-        window.renderBatch = function() {
-            const start = (currentPage - 1) * itemsPerPage;
-            const batch = filteredRecipes.slice(start, start + itemsPerPage);
+        window.renderBatch = () => {
+            const start = (page - 1) * perPage;
+            const batch = filtered.slice(start, start + perPage);
             const grid = document.getElementById('recipeGrid');
 
             batch.forEach((r, i) => {
-                const div = document.createElement('div');
-                div.className = 'bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer flex flex-col h-full animate-fade-in relative group';
-                div.style.animationDelay = `${i * 0.02}s`;
-                div.onclick = () => window.openRecipe(r.id);
+                const el = document.createElement('div');
+                el.className = "bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer group relative animate-fade-in";
+                el.style.animationDelay = `${i*0.02}s`;
+                el.onclick = () => window.openRecipe(r.id);
 
-                let heartClass = (window.savedRecipesSet && window.savedRecipesSet.has(r.id)) ? 'fas text-red-500' : 'far text-white drop-shadow-md';
+                const isFav = window.savedRecipesSet.has(r.id) || window.savedRecipesSet.has(String(r.id));
+                const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' }; 
 
-                div.innerHTML = `
-                    <div class="h-56 relative overflow-hidden bg-gray-100 flex items-center justify-center">
-                        <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+                el.innerHTML = `
+                    <div class="h-48 relative bg-gray-100 flex items-center justify-center overflow-hidden">
+                        <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" 
+                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')">
                         
-                        <!-- Fallback Icon Colorido -->
+                        <!-- Fallback Animado Lordicon -->
                         <div class="hidden absolute inset-0 flex items-center justify-center bg-gray-50">
-                             <i class="fas ${r.iconFallback} ${r.colorFallback} text-6xl animate-bounce"></i>
+                            <lord-icon src="${catInfo.icon}" trigger="loop" delay="2000" colors="primary:#e83a30,secondary:#f4a261" style="width:80px;height:80px"></lord-icon>
                         </div>
 
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                        <div class="absolute top-3 right-3 bg-white/90 px-2 py-0.5 rounded-full text-xs font-bold shadow-sm flex items-center">
-                            <span class="text-yellow-500 mr-1">★</span> ${r.rating}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        <div class="absolute top-2 right-2 bg-white/90 px-1.5 rounded text-[10px] font-bold shadow flex items-center">
+                            <i class="fas fa-star text-yellow-500 mr-1"></i> ${r.rating}
                         </div>
-                        <span class="absolute top-3 left-3 text-2xl drop-shadow-md">${r.category === 'brasileira' ? '🇧🇷' : ''}</span>
                         
-                        <button onclick="toggleSaveRecipe(${r.id}, event)" class="absolute bottom-3 right-3 w-10 h-10 rounded-full hover:bg-white/20 flex items-center justify-center transition z-10">
-                            <i id="heart-${r.id}" class="${heartClass} text-xl heart-icon transition transform hover:scale-125" data-id="${r.id}"></i>
+                        <button onclick="window.toggleSaveRecipe('${r.id}', event)" class="absolute bottom-2 right-2 w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition z-10">
+                            <i class="${isFav ? 'fas text-red-500' : 'far text-white'} fa-heart text-lg heart-icon"></i>
                         </button>
                     </div>
-                    <div class="p-5 flex flex-col flex-grow">
-                        <div class="text-[10px] text-red-600 font-bold uppercase tracking-wider mb-1">${r.category}</div>
-                        <h3 class="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-red-700 transition font-serif">${r.name}</h3>
-                        <div class="flex items-center text-xs text-gray-500 mt-auto pt-3 border-t border-gray-100">
-                            <span class="mr-3 flex items-center"><i class="far fa-clock mr-1"></i> ${r.time}</span>
-                            <span class="flex items-center"><i class="fas fa-utensils mr-1"></i> ${r.ingredients.length} ingr.</span>
-                        </div>
+                    <div class="p-4">
+                        <p class="text-[10px] text-red-600 font-bold uppercase tracking-wider mb-1">${r.category}</p>
+                        <h3 class="font-bold text-gray-800 text-sm leading-tight mb-2 font-serif group-hover:text-red-700 transition">${r.name}</h3>
                     </div>
                 `;
-                grid.appendChild(div);
+                grid.appendChild(el);
             });
-            
-            if (start + itemsPerPage >= filteredRecipes.length) document.getElementById('loadMoreContainer').classList.add('hidden');
-        }
 
-        window.loadMore = () => { currentPage++; window.renderBatch(); }
+            if(start + perPage >= filtered.length) document.getElementById('loadMoreContainer').classList.add('hidden');
+        };
 
-        window.setCategory = (cat) => {
-            window.currentCategory = cat;
+        window.loadMore = () => { page++; window.renderBatch(); };
+        window.setCategory = (c) => { 
+            window.currentCategory = c; 
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.classList.remove('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
-                b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
-                if (b.dataset.cat === cat) {
-                    b.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
-                    b.classList.add('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
-                }
+                if(b.dataset.cat === c) b.classList.add('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
             });
-            
-            let titles = {
-                all:'Catálogo Completo', natal:'Ceia de Natal 🎄', bolo:'Bolos e Tortas 🍰', suco:'Sucos Naturais 🍹', 
-                sopa:'Sopas e Caldos 🥣', carne:'Carnes Selecionadas 🥩', ave:'Aves 🍗', peixe:'Peixes e Frutos do Mar 🐟', 
-                massa:'Massas Italianas 🍝', salada:'Saladas Frescas 🥗', sobremesa:'Doces e Sobremesas 🍮', saved:'Meus Favoritos ❤️',
-                brasileira: 'Culinária Brasileira 🇧🇷', chinesa: 'Culinária Chinesa e Internacional 🇨🇳'
+            window.filterRecipes(); 
+        };
+
+        // --- PAINEL ADMIN ---
+        window.toggleAdminPanel = () => {
+            const modal = document.getElementById('adminModal');
+            modal.classList.toggle('hidden');
+        };
+
+        window.switchAdminTab = (tab) => {
+            document.querySelectorAll('.admin-content').forEach(e => e.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('.admin-tab').forEach(e => e.classList.remove('active'));
+            document.getElementById(`btn-tab-${tab}`).classList.add('active');
+        };
+
+        window.saveRecipe = async () => {
+            const name = document.getElementById('addName').value;
+            const cat = document.getElementById('addCategory').value;
+            const newRecipe = {
+                id: Date.now(),
+                name: name,
+                category: cat,
+                image: document.getElementById('addImage').value || window.getImageUrl(name, Date.now()),
+                desc: document.getElementById('addDesc').value,
+                ingredients: document.getElementById('addIng').value.split('\n'),
+                steps: document.getElementById('addSteps').value.split('\n'),
+                rating: "5.0", time: "45 min"
             };
-            document.getElementById('currentCatTitle').innerText = titles[cat] || cat;
-            window.filterRecipes();
-        }
+            
+            window.firebaseRecipes.unshift(newRecipe);
+            window.mergeAndRender();
+            window.saveRecipeToFirebase(newRecipe);
+            alert("Receita Adicionada!");
+            window.toggleAdminPanel();
+        };
 
-        window.setEnergy = () => window.filterRecipes();
+        window.parseMagicText = () => {
+            const text = document.getElementById('magicPaste').value;
+            const lines = text.split('\n').filter(l => l.trim());
+            if(lines.length > 0) document.getElementById('addName').value = lines[0];
+            const ings = lines.filter(l => l.includes('-') || l.match(/^\d/)).join('\n');
+            document.getElementById('addIng').value = ings;
+        };
 
-        // --- TTS & ZOOM LOGIC ---
+        window.importBulk = async () => {
+            try {
+                const data = JSON.parse(document.getElementById('bulkJson').value);
+                if(!Array.isArray(data)) throw new Error("Deve ser um array");
+                const batch = [];
+                data.forEach(r => {
+                    const rNew = {...r, id: Date.now() + Math.random()};
+                    window.firebaseRecipes.push(rNew);
+                    batch.push(rNew);
+                });
+                window.mergeAndRender();
+                if(window.syncBatch) window.syncBatch(batch);
+                alert(`${data.length} importados!`);
+            } catch(e) { alert("Erro JSON: " + e.message); }
+        };
+
+        window.syncGeneratedToFirebase = async () => {
+            if(!confirm("Enviar 1000 receitas para a nuvem?")) return;
+            const batch = window.generatedRecipes.slice(0, 400); 
+            await window.syncBatch(batch);
+            alert("Sincronização iniciada!");
+        };
         
-        let currentUtterance = null;
-
-        window.toggleTTS = () => {
-            if (currentUtterance) {
-                window.speechSynthesis.cancel();
-                currentUtterance = null;
-                // Reset button style
-                const btn = document.getElementById('ttsBtn');
-                btn.innerHTML = '<i class="fas fa-volume-high"></i> <span>Ouvir</span>';
-                btn.classList.remove('bg-purple-600', 'text-white');
-                btn.classList.add('bg-purple-50', 'text-purple-600');
-                return;
-            }
-
-            const title = document.getElementById('modalTitle').innerText;
-            const desc = document.getElementById('modalDesc').innerText;
-            const ingredients = Array.from(document.querySelectorAll('#modalIngredients li')).map(li => li.innerText).join('. ');
-            const steps = Array.from(document.querySelectorAll('#modalSteps p')).map(p => p.innerText).join('. ');
-
-            const text = `${title}. ${desc}. Ingredientes: ${ingredients}. Modo de Preparo: ${steps}`;
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'pt-BR';
-            
-            utterance.onend = () => {
-                currentUtterance = null;
-                const btn = document.getElementById('ttsBtn');
-                btn.innerHTML = '<i class="fas fa-volume-high"></i> <span>Ouvir</span>';
-                btn.classList.remove('bg-purple-600', 'text-white');
-                btn.classList.add('bg-purple-50', 'text-purple-600');
+        window.downloadBackup = () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.finalRecipeList));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "backup_receitas.json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        };
+        
+        window.restoreBackup = (input) => {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = JSON.parse(e.target.result);
+                window.firebaseRecipes = data;
+                window.mergeAndRender();
+                localStorage.setItem('backupData', JSON.stringify(data));
+                alert("Backup Restaurado!");
             };
+            reader.readAsText(file);
+        };
 
-            window.speechSynthesis.speak(utterance);
-            currentUtterance = utterance;
+        // --- GLOBAL START ---
+        window.populate = populate;
+        window.populate();
+        document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
+        document.getElementById('recipeModal').addEventListener('click', (e) => { if(e.target.id === 'recipeModal') window.closeModal(); });
 
-            // Active button style
-            const btn = document.getElementById('ttsBtn');
-            btn.innerHTML = '<i class="fas fa-stop"></i> <span>Parar</span>';
-            btn.classList.remove('bg-purple-50', 'text-purple-600');
-            btn.classList.add('bg-purple-600', 'text-white');
+        // --- MODAL ---
+        window.openRecipe = (id) => {
+            const r = window.finalRecipeList.find(x => x.id == id);
+            if(!r) return;
+            window.currentModalRecipeId = id;
+            document.getElementById('modalTitle').innerText = r.name;
+            
+            const img = document.getElementById('modalImage');
+            img.src = r.image;
+            img.style.display = 'block';
+            document.getElementById('modalFallback').classList.add('hidden');
+            
+            // Set Fallback
+            const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' };
+            document.getElementById('modalLordIcon').setAttribute('src', catInfo.icon);
+
+            const ingList = document.getElementById('modalIngredients');
+            ingList.innerHTML = (r.ingredients || []).map(i => `<li class="border-b py-2">${i}</li>`).join('');
+            
+            const stepList = document.getElementById('modalSteps');
+            stepList.innerHTML = (r.steps || []).map((s, i) => `<div class="mb-4"><span class="font-bold text-red-600 mr-2">${i+1}.</span>${s}</div>`).join('');
+
+            window.updateModalHeart(id);
+            document.getElementById('recipeModal').classList.remove('hidden');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('recipeModal').classList.add('hidden');
+            const v = document.getElementById('modalVideo');
+            if(v) v.pause();
+        };
+        
+        window.toggleSaveRecipe = (id, e) => {
+            if(e) e.stopPropagation();
+            const sid = String(id);
+            if(window.savedRecipesSet.has(sid)) window.savedRecipesSet.delete(sid);
+            else window.savedRecipesSet.add(sid);
+            window.updateSavedUI();
+            window.toggleSaveRecipeDB(sid, window.savedRecipesSet.has(sid));
+        };
+
+        window.showSavedRecipes = () => window.setCategory('saved');
+        window.resetApp = () => { window.setCategory('all'); document.getElementById('searchInput').value = ''; };
+
+        // --- TTS & ZOOM ---
+        let currentUtterance = null;
+        window.toggleTTS = () => {
+            if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; return; }
+            const text = `${document.getElementById('modalTitle').innerText}. ${document.getElementById('modalDesc').innerText}`;
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'pt-BR';
+            window.speechSynthesis.speak(u);
+            currentUtterance = u;
         };
 
         window.toggleZoom = () => {
-            const zoomModal = document.getElementById('zoomModal');
-            const zoomedImage = document.getElementById('zoomedImage');
-            const modalImage = document.getElementById('modalImage');
+            const z = document.getElementById('zoomModal');
+            const i = document.getElementById('modalImage');
+            const zi = document.getElementById('zoomedImage');
+            if (z.classList.contains('hidden')) { zi.src = i.src; z.classList.remove('hidden'); }
+            else z.classList.add('hidden');
+        };
 
-            if (zoomModal.classList.contains('hidden')) {
-                zoomedImage.src = modalImage.src;
-                zoomModal.classList.remove('hidden');
+        // --- SHARE ---
+        window.shareRecipeFromModal = () => {
+            const url = window.location.href + '?recipe=' + window.currentModalRecipeId;
+            if(navigator.share) navigator.share({url});
+            else navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
+        };
+
+        // Placeholder
+        window.handleLogin = () => console.log("Auth Loading...");
+        window.toggleSaveRecipeDB = () => {};
+    </script>
+
+    <!-- Firebase Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBqSUJP7BOIZSCJai83L2h-PnoyXh0oon4",
+            authDomain: "culinariaimperial.firebaseapp.com",
+            projectId: "culinariaimperial",
+            storageBucket: "culinariaimperial.firebasestorage.app",
+            messagingSenderId: "103351782200",
+            appId: "1:103351782200:web:28bd29557dce703abb0fcd",
+            measurementId: "G-2WJEY05TJB"
+        };
+
+        let app, auth, db, user;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            const analytics = getAnalytics(app);
+
+            const initAuth = async () => {
+                try {
+                    if(typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                    else if(!auth.currentUser) await signInAnonymously(auth);
+                } catch(e) { window.enableOfflineMode(); }
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, (u) => {
+                user = u;
+                window.updateAuthUI(u);
+                if(u) window.subscribeData();
+            });
+
+        } catch(e) { window.enableOfflineMode(); }
+
+        // Exports
+        window.handleLogin = async () => {
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
+            catch(e) { if(e.code.includes('unauthorized')) alert("Domínio não autorizado."); }
+        };
+
+        window.handleLogout = async () => { try { await signOut(auth); } catch(e){} window.location.reload(); };
+
+        window.enableOfflineMode = () => {
+            const local = localStorage.getItem('backupData');
+            if(local) window.firebaseRecipes = JSON.parse(local);
+            window.mergeAndRender();
+        };
+
+        window.updateAuthUI = (u) => {
+            document.getElementById('loginLoading').classList.add('hidden');
+            if(u && !u.isAnonymous) {
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('userPhoto').src = u.photoURL;
+                document.getElementById('userName').innerText = u.displayName;
             } else {
-                zoomModal.classList.add('hidden');
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.getElementById('userProfile').classList.add('hidden');
             }
         };
 
-        // --- MODAL ---
-        window.openRecipe = function(id) {
-            const r = window.allRecipes.find(x => x.id === id);
-            if (!r) return;
-
-            window.currentModalRecipeId = id;
-            document.getElementById('modalTitle').innerText = r.name;
-            const modalImg = document.getElementById('modalImage');
-            const fallback = document.getElementById('modalFallbackIcon');
-            const fallbackI = document.getElementById('modalFallbackIconI');
-            
-            modalImg.src = r.image;
-            modalImg.style.display = 'block';
-            fallback.classList.add('hidden');
-            
-            // Set fallback icon class
-            fallbackI.className = `text-8xl ${r.colorFallback} animate-bounce fas ${r.iconFallback}`;
-
-            document.getElementById('modalDesc').innerText = r.desc;
-            document.getElementById('modalTime').innerText = r.time;
-            document.getElementById('modalFunction').innerText = r.func;
-            document.getElementById('modalCategoryTag').innerText = r.category;
-            document.getElementById('modalRating').innerHTML = getStarsHTML(r.rating) + `<span class="ml-1 text-white/80">(${r.rating})</span>`;
-
-            window.updateModalHeart(id);
-
-            const ingList = document.getElementById('modalIngredients');
-            ingList.innerHTML = '';
-            r.ingredients.forEach(ing => {
-                ingList.innerHTML += `<li class="flex items-center bg-gray-50 px-3 py-2 rounded-lg border border-gray-100"><i class="fas fa-check-circle text-green-500 mr-2 text-sm"></i> ${ing}</li>`;
+        window.subscribeData = () => {
+            const col = collection(db, 'recipes');
+            onSnapshot(col, (snap) => {
+                window.firebaseRecipes = [];
+                snap.forEach(d => window.firebaseRecipes.push({id: d.id, ...d.data()}));
+                window.mergeAndRender();
             });
 
-            const stepList = document.getElementById('modalSteps');
-            stepList.innerHTML = '';
-            r.steps.forEach((step, i) => {
-                stepList.innerHTML += `
-                    <div class="flex">
-                        <div class="flex-shrink-0 w-8 h-8 bg-red-100 text-red-700 rounded-full flex items-center justify-center font-bold mr-4 text-sm">${i+1}</div>
-                        <p class="pt-1 text-gray-700 leading-relaxed">${step}</p>
-                    </div>`;
+            if(user && !user.isAnonymous) {
+                const favCol = collection(db, 'users', user.uid, 'favorites');
+                onSnapshot(favCol, (snap) => {
+                    window.savedRecipesSet.clear();
+                    snap.forEach(d => window.savedRecipesSet.add(d.id));
+                    window.updateSavedUI();
+                });
+            }
+        };
+
+        window.saveRecipeToFirebase = async (r) => {
+            const ref = doc(db, 'recipes', r.id.toString());
+            await setDoc(ref, r);
+        };
+
+        window.syncBatch = async (recipes) => {
+            const batch = writeBatch(db);
+            recipes.forEach(r => {
+                const ref = doc(db, 'recipes', r.id.toString());
+                batch.set(ref, r);
             });
+            await batch.commit();
+        };
 
-            // Reseta o vídeo
-            const videoEl = document.getElementById('modalVideo');
-            if(videoEl) {
-                videoEl.load();
-            }
+        window.toggleSaveRecipeDB = async (id, isSaved) => {
+            if(!user || user.isAnonymous) return;
+            const ref = doc(db, 'users', user.uid, 'favorites', id.toString());
+            if(isSaved) await setDoc(ref, { savedAt: new Date() });
+            else await deleteDoc(ref);
+        };
 
-            document.getElementById('recipeModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            
-            // RESET SCROLL PARA VISIBILIDADE TOTAL NO TOPO
-            document.getElementById('modalLeftCol').scrollTop = 0;
-            document.getElementById('modalRightCol').scrollTop = 0;
-        }
+        window.updateSavedUI = () => {
+            document.getElementById('savedCountDropdown').innerText = window.savedRecipesSet.size;
+            window.filterRecipes();
+            if(window.currentModalRecipeId) window.updateModalHeart(window.currentModalRecipeId);
+        };
 
-        window.closeModal = function() {
-            // Stop TTS if running
-            if (window.speechSynthesis) window.speechSynthesis.cancel();
-            
-            const videoEl = document.getElementById('modalVideo');
-            if(videoEl) videoEl.pause();
-            
-            document.getElementById('recipeModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Share (APENAS LINK)
-        window.shareRecipe = async (id, event) => {
-            if(event) event.stopPropagation();
-            const url = new URL(window.location.href);
-            url.searchParams.set('recipe', id);
-            const shareUrl = url.toString();
-
-            if (navigator.share) {
-                try { await navigator.share({ url: shareUrl }); } catch (err) {}
-            } else {
-                try {
-                    await navigator.clipboard.writeText(shareUrl);
-                    alert('Link copiado: ' + shareUrl);
-                } catch (err) { alert('Copie: ' + shareUrl); }
-            }
-        }
-        window.shareRecipeFromModal = () => { if(window.currentModalRecipeId) window.shareRecipe(window.currentModalRecipeId); }
-
-        // --- GLOBAL START ---
-        window.resetApp = () => {
-            window.setCategory('all');
-            document.getElementById('searchInput').value = '';
-            window.closeModal();
-        }
-
-        document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
-        document.getElementById('recipeModal').addEventListener('click', (e) => { if(e.target.id === 'recipeModal') window.closeModal(); });
-        
-        // Keydown para fechar com ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const zoom = document.getElementById('zoomModal');
-                const modal = document.getElementById('recipeModal');
-                if (!zoom.classList.contains('hidden')) {
-                    toggleZoom();
-                } else if (!modal.classList.contains('hidden')) {
-                    window.closeModal();
-                }
-            }
-        });
-
-        window.init();
+        window.updateModalHeart = (id) => {
+             const btn = document.getElementById('modalSaveBtn');
+             if(!btn) return;
+             const icon = btn.querySelector('i');
+             const isFav = window.savedRecipesSet.has(String(id)) || window.savedRecipesSet.has(id);
+             icon.className = isFav ? 'fas fa-heart text-xl text-red-500' : 'far fa-heart text-xl';
+             btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-pink-600' : 'bg-gray-100 text-gray-600'}`;
+        };
     </script>
 </body>
 </html>
