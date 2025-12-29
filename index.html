@@ -3,78 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enciclopédia Imperial: Receitas do Mundo</title>
-    <!-- Ícone da Aba (Favicon) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍳</text></svg>">
+    <title>Enciclopédia Imperial: 1000 Receitas</title>
+    <!-- Ícone da Aba -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥘</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@400;700&display=swap');
 
         body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f8f5f2;
+            font-family: 'Lato', sans-serif;
+            background-color: #ffffff;
+            color: #1a202c;
         }
 
         h1, h2, h3, .serif-font {
-            font-family: 'Noto Serif SC', serif;
+            font-family: 'Playfair Display', serif;
         }
 
-        .pattern-bg {
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
+        /* Efeitos de Card */
         .card-hover {
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transition: all 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            border-color: #d97706;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        /* Tags de Energia */
-        .energy-yin { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-        .energy-yang { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-        .energy-neutral { background-color: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; }
-        .energy-qi { background-color: #fofdf4; color: #15803d; border: 1px solid #bbf7d0; }
-
-        /* Scrollbar Invisível mas funcional */
+        /* Scrollbar Oculta */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* Animações */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spin-active { animation: spin 4s linear infinite; }
 
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
         .animate-pop { animation: pop 0.3s ease-out; }
+
+        /* Placeholder de imagem enquanto carrega */
+        .img-loading {
+            background-color: #f3f4f6;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e5e7eb' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        }
     </style>
 </head>
-<body class="pattern-bg text-gray-800 min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 
     <!-- Header -->
-    <header class="bg-red-900 text-white shadow-xl sticky top-0 z-40 border-b-4 border-yellow-600">
+    <header class="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm">
         <div class="container mx-auto px-4 pt-3 pb-2">
             <div class="flex flex-col md:flex-row justify-between items-center mb-3">
                 
-                <!-- Logo (Home) -->
+                <!-- Logo -->
                 <div class="flex items-center space-x-3 mb-3 md:mb-0 cursor-pointer group" onclick="resetApp()" title="Voltar ao Início">
-                    <div class="bg-yellow-500 text-red-900 w-12 h-12 rounded-full flex items-center justify-center font-bold text-2xl border-2 border-white shadow-lg group-hover:bg-yellow-400 transition transform group-hover:rotate-12">
+                    <div class="w-10 h-10 rounded-full bg-red-700 text-white flex items-center justify-center font-bold text-xl shadow-md group-hover:bg-red-800 transition">
                         食
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-wide serif-font group-hover:text-yellow-200 transition">Enciclopédia Imperial</h1>
-                        <p class="text-xs text-yellow-200">Brasil • China • Mundo</p>
+                        <h1 class="text-2xl font-bold tracking-tight text-gray-900 serif-font">Enciclopédia Imperial</h1>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">1000 Receitas do Mundo</p>
                     </div>
                 </div>
                 
@@ -82,58 +74,82 @@
                 <div class="flex w-full md:w-auto items-center space-x-3">
                     
                     <!-- Busca -->
-                    <div class="relative flex-grow md:w-80">
-                        <input type="text" id="searchInput" placeholder="Procure uma receita, um ingrediente, um tipo de prato ..." 
-                            class="w-full pl-10 pr-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-red-50 shadow-inner border border-red-200 transition-all text-sm">
-                        <i class="fas fa-search absolute left-3 top-3 text-red-800"></i>
+                    <div class="relative flex-grow md:w-96">
+                        <input type="text" id="searchInput" placeholder="Procure uma receita, um ingrediente..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-full bg-gray-100 border-none focus:ring-2 focus:ring-red-500 focus:bg-white transition text-sm text-gray-800 placeholder-gray-500">
+                        <i class="fas fa-search absolute left-3.5 top-3.5 text-gray-400"></i>
                     </div>
 
-                    <!-- Botão Login Google (Destaque) -->
+                    <!-- Filtro Energia -->
+                    <div class="relative group">
+                        <div id="energyBtnBg" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition relative overflow-hidden">
+                            <i id="energyIcon" class="fas fa-yin-yang text-gray-600 text-lg"></i>
+                            <select id="energyFilter" onchange="setEnergy(this.value)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+                                <option value="all">Todas as Energias</option>
+                                <option value="Yin">❄️ Yin (Resfriante)</option>
+                                <option value="Yang">🔥 Yang (Aquecedor)</option>
+                                <option value="Neutro">⚖️ Neutro (Equilíbrio)</option>
+                                <option value="Qi">⚡ Qi (Tônico)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Auth -->
                     <div id="authContainer">
-                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-white text-red-900 hover:bg-gray-100 font-bold py-2 px-4 rounded-full shadow-md transition transform hover:scale-105 flex items-center text-sm border border-gray-200">
-                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4 mr-2"> Entrar
+                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-gray-900 text-white hover:bg-black font-bold py-2 px-5 rounded-full shadow-md transition transform hover:scale-105 flex items-center text-sm">
+                            <i class="fab fa-google mr-2"></i> Entrar
                         </button>
+                        <div id="loginLoading" class="w-8 h-8 rounded-full border-2 border-gray-300 border-t-red-600 animate-spin"></div>
                         
-                        <!-- Perfil -->
-                        <div id="userProfile" class="hidden relative group cursor-pointer">
-                            <div class="w-10 h-10 rounded-full border-2 border-yellow-400 overflow-hidden bg-red-800">
-                                <img id="userPhoto" src="" alt="User" class="w-full h-full object-cover">
-                            </div>
-                            <!-- Menu -->
-                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl py-2 hidden group-hover:block animate-fade-in border border-gray-100 z-50">
-                                <div class="px-4 py-2 border-b border-gray-100 bg-gray-50">
-                                    <p class="text-xs text-gray-500">Olá,</p>
-                                    <p class="text-sm font-bold text-gray-800 truncate" id="userName">Usuário</p>
+                        <!-- Perfil com CORREÇÃO DE HOVER -->
+                        <div id="userProfile" class="hidden relative group cursor-pointer h-10 flex items-center">
+                            <!-- Imagem Trigger -->
+                            <img id="userPhoto" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
+                            
+                            <!-- Container "Ponte" com Padding Top para evitar gap -->
+                            <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block z-50">
+                                <!-- Dropdown Real -->
+                                <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 animate-fade-in">
+                                    <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                                        <p class="text-xs text-gray-500">Logado como</p>
+                                        <p class="text-sm font-bold text-gray-900 truncate" id="userName">Usuário</p>
+                                    </div>
+                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
+                                        <i class="fas fa-heart text-red-500 mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
+                                    </a>
+                                    <div class="border-t border-gray-100 mt-1"></div>
+                                    <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                        <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair
+                                    </a>
                                 </div>
-                                <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
-                                    <i class="fas fa-heart text-red-500 mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
-                                </a>
-                                <div class="border-t border-gray-100 mt-1"></div>
-                                <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-                                    <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair
-                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Navegação Categorias Expandida -->
-            <div class="w-full border-t border-red-800 pt-3 mt-1">
+            <!-- Navegação Categorias -->
+            <div class="w-full pt-1 border-t border-gray-100">
                 <div class="overflow-x-auto scrollbar-hide flex justify-start md:justify-center px-1 pb-1">
-                    <div class="flex space-x-2 min-w-max">
-                        <button onclick="setCategory('all')" class="cat-btn active-cat px-3 py-1.5 rounded-full text-xs font-bold transition bg-yellow-600 text-white shadow-md border border-yellow-500" data-cat="all">Todos</button>
-                        <button onclick="setCategory('natal')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="natal">🎄 Natal</button>
-                        <button onclick="setCategory('bolo')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="bolo">🍰 Bolos</button>
-                        <button onclick="setCategory('suco')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="suco">🍹 Sucos</button>
-                        <button onclick="setCategory('sopa')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="sopa">🥣 Sopas</button>
-                        <button onclick="setCategory('carne')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="carne">🥩 Carnes</button>
-                        <button onclick="setCategory('ave')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="ave">🍗 Aves</button>
-                        <button onclick="setCategory('peixe')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="peixe">🐟 Peixes</button>
-                        <button onclick="setCategory('massa')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="massa">🍝 Massas</button>
-                        <button onclick="setCategory('salada')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="salada">🥗 Saladas</button>
-                        <button onclick="setCategory('sobremesa')" class="cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-red-800 text-red-100 border border-red-700" data-cat="sobremesa">🍮 Doces</button>
-                        <button onclick="setCategory('saved')" id="savedFilterBtn" class="hidden cat-btn px-3 py-1.5 rounded-full text-xs font-bold transition bg-pink-600 text-white border border-pink-400" data-cat="saved">❤️ Favoritos</button>
+                    <div class="flex space-x-2 min-w-max py-2">
+                        <!-- Menu Principal -->
+                        <button onclick="setCategory('all')" class="cat-btn active-cat px-4 py-1.5 rounded-full text-xs font-bold transition bg-gray-900 text-white" data-cat="all">Todos</button>
+                        <button onclick="setCategory('brasileira')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300" data-cat="brasileira">🇧🇷 Brasil</button>
+                        <button onclick="setCategory('chinesa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-red-50 hover:text-red-700 hover:border-red-300" data-cat="chinesa">🇨🇳 China</button>
+                        
+                        <!-- Categorias de Comida -->
+                        <button onclick="setCategory('natal')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="natal">🎄 Natal</button>
+                        <button onclick="setCategory('suco')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="suco">🍹 Sucos</button>
+                        <button onclick="setCategory('sopa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="sopa">🥣 Sopas</button>
+                        <button onclick="setCategory('bolo')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="bolo">🍰 Bolos</button>
+                        <button onclick="setCategory('carne')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="carne">🥩 Carnes</button>
+                        <button onclick="setCategory('ave')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="ave">🍗 Aves</button>
+                        <button onclick="setCategory('peixe')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="peixe">🐟 Peixes</button>
+                        <button onclick="setCategory('massa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="massa">🍝 Massas</button>
+                        <button onclick="setCategory('salada')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="salada">🥗 Saladas</button>
+                        <button onclick="setCategory('sobremesa')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="sobremesa">🍮 Doces</button>
+                        <button onclick="setCategory('medicinal')" class="cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-white text-gray-600 border border-gray-200 hover:bg-gray-50" data-cat="medicinal">💊 Saúde</button>
+                        <button onclick="setCategory('saved')" id="savedFilterBtn" class="hidden cat-btn px-4 py-1.5 rounded-full text-xs font-bold transition bg-pink-50 text-pink-600 border border-pink-200 hover:bg-pink-100" data-cat="saved">❤️ Favoritos</button>
                     </div>
                 </div>
             </div>
@@ -141,119 +157,136 @@
     </header>
 
     <!-- Conteúdo Principal -->
-    <main class="container mx-auto px-4 py-6 flex-grow">
+    <main class="container mx-auto px-4 py-8 flex-grow">
         
-        <!-- Top 20 Mais Buscadas -->
-        <div id="top20Container" class="mb-10">
-            <h2 class="text-xl font-bold text-gray-800 serif-font mb-4 flex items-center px-2">
-                <i class="fas fa-fire text-orange-500 mr-2"></i> 20 Receitas Mais Buscadas
+        <!-- Top 20 Carrossel -->
+        <div id="top20Container" class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 serif-font mb-5 flex items-center">
+                <span class="bg-red-100 text-red-600 p-2 rounded-lg mr-3"><i class="fas fa-fire"></i></span>
+                Destaques da Semana
             </h2>
-            <div class="overflow-x-auto scrollbar-hide pb-4">
-                <div class="flex space-x-4 min-w-max px-2" id="top20List">
-                    <!-- Injetado via JS -->
+            <div class="overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4">
+                <div class="flex space-x-5 min-w-max" id="top20List">
+                    <!-- Cards Top 20 Injetados Aqui -->
                 </div>
             </div>
         </div>
 
-        <!-- Painel de Status da Grid Principal -->
-        <div class="flex justify-between items-end mb-4 px-2 border-b border-gray-200 pb-2">
-            <h2 class="text-2xl font-bold text-gray-800 serif-font" id="currentCatTitle">Catálogo Completo</h2>
-            <span class="text-xs text-gray-500" id="totalCount">Carregando...</span>
+        <!-- Título da Seção Principal -->
+        <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-4">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900 serif-font" id="currentCatTitle">Catálogo Completo</h2>
+                <p class="text-sm text-gray-500 mt-1">Explore sabores autênticos de todo o mundo.</p>
+            </div>
+            <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-3 py-1 rounded-full" id="totalCount">Carregando...</span>
         </div>
 
         <!-- Grid de Receitas -->
-        <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Cards injetados via JS -->
+        <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Cards Principais Injetados Aqui -->
         </div>
 
         <!-- Botão Carregar Mais -->
-        <div id="loadMoreContainer" class="text-center py-10">
-            <button onclick="loadMore()" class="group bg-white border border-gray-300 text-gray-600 hover:text-red-800 hover:border-red-800 font-semibold py-2 px-8 rounded-full shadow-sm transition-all transform hover:scale-105 flex items-center mx-auto text-sm">
-                Carregar Mais <i class="fas fa-chevron-down ml-2"></i>
+        <div id="loadMoreContainer" class="text-center py-12">
+            <button onclick="loadMore()" class="bg-white border border-gray-300 text-gray-700 hover:border-gray-800 hover:text-gray-900 font-bold py-3 px-8 rounded-full shadow-sm transition-all transform hover:scale-105 inline-flex items-center">
+                Carregar Mais Receitas <i class="fas fa-chevron-down ml-2"></i>
             </button>
         </div>
 
         <!-- Estado Vazio -->
-        <div id="emptyState" class="hidden text-center py-20">
-            <div class="bg-gray-100 p-6 rounded-full inline-block mb-3">
-                <i class="fas fa-utensils text-4xl text-gray-400"></i>
+        <div id="emptyState" class="hidden text-center py-24">
+            <div class="bg-gray-50 p-8 rounded-full inline-block mb-4">
+                <i class="fas fa-search text-4xl text-gray-300"></i>
             </div>
-            <p class="text-lg text-gray-600 font-serif">Nenhuma receita encontrada.</p>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">Nenhuma receita encontrada</h3>
+            <p class="text-gray-500">Tente buscar por outro termo ou mude a categoria.</p>
         </div>
     </main>
 
     <!-- Modal de Detalhes -->
-    <div id="recipeModal" class="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-none md:rounded-xl w-full max-w-4xl h-full md:h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
+        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
             
-            <!-- Header Modal -->
-            <div class="bg-white border-b border-gray-100 p-4 flex justify-between items-center shrink-0">
-                <div class="flex items-center overflow-hidden">
-                    <span id="modalIcon" class="text-3xl mr-3"></span>
-                    <div>
-                        <h2 id="modalTitle" class="text-xl font-bold text-gray-800 leading-tight serif-font"></h2>
-                        <div class="flex items-center text-xs text-yellow-500 mt-1" id="modalRating"></div>
+            <!-- Header Modal Imagem -->
+            <div class="relative h-64 md:h-80 shrink-0 bg-gray-200">
+                <img id="modalImage" src="" class="w-full h-full object-cover" alt="Receita">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+
+                <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <span id="modalCategoryTag" class="px-2 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">Categoria</span>
+                        <div class="flex text-yellow-400 text-xs items-center bg-black/40 px-2 py-1 rounded" id="modalRating"></div>
                     </div>
+                    <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-md">Título da Receita</h2>
                 </div>
-                <div class="flex items-center space-x-2 shrink-0 ml-2">
-                    <button onclick="shareRecipeFromModal()" class="p-2 rounded-full hover:bg-gray-100 text-blue-500 transition">
-                        <i class="fas fa-share-alt"></i>
+            </div>
+
+            <!-- Toolbar de Ação -->
+            <div class="bg-white border-b border-gray-100 px-6 py-3 flex justify-between items-center">
+                <div class="flex space-x-6 text-sm text-gray-600">
+                    <span class="flex items-center"><i class="far fa-clock mr-2 text-red-500"></i> <span id="modalTime" class="font-bold"></span></span>
+                    <span class="flex items-center"><i class="fas fa-utensils mr-2 text-red-500"></i> <span id="modalFunction" class="font-bold"></span></span>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="shareRecipeFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition text-sm font-bold">
+                        <i class="fas fa-share-alt"></i> <span>Compartilhar</span>
                     </button>
-                    <button id="modalSaveBtn" onclick="toggleSaveFromModal()" class="p-2 rounded-full hover:bg-gray-100 text-gray-400 transition">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <button onclick="closeModal()" class="p-2 rounded-full hover:bg-red-50 text-gray-500 hover:text-red-500 transition">
-                        <i class="fas fa-times text-lg"></i>
+                    <button id="modalSaveBtn" onclick="toggleSaveFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-600 transition text-sm font-bold">
+                        <i class="far fa-heart"></i> <span>Salvar</span>
                     </button>
                 </div>
             </div>
 
+            <!-- Conteúdo Scroll -->
             <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-white">
-                <!-- Info Lateral -->
-                <div class="md:w-1/3 bg-gray-50 p-6 border-r border-gray-100 overflow-y-auto">
-                    <div class="mb-6">
-                        <span id="modalCategory" class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2 block">Categoria</span>
-                        <span class="px-3 py-1 bg-white border border-gray-200 rounded-full text-xs font-semibold text-gray-600 shadow-sm" id="modalOriginalName"></span>
-                    </div>
+                <!-- Coluna Esquerda: Ingredientes & Vídeo -->
+                <div class="md:w-1/3 bg-gray-50 p-8 border-r border-gray-100 overflow-y-auto custom-scroll">
                     
-                    <div class="space-y-4 text-sm text-gray-600">
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span><i class="far fa-clock mr-2"></i>Tempo</span>
-                            <span id="modalTime" class="font-bold text-gray-800"></span>
+                    <!-- Seção de Vídeo -->
+                    <div class="mb-8">
+                         <h3 class="font-bold text-gray-900 text-lg mb-3 flex items-center">
+                            <i class="fas fa-play-circle text-red-600 mr-2"></i> Vídeo do Preparo
+                        </h3>
+                        <div class="rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-black relative group">
+                            <video id="modalVideo" controls class="w-full aspect-video" poster="" playsinline>
+                                <source src="https://videos.pexels.com/video-files/2882090/2882090-hd_1920_1080_24fps.mp4" type="video/mp4">
+                                Seu navegador não suporta vídeos.
+                            </video>
                         </div>
-                        <div class="flex justify-between border-b border-gray-200 pb-2">
-                            <span><i class="fas fa-utensils mr-2"></i>Função</span>
-                            <span id="modalFunction" class="font-bold text-gray-800"></span>
-                        </div>
-                        <p id="modalDesc" class="pt-2 italic leading-relaxed text-xs"></p>
+                        <p class="text-xs text-gray-500 mt-2 italic text-center">Vídeo ilustrativo de preparo culinário.</p>
                     </div>
+
+                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center border-t border-gray-200 pt-6">
+                        Ingredientes
+                    </h3>
+                    <ul id="modalIngredients" class="space-y-3 text-sm text-gray-700"></ul>
                 </div>
 
-                <!-- Conteúdo Principal -->
-                <div class="md:w-2/3 p-6 overflow-y-auto">
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                        <i class="fas fa-shopping-basket text-red-600 mr-2"></i> Ingredientes
+                <!-- Coluna Direita: Preparo -->
+                <div class="md:w-2/3 p-8 overflow-y-auto custom-scroll">
+                    <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
+                        Modo de Preparo
                     </h3>
-                    <ul id="modalIngredients" class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8 text-sm text-gray-700"></ul>
-
-                    <h3 class="font-bold text-gray-800 mb-4 flex items-center border-b pb-2">
-                        <i class="fas fa-fire-alt text-red-600 mr-2"></i> Modo de Preparo
-                    </h3>
-                    <div id="modalSteps" class="space-y-3 text-sm text-gray-700"></div>
+                    <p id="modalDesc" class="text-gray-500 italic mb-8 text-sm bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400"></p>
+                    <div id="modalSteps" class="space-y-8"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK (ES Modules) -->
+    <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let app, auth, db, user;
         window.savedRecipesSet = new Set();
-        window.isOffline = false; // Estado global de conexão
+        window.isOffline = false;
 
         const firebaseConfig = {
             apiKey: "AIzaSyC0iJ0FprASJbqMaEVezRfsLF21O-zQxI4",
@@ -264,56 +297,59 @@
             appId: "1:923596482018:web:5e388229af8a3d259b05bb"
         };
 
-        const appId = firebaseConfig.projectId;
-
-        // Inicialização Resiliente
+        // Inicialização Segura
         try {
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
             
-            // Monitor de Auth
-            onAuthStateChanged(auth, (currentUser) => {
-                user = currentUser;
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        if (!auth.currentUser) await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.warn("Auth falhou, modo offline ativado.");
+                    enableOfflineMode();
+                }
+            };
+            initAuth();
+
+            onAuthStateChanged(auth, (u) => {
+                user = u;
                 updateAuthUI();
-                if (user) {
-                    subscribeToSavedRecipes();
-                } else {
+                if (user) subscribeToSavedRecipes();
+                else {
                     window.savedRecipesSet.clear();
                     updateSavedRecipesUI();
                 }
-            }, (error) => {
-                // Falha silenciosa para offline se o auth falhar
-                enableOfflineMode();
-            });
+            }, () => enableOfflineMode());
 
         } catch (e) {
             enableOfflineMode();
         }
 
-        // Login Google Silencioso
+        // Login Google + Fallback
         window.handleLogin = async () => {
-            if (!auth) { enableOfflineMode(); return; }
+            if (!auth) return enableOfflineMode();
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                // Captura erro de domínio ou operação não permitida e faz fallback SILENCIOSO
+                // Erro de domínio ou operação não permitida -> Fallback Silencioso para Offline
                 if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/unauthorized-domain') {
-                    console.warn("Login Google indisponível. Ativando modo offline local.");
+                    console.warn("Google Auth indisponível. Ativando Offline.");
                     enableOfflineMode();
                 } else {
-                    // Outros erros (rede, fechou popup) apenas logamos
-                    console.log("Login cancelado ou erro:", error.message);
+                    console.error("Erro login:", error);
                 }
             }
         };
 
         window.handleLogout = async () => {
-            try {
-                if (auth) await signOut(auth);
-                window.location.reload();
-            } catch (e) { window.location.reload(); }
+            try { if (auth) await signOut(auth); window.location.reload(); } catch (e) { window.location.reload(); }
         };
 
         function enableOfflineMode() {
@@ -323,46 +359,45 @@
                 if (saved) JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
             } catch(e){}
             
-            // Simula usuário logado para a UI
-            user = { 
-                isAnonymous: true, 
-                displayName: 'Convidado', 
-                email: 'Modo Offline', 
-                photoURL: 'https://ui-avatars.com/api/?name=Guest&background=random' 
-            };
+            user = { isAnonymous: true, displayName: 'Convidado', email: 'Modo Offline', photoURL: null };
             updateAuthUI();
             updateSavedRecipesUI();
+            if (window.currentCategory === 'saved') window.renderBatch();
         }
 
         function updateAuthUI() {
-            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loginLoading');
             const userProfile = document.getElementById('userProfile');
+            const loginBtn = document.getElementById('loginBtn');
             const savedFilterBtn = document.getElementById('savedFilterBtn');
             
             if (user) {
-                loginBtn.classList.add('hidden');
-                userProfile.classList.remove('hidden');
-                savedFilterBtn.classList.remove('hidden');
+                loading.classList.add('hidden');
                 
-                document.getElementById('userPhoto').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=random`;
-                document.getElementById('userName').innerText = user.displayName;
+                if (window.isOffline || !user.isAnonymous) {
+                    loginBtn.classList.add('hidden');
+                    userProfile.classList.remove('hidden');
+                    savedFilterBtn.classList.remove('hidden');
+                    document.getElementById('userPhoto').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Guest'}&background=random`;
+                    document.getElementById('userName').innerText = user.displayName;
+                } else {
+                    loginBtn.classList.remove('hidden');
+                    userProfile.classList.add('hidden'); 
+                    savedFilterBtn.classList.remove('hidden');
+                }
             } else {
-                loginBtn.classList.remove('hidden');
+                loading.classList.remove('hidden');
             }
         }
 
+        // Favoritos
         window.toggleSaveRecipe = async (recipeId, event) => {
             if (event) event.stopPropagation();
-            if (!user && !window.isOffline) {
-                // Se não logado e não offline, tenta logar ou ativar offline
-                window.handleLogin(); 
-                return;
-            }
+            if (!user && !window.isOffline) { window.handleLogin(); return; }
 
             const id = parseInt(recipeId);
             const isSaved = window.savedRecipesSet.has(id);
 
-            // UI Otimista
             if (isSaved) window.savedRecipesSet.delete(id);
             else window.savedRecipesSet.add(id);
             
@@ -372,7 +407,7 @@
             if (window.isOffline) {
                 localStorage.setItem('localFavs', JSON.stringify(Array.from(window.savedRecipesSet)));
             } else if (user && !user.isAnonymous) {
-                const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'savedRecipes', id.toString());
+                const ref = doc(db, 'artifacts', firebaseConfig.projectId, 'users', user.uid, 'savedRecipes', id.toString());
                 try {
                     if (isSaved) await deleteDoc(ref);
                     else await setDoc(ref, { savedAt: new Date() });
@@ -384,18 +419,18 @@
 
         function subscribeToSavedRecipes() {
             if (!user || user.isAnonymous || window.isOffline) {
-                // Load Local
                 const saved = localStorage.getItem('localFavs');
-                if(saved) JSON.parse(saved).forEach(id => window.savedRecipesSet.add(id));
+                if (saved) JSON.parse(saved).forEach(id => window.savedRecipesSet.add(parseInt(id)));
                 updateSavedRecipesUI();
                 return;
             }
             
-            const q = collection(db, 'artifacts', appId, 'users', user.uid, 'savedRecipes');
+            const q = collection(db, 'artifacts', firebaseConfig.projectId, 'users', user.uid, 'savedRecipes');
             onSnapshot(q, (snap) => {
                 window.savedRecipesSet.clear();
                 snap.forEach(d => window.savedRecipesSet.add(parseInt(d.id)));
                 updateSavedRecipesUI();
+                if (window.currentCategory === 'saved') window.renderBatch();
             }, () => enableOfflineMode());
         }
 
@@ -406,16 +441,10 @@
 
             document.querySelectorAll('.heart-icon').forEach(icon => {
                 const id = parseInt(icon.dataset.id);
-                if (window.savedRecipesSet.has(id)) {
-                    icon.classList.remove('far', 'text-gray-300');
-                    icon.classList.add('fas', 'text-red-500', 'animate-pop');
-                } else {
-                    icon.classList.remove('fas', 'text-red-500', 'animate-pop');
-                    icon.classList.add('far', 'text-gray-300');
-                }
+                const isFav = window.savedRecipesSet.has(id);
+                icon.className = isFav ? 'fas fa-heart text-lg heart-icon text-red-500 animate-pop' : 'far fa-heart text-lg heart-icon text-gray-400';
             });
             
-            // Update Modal Heart
             if(window.currentModalRecipeId) window.updateModalHeart(window.currentModalRecipeId);
         }
 
@@ -424,11 +453,11 @@
             if(!btn) return;
             const icon = btn.querySelector('i');
             if (window.savedRecipesSet.has(id)) {
-                icon.classList.remove('far', 'text-gray-400');
-                icon.classList.add('fas', 'text-red-500');
+                icon.className = 'fas fa-heart text-xl text-red-500';
+                btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-pink-50 text-pink-600 transition text-sm font-bold';
             } else {
-                icon.classList.remove('fas', 'text-red-500');
-                icon.classList.add('far', 'text-gray-400');
+                icon.className = 'far fa-heart text-xl';
+                btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-gray-100 text-gray-600 transition text-sm font-bold';
             }
         }
         
@@ -439,9 +468,9 @@
     </script>
 
     <script>
-        // --- GERADOR DE DADOS EXPANDIDO ---
+        // --- DADOS E LÓGICA DE GERAÇÃO AVANÇADA ---
         
-        // Pools de Ingredientes Específicos
+        // Pools de Ingredientes
         const ingredientsPool = {
             suco: ["Laranja", "Abacaxi", "Hortelã", "Gengibre", "Couve", "Limão", "Açúcar", "Gelo", "Água de Coco", "Morango"],
             sopa: ["Batata", "Cenoura", "Mandioquinha", "Cebola", "Alho", "Caldo de Carne", "Macarrão", "Frango Desfiado", "Azeite"],
@@ -454,40 +483,67 @@
             salada: ["Alface", "Rúcula", "Tomate Cereja", "Pepino", "Manga", "Queijo Branco", "Azeite", "Mostarda e Mel"]
         };
 
-        // Passos Genéricos mas Adaptáveis
         const stepsPool = {
-            suco: ["Lave bem as frutas.", "Descasque e corte em pedaços.", "Bata no liquidificador com água ou leite.", "Coe se necessário e adicione gelo.", "Sirva imediatamente."],
+            suco: ["Lave bem as frutas.", "Descasque e corte em pedaços.", "Bata no liquidificador com água ou leite.", "Coe se necessário e adicione gelo.", "Sirva imediatamente em copo alto."],
             sopa: ["Refogue o alho e a cebola no azeite.", "Adicione os legumes picados e a carne.", "Cubra com água e cozinhe até amaciar.", "Bata no liquidificador para um creme ou sirva em pedaços.", "Acerte o sal e finalize com cheiro verde."],
             bolo: ["Bata as claras em neve.", "Misture as gemas com açúcar e manteiga.", "Adicione a farinha e o leite alternadamente.", "Incorpore o fermento delicadamente.", "Asse em forno pré-aquecido a 180°C por 40 min."],
-            natal: ["Tempere a carne de véspera.", "Prepare o recheio ou acompanhamento.", "Asse lentamente regando com o molho.", "Decore a travessa com frutas e fios de ovos.", "Sirva na ceia com a família."],
-            carne: ["Tempere a carne com sal grosso.", "Sele em frigideira bem quente ou leve à churrasqueira.", "Deixe descansar antes de fatiar.", "Sirva com vinagrete e farofa."],
-            ave: ["Limpe bem a ave.", "Tempere com limão e ervas.", "Asse até dourar bem a pele.", "Sirva com batatas assadas."],
-            peixe: ["Tempere o peixe com limão e sal.", "Refogue os temperos (cebola, tomate, pimentão).", "Adicione o peixe e o leite de coco.", "Cozinhe em fogo baixo sem mexer muito.", "Finalize com coentro fresco."],
-            massa: ["Cozinhe a massa em água salgada abundante.", "Prepare o molho em outra panela.", "Escorra a massa al dente.", "Misture ao molho e finalize com queijo.", "Decore com manjericão."],
-            salada: ["Lave e seque bem as folhas.", "Corte os ingredientes em cubos ou fatias.", "Prepare o molho emulsionando azeite e ácido.", "Misture tudo na hora de servir.", "Salpique castanhas ou sementes para crocância."]
+            carne: ["Tempere a carne com sal grosso e pimenta.", "Sele em frigideira bem quente com manteiga.", "Deixe descansar antes de fatiar.", "Sirva acompanhado de farofa e vinagrete."]
         };
 
-        function generateRecipe(id, category, nameSuffix) {
-            const catKey = category === 'brasileira' ? 'carne' : (ingredientsPool[category] ? category : 'sopa'); // Fallback seguro
+        // --- GERADOR DE NOMES SEM NÚMEROS ---
+        const nameModifiers = {
+            adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco', 'Gourmet', 'Clássico', 'Real', 'Magnífico', 'Saboroso', 'Leve', 'Rápido', 'Premium', 'Autêntico'],
+            origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino', 'Paulista', 'Asiático', 'Mediterrâneo', 'Tropical'],
+            styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado', 'Caramelizado', 'Temperado', 'Recheado']
+        };
+
+        function generateUniqueName(category, type) {
+            const patterns = [
+                () => `${type} ${getRandom(nameModifiers.adjectives)}`,
+                () => `${type} ${getRandom(nameModifiers.origins)}`,
+                () => `${type} ${getRandom(nameModifiers.styles)}`,
+                () => `${getRandom(nameModifiers.adjectives)} ${type}`,
+                () => `${type} com ${getRandom(ingredientsPool[category] || ingredientsPool.carne)}`
+            ];
+            
+            // Escolhe um padrão aleatório
+            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+            return pattern();
+        }
+
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // Gerador de URLs de Imagens (Pexels Style via Pollinations)
+        function getImageUrl(name, id) {
+            const cleanName = name.replace(/ /g, '%20');
+            // Prompt específico para "Pexels Style Food Photography"
+            return `https://image.pollinations.ai/prompt/professional%20food%20photography%20of%20${cleanName}%20on%20a%20plate%20pexels%20style%20culinary%20magazine%204k%20natural%20lighting%20top%20down%20view?width=600&height=400&nologo=true&seed=${id}&model=flux`;
+        }
+
+        function generateRecipe(id, category, type) {
+            const catKey = category === 'brasileira' ? 'carne' : (ingredientsPool[category] ? category : 'sopa');
             const ingSource = ingredientsPool[catKey] || ingredientsPool['carne'];
             const stepSource = stepsPool[catKey] || stepsPool['carne'];
             
-            // Random Ingredients (4 to 6)
             const ingredients = [];
             const shuffled = [...ingSource].sort(() => 0.5 - Math.random());
             ingredients.push(...shuffled.slice(0, Math.floor(Math.random() * 3) + 4));
 
-            // Random Rating (3.5 to 5.0)
-            const rating = (Math.random() * (5.0 - 3.5) + 3.5).toFixed(1);
+            const rating = (Math.random() * (5.0 - 4.2) + 4.2).toFixed(1);
+            
+            // Gera nome sem números
+            const name = generateUniqueName(category, type);
 
             return {
                 id: id,
-                name: `${category.charAt(0).toUpperCase() + category.slice(1)} ${nameSuffix}`,
-                originalName: `Receita Especial #${id}`,
+                name: name,
+                originalName: `Receita Exclusiva`,
                 category: category,
                 energy: Math.random() > 0.5 ? 'Yang' : 'Yin',
-                icon: getIconForCategory(category),
-                desc: `Uma deliciosa opção de ${category} para sua mesa.`,
+                image: getImageUrl(name, id),
+                desc: `Uma deliciosa e autêntica receita de ${category} para sua mesa. Sabor inigualável e preparo especial.`,
                 func: 'Sabor',
                 time: `${Math.floor(Math.random() * 40) + 20} min`,
                 ingredients: ingredients,
@@ -496,40 +552,49 @@
             };
         }
 
-        function getIconForCategory(cat) {
-            const icons = { suco:'🍹', sopa:'🥣', bolo:'🍰', natal:'🎄', carne:'🥩', ave:'🍗', peixe:'🐟', massa:'🍝', salada:'🥗', sobremesa:'🍮', bebida:'🍵', entrada:'🥟', principal:'🥘', brasileira:'🍲', medicinal:'💊' };
-            return icons[cat] || '🍽️';
-        }
-
         window.allRecipes = [];
         let genId = 3000;
 
+        // Tipos base para gerar variações
+        const baseTypes = {
+            suco: ['Suco', 'Vitamina', 'Smoothie', 'Refresco', 'Drink'],
+            sopa: ['Sopa', 'Caldo', 'Creme', 'Consomê'],
+            bolo: ['Bolo', 'Torta', 'Rocambole', 'Cupcake'],
+            carne: ['Bife', 'Assado', 'Picadinho', 'Estrogonofe', 'Hambúrguer', 'Almôndega'],
+            ave: ['Frango', 'Peru', 'Chester', 'Galeto', 'Asinha'],
+            peixe: ['Peixe', 'Moqueca', 'Filé', 'Camarão', 'Lula'],
+            massa: ['Macarrão', 'Lasanha', 'Nhoque', 'Pizza', 'Ravioli'],
+            salada: ['Salada', 'Mix de Folhas', 'Vinagrete', 'Bowl'],
+            sobremesa: ['Pudim', 'Mousse', 'Pavê', 'Sorvete', 'Doce', 'Torta'],
+            brasileira: ['Feijoada', 'Baião', 'Vatapá', 'Acarajé', 'Farofa'],
+            chinesa: ['Yakisoba', 'Rolinho', 'Pato', 'Frango Xadrez'],
+            natal: ['Peru', 'Tender', 'Rabanada', 'Salpicão']
+        };
+
         function populateRecipes() {
-            // Novas Categorias (+150 itens)
-            const newCats = ['suco', 'sopa', 'bolo', 'natal', 'carne', 'ave', 'peixe', 'massa', 'salada'];
-            const suffixes = ['da Vovó', 'Especial', 'Cremoso', 'Rápido', 'Light', 'de Festa', 'Tradicional', 'do Chef'];
+            const categories = [
+                'suco', 'sopa', 'bolo', 'natal', 'carne', 'ave', 'peixe', 'massa', 'salada',
+                'brasileira', 'bebida', 'entrada', 'principal', 'sobremesa', 'medicinal', 'chinesa'
+            ];
+            
+            const targetTotal = 1000;
+            const perCategory = Math.ceil(targetTotal / categories.length);
 
-            newCats.forEach(cat => {
-                for(let i=0; i<18; i++) { // ~160 receitas
-                    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-                    window.allRecipes.push(generateRecipe(genId++, cat, suffix));
+            categories.forEach(cat => {
+                const types = baseTypes[cat] || baseTypes['carne']; // fallback
+                for(let i=0; i<perCategory; i++) {
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    window.allRecipes.push(generateRecipe(genId++, cat, type));
                 }
             });
-
-            // Dados Antigos (recriados simplificados para manter o exemplo funcional e leve)
-            // Em produção real, isso viria de um JSON separado.
-            const oldCats = ['brasileira', 'bebida', 'entrada', 'principal', 'sobremesa', 'medicinal'];
-            oldCats.forEach(cat => {
-                for(let i=0; i<10; i++) {
-                    window.allRecipes.push(generateRecipe(genId++, cat, "Clássico"));
-                }
-            });
+            
+            // Embaralhar para variedade
+            window.allRecipes.sort(() => Math.random() - 0.5);
         }
         populateRecipes();
 
-        // --- LÓGICA DE UI ---
+        // --- LÓGICA UI ---
         
-        // Stars Helper
         function getStarsHTML(rating) {
             let html = '';
             for(let i=1; i<=5; i++) {
@@ -540,21 +605,24 @@
             return html;
         }
 
-        // Top 20 Logic
         function renderTop20() {
             const container = document.getElementById('top20List');
-            const topRecipes = [...window.allRecipes].sort((a,b) => b.rating - a.rating).slice(0, 20);
+            const topRecipes = window.allRecipes.slice(0, 20); 
             
             topRecipes.forEach(r => {
                 const el = document.createElement('div');
-                el.className = "flex-shrink-0 w-32 cursor-pointer transform hover:scale-105 transition";
+                el.className = "flex-shrink-0 w-48 cursor-pointer group";
                 el.onclick = () => window.openRecipe(r.id);
                 el.innerHTML = `
-                    <div class="h-32 w-32 rounded-lg bg-red-50 flex items-center justify-center text-4xl shadow-md border border-red-100 mb-2">
-                        ${r.icon}
+                    <div class="h-48 w-48 rounded-xl overflow-hidden shadow-lg mb-2 relative">
+                        <img src="${r.image}" class="w-full h-full object-cover transition transform duration-700 group-hover:scale-110 img-loading" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute bottom-2 left-2 text-white">
+                            <div class="text-[10px] font-bold uppercase tracking-wide opacity-90">${r.category}</div>
+                            <div class="text-xs font-bold flex items-center"><i class="fas fa-star text-yellow-400 mr-1"></i> ${r.rating}</div>
+                        </div>
                     </div>
-                    <p class="text-xs font-bold text-gray-700 truncate text-center">${r.name}</p>
-                    <div class="text-[10px] text-center mt-1">${getStarsHTML(r.rating)}</div>
+                    <p class="text-sm font-bold text-gray-800 truncate leading-tight group-hover:text-red-700 transition">${r.name}</p>
                 `;
                 container.appendChild(el);
             });
@@ -564,20 +632,19 @@
         window.currentCategory = 'all';
         let filteredRecipes = [];
         let currentPage = 1;
-        const itemsPerPage = 20;
+        const itemsPerPage = 24;
 
         window.init = function() { 
             renderTop20();
             window.filterRecipes(); 
             
-            // Deep Link Handler
             const params = new URLSearchParams(window.location.search);
             const recipeId = params.get('recipe');
             if(recipeId) {
                 setTimeout(() => {
                     const r = window.allRecipes.find(x => x.id == recipeId);
                     if(r) window.openRecipe(r.id);
-                }, 500);
+                }, 800);
             }
         }
 
@@ -591,14 +658,25 @@
                 if (!window.savedRecipesSet) filteredRecipes = [];
                 else filteredRecipes = window.allRecipes.filter(r => window.savedRecipesSet.has(r.id));
             } else {
-                filteredRecipes = window.allRecipes.filter(r => {
-                    const matchCat = window.currentCategory === 'all' || r.category === window.currentCategory;
-                    const matchTerm = r.name.toLowerCase().includes(term);
-                    return matchCat && matchTerm;
-                });
+                if (window.currentCategory === 'chinesa') {
+                    // Filtra tudo que NÃO é brasileira
+                    filteredRecipes = window.allRecipes.filter(r => {
+                        const isNotBR = r.category !== 'brasileira';
+                        const matchEn = document.getElementById('energyFilter').value === 'all' || r.energy === document.getElementById('energyFilter').value;
+                        const matchTerm = r.name.toLowerCase().includes(term);
+                        return isNotBR && matchEn && matchTerm;
+                    });
+                } else {
+                    filteredRecipes = window.allRecipes.filter(r => {
+                        const matchCat = window.currentCategory === 'all' || r.category === window.currentCategory;
+                        const matchEn = document.getElementById('energyFilter').value === 'all' || r.energy === document.getElementById('energyFilter').value;
+                        const matchTerm = r.name.toLowerCase().includes(term);
+                        return matchCat && matchEn && matchTerm;
+                    });
+                }
             }
 
-            document.getElementById('totalCount').innerText = `${filteredRecipes.length} itens`;
+            document.getElementById('totalCount').innerText = `${filteredRecipes.length} receitas`;
             
             if (filteredRecipes.length === 0) {
                 document.getElementById('emptyState').classList.remove('hidden');
@@ -617,26 +695,32 @@
 
             batch.forEach((r, i) => {
                 const div = document.createElement('div');
-                div.className = 'bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer flex flex-col h-full animate-fade-in relative group';
-                div.style.animationDelay = `${i * 0.03}s`;
+                div.className = 'bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden card-hover cursor-pointer flex flex-col h-full animate-fade-in relative group';
+                div.style.animationDelay = `${i * 0.02}s`;
                 div.onclick = () => window.openRecipe(r.id);
 
-                let heartClass = (window.savedRecipesSet && window.savedRecipesSet.has(r.id)) ? 'fas text-red-500' : 'far text-gray-300';
+                let heartClass = (window.savedRecipesSet && window.savedRecipesSet.has(r.id)) ? 'fas text-red-500' : 'far text-white drop-shadow-md';
 
                 div.innerHTML = `
-                    <div class="h-32 bg-gray-50 flex items-center justify-center relative">
-                        <span class="text-5xl icon-effect drop-shadow-sm">${r.icon}</span>
-                        <div class="absolute top-2 right-2 bg-white bg-opacity-90 px-1.5 py-0.5 rounded text-[10px] font-bold shadow-sm flex items-center">
+                    <div class="h-56 relative overflow-hidden bg-gray-100">
+                        <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                        <div class="absolute top-3 right-3 bg-white/90 px-2 py-0.5 rounded-full text-xs font-bold shadow-sm flex items-center">
                             <span class="text-yellow-500 mr-1">★</span> ${r.rating}
                         </div>
-                        <button onclick="toggleSaveRecipe(${r.id}, event)" class="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full shadow hover:bg-red-50 flex items-center justify-center transition z-10">
-                            <i id="heart-${r.id}" class="${heartClass} fa-heart text-sm heart-icon transition transform hover:scale-110" data-id="${r.id}"></i>
+                        <span class="absolute top-3 left-3 text-2xl drop-shadow-md">${r.category === 'brasileira' ? '🇧🇷' : ''}</span>
+                        
+                        <button onclick="toggleSaveRecipe(${r.id}, event)" class="absolute bottom-3 right-3 w-10 h-10 rounded-full hover:bg-white/20 flex items-center justify-center transition z-10">
+                            <i id="heart-${r.id}" class="${heartClass} text-xl heart-icon transition transform hover:scale-125" data-id="${r.id}"></i>
                         </button>
                     </div>
-                    <div class="p-3 flex flex-col flex-grow">
-                        <div class="text-[10px] text-gray-400 uppercase font-bold mb-1 tracking-wider">${r.category}</div>
-                        <h3 class="font-bold text-gray-800 leading-tight mb-1 text-sm group-hover:text-red-700 transition">${r.name}</h3>
-                        <p class="text-xs text-gray-500 line-clamp-2">${r.desc}</p>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="text-[10px] text-red-600 font-bold uppercase tracking-wider mb-1">${r.category}</div>
+                        <h3 class="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-red-700 transition font-serif">${r.name}</h3>
+                        <div class="flex items-center text-xs text-gray-500 mt-auto pt-3 border-t border-gray-100">
+                            <span class="mr-3 flex items-center"><i class="far fa-clock mr-1"></i> ${r.time}</span>
+                            <span class="flex items-center"><i class="fas fa-utensils mr-1"></i> ${r.ingredients.length} ingr.</span>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(div);
@@ -650,24 +734,24 @@
         window.setCategory = (cat) => {
             window.currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('active-cat', 'bg-yellow-600', 'text-white');
+                b.classList.remove('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
                 b.classList.add('bg-white', 'text-gray-600', 'border-gray-200');
                 if (b.dataset.cat === cat) {
                     b.classList.remove('bg-white', 'text-gray-600', 'border-gray-200');
-                    b.classList.add('active-cat', 'bg-yellow-600', 'text-white', 'border-yellow-600');
+                    b.classList.add('active-cat', 'bg-gray-900', 'text-white', 'border-transparent');
                 }
             });
             
             let titles = {
                 all:'Catálogo Completo', natal:'Ceia de Natal 🎄', bolo:'Bolos e Tortas 🍰', suco:'Sucos Naturais 🍹', 
-                sopa:'Sopas e Caldos 🥣', carne:'Carnes 🥩', ave:'Aves 🍗', peixe:'Peixes e Frutos do Mar 🐟', 
-                massa:'Massas 🍝', salada:'Saladas e Molhos 🥗', sobremesa:'Doces e Sobremesas 🍮', saved:'Meus Favoritos ❤️'
+                sopa:'Sopas e Caldos 🥣', carne:'Carnes Selecionadas 🥩', ave:'Aves 🍗', peixe:'Peixes e Frutos do Mar 🐟', 
+                massa:'Massas Italianas 🍝', salada:'Saladas Frescas 🥗', sobremesa:'Doces e Sobremesas 🍮', saved:'Meus Favoritos ❤️',
+                brasileira: 'Culinária Brasileira 🇧🇷', chinesa: 'Culinária Chinesa e Internacional 🇨🇳'
             };
             document.getElementById('currentCatTitle').innerText = titles[cat] || cat;
             window.filterRecipes();
         }
 
-        // --- ENERGIA (Simulada para manter layout antigo funcionando se necessário) ---
         window.setEnergy = () => window.filterRecipes();
 
         // --- MODAL ---
@@ -677,35 +761,46 @@
 
             window.currentModalRecipeId = id;
             document.getElementById('modalTitle').innerText = r.name;
-            document.getElementById('modalIcon').innerText = r.icon;
+            document.getElementById('modalImage').src = r.image;
             document.getElementById('modalDesc').innerText = r.desc;
             document.getElementById('modalTime').innerText = r.time;
             document.getElementById('modalFunction').innerText = r.func;
-            document.getElementById('modalOriginalName').innerText = r.category;
-            document.getElementById('modalRating').innerHTML = getStarsHTML(r.rating) + `<span class="ml-1 text-gray-400">(${r.rating})</span>`;
+            document.getElementById('modalCategoryTag').innerText = r.category;
+            document.getElementById('modalRating').innerHTML = getStarsHTML(r.rating) + `<span class="ml-1 text-white/80">(${r.rating})</span>`;
 
-            // Reset Heart
             window.updateModalHeart(id);
 
-            // Ingredientes
             const ingList = document.getElementById('modalIngredients');
             ingList.innerHTML = '';
             r.ingredients.forEach(ing => {
-                ingList.innerHTML += `<li class="flex items-center bg-gray-50 p-2 rounded border border-gray-100"><i class="fas fa-check text-green-500 mr-2 text-xs"></i> ${ing}</li>`;
+                ingList.innerHTML += `<li class="flex items-center bg-gray-50 px-3 py-2 rounded-lg border border-gray-100"><i class="fas fa-check-circle text-green-500 mr-2 text-sm"></i> ${ing}</li>`;
             });
 
-            // Passos
             const stepList = document.getElementById('modalSteps');
             stepList.innerHTML = '';
             r.steps.forEach((step, i) => {
-                stepList.innerHTML += `<div class="flex"><div class="flex-shrink-0 w-6 h-6 bg-red-100 text-red-800 rounded-full flex items-center justify-center font-bold mr-3 text-xs">${i+1}</div><p>${step}</p></div>`;
+                stepList.innerHTML += `
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-8 h-8 bg-red-100 text-red-700 rounded-full flex items-center justify-center font-bold mr-4 text-sm">${i+1}</div>
+                        <p class="pt-1 text-gray-700 leading-relaxed">${step}</p>
+                    </div>`;
             });
+
+            // Reseta o vídeo para garantir que o src funcione
+            const videoEl = document.getElementById('modalVideo');
+            if(videoEl) {
+                videoEl.load();
+            }
 
             document.getElementById('recipeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
         window.closeModal = function() {
+            // Pausa o vídeo ao fechar
+            const videoEl = document.getElementById('modalVideo');
+            if(videoEl) videoEl.pause();
+            
             document.getElementById('recipeModal').classList.add('hidden');
             document.body.style.overflow = 'auto';
         }
