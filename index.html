@@ -35,6 +35,21 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Scrollbar Customizada para o Modal */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e0; 
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; 
+        }
+
         /* Animações */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -106,21 +121,25 @@
                         </button>
                         <div id="loginLoading" class="w-8 h-8 rounded-full border-2 border-gray-300 border-t-red-600 animate-spin"></div>
                         
-                        <div id="userProfile" class="hidden relative group cursor-pointer">
+                        <!-- Perfil com CORREÇÃO DE HOVER (Ponte Invisível) -->
+                        <div id="userProfile" class="hidden relative group cursor-pointer h-10 flex items-center">
                             <img id="userPhoto" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
-                            <!-- Dropdown -->
-                            <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 hidden group-hover:block animate-fade-in border border-gray-100 z-50">
-                                <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                                    <p class="text-xs text-gray-500">Logado como</p>
-                                    <p class="text-sm font-bold text-gray-900 truncate" id="userName">Usuário</p>
+                            
+                            <!-- Ponte Invisível para manter hover -->
+                            <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block z-50">
+                                <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 animate-fade-in">
+                                    <div class="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                                        <p class="text-xs text-gray-500">Logado como</p>
+                                        <p class="text-sm font-bold text-gray-900 truncate" id="userName">Usuário</p>
+                                    </div>
+                                    <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
+                                        <i class="fas fa-heart text-red-500 mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
+                                    </a>
+                                    <div class="border-t border-gray-100 mt-1"></div>
+                                    <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                                        <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair
+                                    </a>
                                 </div>
-                                <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition">
-                                    <i class="fas fa-heart text-red-500 mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
-                                </a>
-                                <div class="border-t border-gray-100 mt-1"></div>
-                                <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
-                                    <i class="fas fa-sign-out-alt text-gray-400 mr-2"></i> Sair
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -203,16 +222,16 @@
     </main>
 
     <!-- Modal de Detalhes -->
-    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
-        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
+        <div class="bg-white rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
             
-            <!-- Header Modal Imagem (com Fallback Icon) -->
+            <!-- Header Modal Imagem (com Fallback Icon Colorido) -->
             <div class="relative h-64 md:h-80 shrink-0 bg-gray-200 group">
                 <img id="modalImage" src="" class="w-full h-full object-cover" alt="Receita" onerror="this.style.display='none'; document.getElementById('modalFallbackIcon').classList.remove('hidden');">
                 
-                <!-- Ícone Animado de Fallback (Invisível por padrão) -->
-                <div id="modalFallbackIcon" class="hidden absolute inset-0 bg-gray-100 flex items-center justify-center">
-                     <i id="modalFallbackIconI" class="text-8xl text-gray-300 animate-bounce"></i>
+                <!-- Ícone Animado Colorido de Fallback -->
+                <div id="modalFallbackIcon" class="hidden absolute inset-0 bg-gray-50 flex items-center justify-center">
+                     <i id="modalFallbackIconI" class="text-8xl animate-bounce drop-shadow-lg"></i>
                 </div>
 
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
@@ -247,9 +266,9 @@
             </div>
 
             <!-- Conteúdo Scroll -->
-            <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-white">
+            <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-white" id="modalScrollContainer">
                 <!-- Coluna Esquerda: Ingredientes & Vídeo -->
-                <div class="md:w-1/3 bg-gray-50 p-8 border-r border-gray-100 overflow-y-auto custom-scroll">
+                <div id="modalLeftCol" class="md:w-1/3 bg-gray-50 p-8 border-r border-gray-100 overflow-y-auto custom-scroll">
                     
                     <!-- Seção de Vídeo -->
                     <div class="mb-8">
@@ -272,7 +291,7 @@
                 </div>
 
                 <!-- Coluna Direita: Preparo -->
-                <div class="md:w-2/3 p-8 overflow-y-auto custom-scroll">
+                <div id="modalRightCol" class="md:w-2/3 p-8 overflow-y-auto custom-scroll">
                     <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
                         Modo de Preparo
                     </h3>
@@ -475,24 +494,24 @@
     <script>
         // --- DADOS E LÓGICA DE GERAÇÃO AVANÇADA ---
         
-        // Mapa de Ícones para Fallback
-        const categoryIcons = {
-            'suco': 'fa-glass-water',
-            'sopa': 'fa-bowl-food',
-            'bolo': 'fa-cake-candles',
-            'natal': 'fa-gifts',
-            'carne': 'fa-drumstick-bite',
-            'ave': 'fa-crow',
-            'peixe': 'fa-fish',
-            'massa': 'fa-pizza-slice',
-            'salada': 'fa-leaf',
-            'sobremesa': 'fa-ice-cream',
-            'medicinal': 'fa-notes-medical',
-            'brasileira': 'fa-flag',
-            'chinesa': 'fa-dragon',
-            'bebida': 'fa-mug-hot',
-            'entrada': 'fa-utensils',
-            'principal': 'fa-plate-wheat'
+        // Mapa de Ícones e Cores Vibrantes
+        const categoryData = {
+            'suco': { icon: 'fa-glass-water', color: 'text-orange-500' },
+            'sopa': { icon: 'fa-bowl-food', color: 'text-yellow-600' },
+            'bolo': { icon: 'fa-cake-candles', color: 'text-pink-500' },
+            'natal': { icon: 'fa-gifts', color: 'text-red-600' },
+            'carne': { icon: 'fa-drumstick-bite', color: 'text-red-800' },
+            'ave': { icon: 'fa-crow', color: 'text-yellow-700' },
+            'peixe': { icon: 'fa-fish', color: 'text-blue-500' },
+            'massa': { icon: 'fa-pizza-slice', color: 'text-yellow-500' },
+            'salada': { icon: 'fa-leaf', color: 'text-green-500' },
+            'sobremesa': { icon: 'fa-ice-cream', color: 'text-purple-500' },
+            'medicinal': { icon: 'fa-notes-medical', color: 'text-teal-500' },
+            'brasileira': { icon: 'fa-flag', color: 'text-green-600' },
+            'chinesa': { icon: 'fa-dragon', color: 'text-red-700' },
+            'bebida': { icon: 'fa-mug-hot', color: 'text-amber-700' },
+            'entrada': { icon: 'fa-utensils', color: 'text-gray-600' },
+            'principal': { icon: 'fa-plate-wheat', color: 'text-orange-700' }
         };
 
         // Pools de Ingredientes
@@ -539,14 +558,19 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        // Gerador de URLs de Imagens (Pexels Style via Pollinations)
+        // Gerador de URLs de Imagens
         function getImageUrl(name, id) {
             const cleanName = name.replace(/ /g, '%20');
             return `https://image.pollinations.ai/prompt/professional%20food%20photography%20of%20${cleanName}%20on%20a%20plate%20pexels%20style%20culinary%20magazine%204k%20natural%20lighting%20top%20down%20view?width=600&height=400&nologo=true&seed=${id}&model=flux`;
         }
         
-        function getCategoryIconClass(category) {
-            return categoryIcons[category] || 'fa-utensils';
+        // Helpers de ícone e cor
+        function getCategoryIcon(category) {
+            return categoryData[category]?.icon || 'fa-utensils';
+        }
+        
+        function getCategoryColor(category) {
+            return categoryData[category]?.color || 'text-gray-500';
         }
 
         function generateRecipe(id, category, type) {
@@ -568,7 +592,8 @@
                 category: category,
                 energy: Math.random() > 0.5 ? 'Yang' : 'Yin',
                 image: getImageUrl(name, id),
-                iconFallback: getCategoryIconClass(category),
+                iconFallback: getCategoryIcon(category),
+                colorFallback: getCategoryColor(category),
                 desc: `Uma deliciosa e autêntica receita de ${category} para sua mesa. Sabor inigualável e preparo especial.`,
                 func: 'Sabor',
                 time: `${Math.floor(Math.random() * 40) + 20} min`,
@@ -642,7 +667,7 @@
                     <div class="h-48 w-48 rounded-xl overflow-hidden shadow-lg mb-2 relative bg-gray-100 flex items-center justify-center">
                         <img src="${r.image}" class="w-full h-full object-cover transition transform duration-700 group-hover:scale-110 img-loading" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
                         <div class="hidden absolute inset-0 flex items-center justify-center">
-                            <i class="fas ${r.iconFallback} text-6xl text-gray-300 animate-pulse"></i>
+                            <i class="fas ${r.iconFallback} ${r.colorFallback} text-6xl animate-bounce"></i>
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         <div class="absolute bottom-2 left-2 text-white">
@@ -733,9 +758,9 @@
                     <div class="h-56 relative overflow-hidden bg-gray-100 flex items-center justify-center">
                         <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
                         
-                        <!-- Fallback Icon -->
-                        <div class="hidden absolute inset-0 flex items-center justify-center bg-gray-100">
-                             <i class="fas ${r.iconFallback} text-6xl text-gray-300 animate-bounce"></i>
+                        <!-- Fallback Icon Colorido -->
+                        <div class="hidden absolute inset-0 flex items-center justify-center bg-gray-50">
+                             <i class="fas ${r.iconFallback} ${r.colorFallback} text-6xl animate-bounce"></i>
                         </div>
 
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
@@ -804,7 +829,7 @@
             fallback.classList.add('hidden');
             
             // Set fallback icon class
-            fallbackI.className = `text-8xl text-gray-300 animate-bounce fas ${r.iconFallback}`;
+            fallbackI.className = `text-8xl ${r.colorFallback} animate-bounce fas ${r.iconFallback}`;
 
             document.getElementById('modalDesc').innerText = r.desc;
             document.getElementById('modalTime').innerText = r.time;
@@ -838,6 +863,10 @@
 
             document.getElementById('recipeModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // RESET SCROLL PARA VISIBILIDADE TOTAL NO TOPO
+            document.getElementById('modalLeftCol').scrollTop = 0;
+            document.getElementById('modalRightCol').scrollTop = 0;
         }
 
         window.closeModal = function() {
