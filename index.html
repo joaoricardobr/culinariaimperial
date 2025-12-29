@@ -70,6 +70,11 @@
         video:fullscreen {
             object-fit: contain;
         }
+
+        /* Zoom Lightbox */
+        #zoomModal {
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-white min-h-screen flex flex-col">
@@ -121,10 +126,8 @@
                         </button>
                         <div id="loginLoading" class="w-8 h-8 rounded-full border-2 border-gray-300 border-t-red-600 animate-spin"></div>
                         
-                        <!-- Perfil com CORREÇÃO DE HOVER (Ponte Invisível) -->
                         <div id="userProfile" class="hidden relative group cursor-pointer h-10 flex items-center">
                             <img id="userPhoto" src="" alt="User" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover">
-                            
                             <!-- Ponte Invisível para manter hover -->
                             <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block z-50">
                                 <div class="bg-white rounded-xl shadow-xl py-2 border border-gray-100 animate-fade-in">
@@ -222,25 +225,30 @@
     </main>
 
     <!-- Modal de Detalhes -->
-    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-0 md:p-4 backdrop-blur-md transition-opacity">
         <div class="bg-white rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
             
-            <!-- Header Modal Imagem (com Fallback Icon Colorido) -->
-            <div class="relative h-64 md:h-80 shrink-0 bg-gray-200 group">
-                <img id="modalImage" src="" class="w-full h-full object-cover" alt="Receita" onerror="this.style.display='none'; document.getElementById('modalFallbackIcon').classList.remove('hidden');">
+            <!-- Header Modal Imagem (com Fallback Icon Colorido e Zoom) -->
+            <div class="relative h-64 md:h-80 shrink-0 bg-gray-200 group cursor-zoom-in" onclick="toggleZoom()">
+                <img id="modalImage" src="" class="w-full h-full object-cover transition duration-300" alt="Receita" onerror="this.style.display='none'; document.getElementById('modalFallbackIcon').classList.remove('hidden');">
                 
                 <!-- Ícone Animado Colorido de Fallback -->
-                <div id="modalFallbackIcon" class="hidden absolute inset-0 bg-gray-50 flex items-center justify-center">
+                <div id="modalFallbackIcon" class="hidden absolute inset-0 bg-gray-50 flex items-center justify-center pointer-events-none">
                      <i id="modalFallbackIconI" class="text-8xl animate-bounce drop-shadow-lg"></i>
                 </div>
 
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 
-                <button onclick="closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20">
+                <!-- Ícone de Zoom Overlay -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/30 p-4 rounded-full opacity-0 group-hover:opacity-100 transition duration-300 pointer-events-none">
+                    <i class="fas fa-search-plus text-white text-3xl"></i>
+                </div>
+                
+                <button onclick="event.stopPropagation(); closeModal()" class="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20">
                     <i class="fas fa-times text-lg"></i>
                 </button>
 
-                <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10">
+                <div class="absolute bottom-0 left-0 w-full p-6 text-white z-10 pointer-events-none">
                     <div class="flex items-center space-x-2 mb-2">
                         <span id="modalCategoryTag" class="px-2 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded shadow-sm">Categoria</span>
                         <div class="flex text-yellow-400 text-xs items-center bg-black/40 px-2 py-1 rounded" id="modalRating"></div>
@@ -250,12 +258,16 @@
             </div>
 
             <!-- Toolbar de Ação -->
-            <div class="bg-white border-b border-gray-100 px-6 py-3 flex justify-between items-center">
+            <div class="bg-white border-b border-gray-100 px-6 py-3 flex flex-wrap justify-between items-center gap-2">
                 <div class="flex space-x-6 text-sm text-gray-600">
                     <span class="flex items-center"><i class="far fa-clock mr-2 text-red-500"></i> <span id="modalTime" class="font-bold"></span></span>
                     <span class="flex items-center"><i class="fas fa-utensils mr-2 text-red-500"></i> <span id="modalFunction" class="font-bold"></span></span>
                 </div>
                 <div class="flex space-x-2">
+                    <!-- Botão Ouvir Receita (TTS) -->
+                    <button id="ttsBtn" onclick="toggleTTS()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-purple-50 text-purple-600 hover:bg-purple-100 transition text-sm font-bold" title="Ouvir Receita">
+                        <i class="fas fa-volume-high"></i> <span>Ouvir</span>
+                    </button>
                     <button onclick="shareRecipeFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition text-sm font-bold">
                         <i class="fas fa-share-alt"></i> <span>Compartilhar</span>
                     </button>
@@ -300,6 +312,13 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Zoom Lightbox -->
+    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[60] hidden flex items-center justify-center p-4" onclick="toggleZoom()">
+        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain shadow-2xl rounded-lg" alt="Zoom">
+        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300 focus:outline-none">&times;</button>
+        <p class="absolute bottom-5 text-white text-sm bg-black/50 px-3 py-1 rounded">Toque na tela ou ESC para fechar</p>
     </div>
 
     <!-- Scripts -->
@@ -813,6 +832,63 @@
 
         window.setEnergy = () => window.filterRecipes();
 
+        // --- TTS & ZOOM LOGIC ---
+        
+        let currentUtterance = null;
+
+        window.toggleTTS = () => {
+            if (currentUtterance) {
+                window.speechSynthesis.cancel();
+                currentUtterance = null;
+                // Reset button style
+                const btn = document.getElementById('ttsBtn');
+                btn.innerHTML = '<i class="fas fa-volume-high"></i> <span>Ouvir</span>';
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-purple-50', 'text-purple-600');
+                return;
+            }
+
+            const title = document.getElementById('modalTitle').innerText;
+            const desc = document.getElementById('modalDesc').innerText;
+            const ingredients = Array.from(document.querySelectorAll('#modalIngredients li')).map(li => li.innerText).join('. ');
+            const steps = Array.from(document.querySelectorAll('#modalSteps p')).map(p => p.innerText).join('. ');
+
+            const text = `${title}. ${desc}. Ingredientes: ${ingredients}. Modo de Preparo: ${steps}`;
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-BR';
+            
+            utterance.onend = () => {
+                currentUtterance = null;
+                const btn = document.getElementById('ttsBtn');
+                btn.innerHTML = '<i class="fas fa-volume-high"></i> <span>Ouvir</span>';
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-purple-50', 'text-purple-600');
+            };
+
+            window.speechSynthesis.speak(utterance);
+            currentUtterance = utterance;
+
+            // Active button style
+            const btn = document.getElementById('ttsBtn');
+            btn.innerHTML = '<i class="fas fa-stop"></i> <span>Parar</span>';
+            btn.classList.remove('bg-purple-50', 'text-purple-600');
+            btn.classList.add('bg-purple-600', 'text-white');
+        };
+
+        window.toggleZoom = () => {
+            const zoomModal = document.getElementById('zoomModal');
+            const zoomedImage = document.getElementById('zoomedImage');
+            const modalImage = document.getElementById('modalImage');
+
+            if (zoomModal.classList.contains('hidden')) {
+                zoomedImage.src = modalImage.src;
+                zoomModal.classList.remove('hidden');
+            } else {
+                zoomModal.classList.add('hidden');
+            }
+        };
+
         // --- MODAL ---
         window.openRecipe = function(id) {
             const r = window.allRecipes.find(x => x.id === id);
@@ -870,6 +946,9 @@
         }
 
         window.closeModal = function() {
+            // Stop TTS if running
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+            
             const videoEl = document.getElementById('modalVideo');
             if(videoEl) videoEl.pause();
             
@@ -905,6 +984,19 @@
         document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
         document.getElementById('recipeModal').addEventListener('click', (e) => { if(e.target.id === 'recipeModal') window.closeModal(); });
         
+        // Keydown para fechar com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const zoom = document.getElementById('zoomModal');
+                const modal = document.getElementById('recipeModal');
+                if (!zoom.classList.contains('hidden')) {
+                    toggleZoom();
+                } else if (!modal.classList.contains('hidden')) {
+                    window.closeModal();
+                }
+            }
+        });
+
         window.init();
     </script>
 </body>
