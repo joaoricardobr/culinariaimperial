@@ -59,6 +59,13 @@
 
         /* Estilo para abas do admin */
         .admin-tab.active { border-bottom: 2px solid #8B0000; color: #8B0000; background: white; }
+        
+        /* Modal Styles Refined */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.5);
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -319,7 +326,7 @@
         <div class="bg-cream rounded-none md:rounded-3xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative border border-stone-200">
             
             <!-- Header Modal Imagem -->
-            <div class="relative h-56 md:h-64 shrink-0 bg-stone-100 group cursor-zoom-in" onclick="window.toggleZoom()">
+            <div class="relative h-56 md:h-64 shrink-0 bg-stone-100 group">
                 <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('modalFallback').classList.remove('hidden')">
                 
                 <!-- Fallback Animado -->
@@ -332,7 +339,6 @@
 
                 <div class="absolute bottom-0 left-0 w-full p-8 text-white z-10 pointer-events-none">
                     <div class="flex items-center space-x-3 mb-2">
-                        <span id="modalCategoryTag" class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider rounded border border-white/30">Cat</span>
                         <div class="flex text-imperial-gold text-sm" id="modalRating"></div>
                     </div>
                     <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-xl text-shadow">Título</h2>
@@ -349,8 +355,8 @@
                     <button id="ttsBtn" onclick="window.toggleTTS()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition text-sm font-bold" title="Ouvir">
                         <i class="fas fa-volume-up"></i> <span class="hidden md:inline">Ouvir</span>
                     </button>
-                    <button onclick="window.toggleZoom()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition text-sm font-bold" title="Zoom">
-                        <i class="fas fa-search-plus"></i>
+                    <button onclick="window.toggleTextZoom()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition text-sm font-bold" title="Aumentar Texto">
+                        <i class="fas fa-font"></i>
                     </button>
                     <button onclick="window.shareRecipeFromModal()" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 transition text-sm font-bold" title="Compartilhar">
                         <i class="fas fa-share-alt"></i>
@@ -391,12 +397,6 @@
         </div>
     </div>
 
-    <!-- Zoom Lightbox -->
-    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[70] hidden flex items-center justify-center p-4" onclick="window.toggleZoom()">
-        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
-        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300">&times;</button>
-    </div>
-
     <!-- SCRIPT PRINCIPAL (Lógica UI, Dados, Admin) -->
     <script>
         // ESTADO GLOBAL
@@ -407,6 +407,7 @@
         window.isOffline = false;
         window.currentModalRecipeId = null;
         window.currentCategory = 'all';
+        window.textZoomLevel = 0; // 0=normal, 1=grande, 2=extra
 
         // Configuração de Categorias e Ícones Animados (Lordicon URLs)
         const categories = {
@@ -616,10 +617,7 @@
                         </button>
                     </div>
                     <div class="p-4 bg-white">
-                        <div class="flex justify-between items-center mb-2">
-                             <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider">${r.category}</p>
-                             <div class="text-[10px] text-stone-400 flex items-center"><i class="far fa-clock mr-1"></i>${r.time}</div>
-                        </div>
+                        <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider mb-1">${r.category}</p>
                         <h3 class="font-bold text-stone-800 text-sm leading-tight mb-2 font-serif group-hover:text-imperial-red transition line-clamp-2">${r.name}</h3>
                         <div class="flex items-center text-xs text-stone-500 pt-2 border-t border-stone-50">
                              <span class="flex items-center"><i class="fas fa-tag mr-1 text-orange-400"></i> ${r.func || 'Sabor'}</span>
@@ -775,6 +773,14 @@
 
             window.updateModalHeart(id);
             document.getElementById('recipeModal').classList.remove('hidden');
+            
+            // RESET SCROLL
+            document.getElementById('modalLeftCol').scrollTop = 0;
+            document.getElementById('modalRightCol').scrollTop = 0;
+            
+            // RESET TEXT ZOOM
+            window.textZoomLevel = 0;
+            window.applyTextZoom();
         };
 
         window.closeModal = () => {
@@ -795,7 +801,7 @@
         window.showSavedRecipes = () => window.setCategory('saved');
         window.resetApp = () => { window.setCategory('all'); document.getElementById('searchInput').value = ''; };
 
-        // --- TTS & ZOOM ---
+        // --- TTS & TEXT ZOOM ---
         let currentUtterance = null;
         window.toggleTTS = () => {
             if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; return; }
@@ -806,13 +812,35 @@
             currentUtterance = u;
         };
 
-        window.toggleZoom = () => {
-            const z = document.getElementById('zoomModal');
-            const i = document.getElementById('modalImage');
-            const zi = document.getElementById('zoomedImage');
-            if (z.classList.contains('hidden')) { zi.src = i.src; z.classList.remove('hidden'); }
-            else z.classList.add('hidden');
+        window.textZoomLevel = 0; // 0=normal, 1=medium, 2=large
+        window.toggleTextZoom = () => {
+            window.textZoomLevel = (window.textZoomLevel + 1) % 3;
+            window.applyTextZoom();
         };
+        
+        window.applyTextZoom = () => {
+             const ingList = document.getElementById('modalIngredients');
+             const steps = document.getElementById('modalSteps');
+             const desc = document.getElementById('modalDesc');
+             
+             // Remove all zoom classes
+             [ingList, steps, desc].forEach(el => el.classList.remove('text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl'));
+             
+             if(window.textZoomLevel === 0) { // Normal
+                 ingList.classList.add('text-sm');
+                 desc.classList.add('text-base');
+                 steps.classList.add('text-lg');
+             } else if(window.textZoomLevel === 1) { // Medium
+                 ingList.classList.add('text-base');
+                 desc.classList.add('text-lg');
+                 steps.classList.add('text-xl');
+             } else { // Large
+                 ingList.classList.add('text-lg');
+                 desc.classList.add('text-xl');
+                 steps.classList.add('text-2xl');
+             }
+        };
+
 
         // --- SHARE ---
         window.shareRecipeFromModal = () => {
