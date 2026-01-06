@@ -274,7 +274,7 @@
             <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0 border-b border-gray-800">
                 <div class="flex items-center">
                     <h2 class="text-xl font-bold flex items-center"><i class="fas fa-tools mr-3 text-imperial-red"></i> Painel Administrativo</h2>
-                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.3</span>
+                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.4</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- BOTÃO DE SAIR -->
@@ -1211,35 +1211,40 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // CONFIGURAÇÃO DINÂMICA
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
         let app, auth, db, user;
-
+        let firebaseConfig;
+        
+        // Inicialização "Blindada" contra erros de config
         try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } else {
+                throw new Error("Configuração Firebase não encontrada.");
+            }
+            
+            // Inicializa Firebase
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-            // INICIALIZAÇÃO DE AUTH ROBUSTA (Para corrigir erro de permissão - usa anônimo inicial para leitura)
+            // AUTH INIT
             const initAuth = async () => {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else if (!auth.currentUser) {
-                    // Mantém acesso anônimo para quem visita só para ver receitas
                     await signInAnonymously(auth);
                 }
             };
             initAuth();
 
+            // LISTENER
             onAuthStateChanged(auth, (u) => {
                 user = u;
-                // Admin se logado via Email (não anônimo)
                 window.isUserAdmin = !!u && !u.isAnonymous; 
                 window.updateAuthUI(u);
                 
-                if(u) window.subscribeData();
+                if(u) window.subscribeData(appId); // Pass appId safely
                 
                 // Atualiza Admin UI se estiver aberto
                 const authOverlay = document.getElementById('adminAuthOverlay');
@@ -1249,7 +1254,11 @@
                 }
             });
 
-        } catch(e) { console.log("Offline Mode", e); }
+        } catch(e) { 
+            console.warn("Modo Offline ativado por erro na inicialização:", e);
+            // Garante que a UI de loading suma mesmo com erro
+            window.updateAuthUI(null); 
+        }
 
         // Exports para Login Email/Senha
         window.handleEmailLogin = async () => {
@@ -1265,13 +1274,14 @@
             spinner.classList.remove('hidden');
 
             try {
+                if(!auth) throw new Error("Sistema offline. Login indisponível.");
                 await signInWithEmailAndPassword(auth, email, pass);
-                // Sucesso é tratado no onAuthStateChanged
             } catch(e) {
                 let msg = "Erro desconhecido.";
                 if(e.code === 'auth/wrong-password') msg = "Senha incorreta.";
                 else if(e.code === 'auth/user-not-found') msg = "Usuário não encontrado. Crie uma conta abaixo.";
                 else if(e.code === 'auth/invalid-email') msg = "Email inválido.";
+                else msg = e.message;
                 alert("Falha no Login: " + msg);
             } finally {
                 btnText.innerText = "Entrar com Email";
@@ -1287,6 +1297,7 @@
             if(pass.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
 
             try {
+                if(!auth) throw new Error("Sistema offline.");
                 await createUserWithEmailAndPassword(auth, email, pass);
                 alert("Conta criada com sucesso! Você está logado como Admin.");
             } catch(e) {
@@ -1297,34 +1308,33 @@
         };
 
         window.handleLogout = async () => { 
-            try { await signOut(auth); } catch(e){} 
+            try { if(auth) await signOut(auth); } catch(e){} 
             window.location.reload(); 
         };
 
         window.updateAuthUI = (u) => {
-            document.getElementById('loginLoading').classList.add('hidden');
+            const loadEl = document.getElementById('loginLoading');
+            if(loadEl) loadEl.classList.add('hidden');
+            
             if(u && !u.isAnonymous) {
-                // Usuário Real (Admin)
                 document.getElementById('loginBtn').classList.add('hidden');
                 document.getElementById('userProfile').classList.remove('hidden');
                 
-                // Fix: Handle null email gracefully
                 const safeEmail = u.email || 'admin'; 
                 const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Administrador');
 
                 document.getElementById('userPhoto').src = u.photoURL || `https://ui-avatars.com/api/?name=${safeEmail}&background=8B0000&color=fff`;
                 document.getElementById('userName').innerText = displayName;
             } else {
-                // Anônimo ou Deslogado
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
             }
         };
 
         // CAMINHOS DE COLEÇÃO CORRIGIDOS (artifacts/{appId}/...)
-        window.subscribeData = () => {
-            // Caminho Seguro: artifacts/APP_ID/public/data/recipes
-            const col = collection(db, 'artifacts', appId, 'public', 'data', 'recipes');
+        window.subscribeData = (currentAppId) => {
+            if(!db) return;
+            const col = collection(db, 'artifacts', currentAppId, 'public', 'data', 'recipes');
             
             onSnapshot(col, (snap) => {
                 window.firebaseRecipes = [];
@@ -1335,29 +1345,27 @@
             });
 
             if(user) {
-                // Caminho Seguro: artifacts/APP_ID/users/USER_ID/favorites
-                const favCol = collection(db, 'artifacts', appId, 'users', user.uid, 'favorites');
+                const favCol = collection(db, 'artifacts', currentAppId, 'users', user.uid, 'favorites');
                 onSnapshot(favCol, (snap) => {
                     window.savedRecipesSet.clear();
                     snap.forEach(d => window.savedRecipesSet.add(d.id));
                     window.updateSavedUI();
-                }, (error) => {
-                    console.error("Erro ao carregar favoritos:", error);
-                });
+                }, (error) => { console.error("Erro favoritos", error); });
             }
         };
 
         window.saveRecipeToFirebase = async (r) => {
-            if(!window.isUserAdmin) return alert("Apenas Admins logados podem salvar.");
-            // Caminho Seguro
-            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
+            if(!window.isUserAdmin || !db) return alert("Apenas Admins logados podem salvar (e verifique conexão).");
+            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const ref = doc(db, 'artifacts', currentAppId, 'public', 'data', 'recipes', r.id.toString());
             await setDoc(ref, r);
         };
 
         window.syncGeneratedToFirebase = async () => {
-            if(!window.isUserAdmin) return alert("Faça login para sincronizar.");
+            if(!window.isUserAdmin || !db) return alert("Faça login para sincronizar.");
             if(!confirm("Isso enviará suas receitas locais para o banco de dados. Continuar?")) return;
             
+            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
             const batchSize = 400;
             const chunks = [];
             for (let i = 0; i < window.finalRecipeList.length; i += batchSize) {
@@ -1367,8 +1375,7 @@
             for(const chunk of chunks) {
                 const batch = writeBatch(db);
                 chunk.forEach(r => {
-                    // Caminho Seguro
-                    const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
+                    const ref = doc(db, 'artifacts', currentAppId, 'public', 'data', 'recipes', r.id.toString());
                     batch.set(ref, r);
                 });
                 await batch.commit();
@@ -1377,9 +1384,9 @@
         };
 
         window.toggleSaveRecipeDB = async (id, isSaved) => {
-            if(!user) return;
-            // Caminho Seguro
-            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'favorites', id.toString());
+            if(!user || !db) return;
+            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const ref = doc(db, 'artifacts', currentAppId, 'users', user.uid, 'favorites', id.toString());
             if(isSaved) await setDoc(ref, { savedAt: new Date() });
             else await deleteDoc(ref);
         };
