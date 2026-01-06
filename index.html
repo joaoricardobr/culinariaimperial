@@ -108,14 +108,12 @@
                     </div>
 
                     <!-- Auth -->
-                    <div id="authContainer" class="relative">
+                    <div id="authContainer">
                         <!-- Botão modificado para abrir o modal de login (via admin panel overlay) -->
                         <button id="loginBtn" onclick="toggleAdminPanel()" class="hidden bg-imperial-red text-white hover:bg-red-800 font-bold py-2 px-4 rounded-full text-sm shadow transition">
-                            <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+                            <i class="fas fa-sign-in-alt mr-2"></i> Entrar / Admin
                         </button>
-                        
-                        <!-- Elemento de Loading que deve sumir -->
-                        <div id="loginLoading" class="text-xs text-gray-400 animate-pulse font-bold">Conectando...</div>
+                        <div id="loginLoading" class="text-xs text-gray-400 animate-pulse">Conectando...</div>
                         
                         <div id="userProfile" class="hidden relative group cursor-pointer">
                             <img id="userPhoto" src="" class="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover ring-2 ring-gray-100">
@@ -158,7 +156,7 @@
                 <h2 class="text-3xl font-bold text-stone-900 serif-font" id="currentCatTitle">Catálogo Completo</h2>
                 <p class="text-sm text-gray-500 mt-1 flex items-center">
                     <span id="dbStatus" class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                    <span id="dbStatusText">Sincronizado na Nuvem</span>
+                    Sincronizado na Nuvem
                 </p>
             </div>
             <span class="text-xs font-semibold bg-cream text-stone-600 px-3 py-1 rounded-full border border-stone-200" id="totalCount">Carregando...</span>
@@ -231,7 +229,7 @@
     <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-0 backdrop-blur-sm transition-all duration-300">
         <div class="bg-white rounded-none md:rounded-xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
             
-            <!-- AUTH OVERLAY - Email & Password & Google -->
+            <!-- AUTH OVERLAY - Email & Password -->
             <div id="adminAuthOverlay" class="absolute inset-0 bg-white/95 z-50 flex flex-col items-center justify-center hidden">
                 <div class="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full relative">
                     <button onclick="toggleAdminPanel()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fas fa-times"></i></button>
@@ -239,19 +237,7 @@
                     <div class="text-center mb-6">
                         <i class="fas fa-user-shield text-4xl text-imperial-red mb-3"></i>
                         <h3 class="text-xl font-bold text-gray-800">Login Seguro</h3>
-                        <p class="text-sm text-gray-500">Acesse para salvar e gerenciar</p>
-                    </div>
-
-                    <!-- Botão Google -->
-                    <button onclick="handleGoogleLogin()" class="w-full mb-4 bg-white border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition shadow-sm flex justify-center items-center">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-3" alt="Google">
-                        Entrar com Google
-                    </button>
-
-                    <div class="relative flex py-2 items-center mb-4">
-                        <div class="flex-grow border-t border-gray-200"></div>
-                        <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">OU USE EMAIL</span>
-                        <div class="flex-grow border-t border-gray-200"></div>
+                        <p class="text-sm text-gray-500">Acesse para gerenciar receitas</p>
                     </div>
 
                     <!-- Email/Senha Form -->
@@ -268,6 +254,12 @@
                             <span id="btnLoginText">Entrar com Email</span>
                             <i id="authSpinner" class="fas fa-circle-notch fa-spin ml-2 hidden"></i>
                         </button>
+                    </div>
+
+                    <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-gray-200"></div>
+                        <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Não tem conta?</span>
+                        <div class="flex-grow border-t border-gray-200"></div>
                     </div>
                     
                     <div class="text-center mt-4">
@@ -330,6 +322,7 @@
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-400 mb-1">CHAVE API (Opcional / Salva)</label>
                             <input type="password" id="apiKeyInput" value="pk_9ufESLR0VsgQrg4U" class="w-full p-2 bg-white border rounded text-xs text-gray-500 font-mono">
+                            <p class="text-[10px] text-gray-400 mt-1">Chave API preservada para backend customizado. O padrão usa Pollinations Public API.</p>
                         </div>
 
                         <button onclick="generateRecipeAI()" id="btnGenerateAI" class="w-full magic-btn-gradient text-white py-4 rounded-lg font-bold shadow-lg hover:opacity-90 transition transform active:scale-95 flex justify-center items-center">
@@ -403,12 +396,12 @@
                             </div>
                         </div>
                         <button onclick="saveRecipe()" class="w-full mt-6 bg-green-600 text-white py-4 rounded font-bold hover:bg-green-700 shadow-lg transform active:scale-95 transition flex justify-center items-center">
-                            <i class="fas fa-save mr-2"></i> Salvar Receita
+                            <i class="fas fa-save mr-2"></i> Salvar Receita no Banco de Dados
                         </button>
                     </div>
                 </div>
 
-                <!-- TAB: Gerenciar Receitas -->
+                <!-- TAB: Gerenciar Receitas (REFORMULADA) -->
                 <div id="tab-manage" class="admin-content hidden flex flex-col h-full">
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full">
                         
@@ -594,6 +587,54 @@
             view: 'list', // 'list' | 'grid'
         };
 
+        // --- DEFINIÇÕES DE UI GLOBAIS (Antes do Módulo Firebase) ---
+        // Estas funções são definidas aqui para garantir que existam mesmo se o Firebase falhar.
+
+        window.updateAuthUI = (u) => {
+            const loadEl = document.getElementById('loginLoading');
+            if(loadEl) loadEl.classList.add('hidden');
+            
+            if(u && !u.isAnonymous) {
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                
+                const safeEmail = u.email || 'admin'; 
+                const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Administrador');
+
+                const photoURL = u.photoURL || `https://ui-avatars.com/api/?name=${safeEmail}&background=8B0000&color=fff`;
+                const imgEl = document.getElementById('userPhoto');
+                if(imgEl) imgEl.src = photoURL;
+                
+                const nameEl = document.getElementById('userName');
+                if(nameEl) nameEl.innerText = displayName;
+            } else {
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.getElementById('userProfile').classList.add('hidden');
+            }
+        };
+
+        window.updateModalHeart = (id) => {
+             const btn = document.getElementById('modalSaveBtn');
+             if(!btn) return;
+             const icon = btn.querySelector('i');
+             const isFav = window.savedRecipesSet.has(String(id));
+             icon.className = isFav ? 'fas fa-heart text-xl text-imperial-red' : 'far fa-heart text-xl';
+             btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-imperial-red' : 'bg-stone-100 text-stone-600'}`;
+        };
+
+        window.updateSavedUI = () => {
+            const countEl = document.getElementById('savedCountDropdown');
+            if(countEl) countEl.innerText = window.savedRecipesSet.size;
+            window.filterRecipes();
+            if(window.currentModalRecipeId) window.updateModalHeart(window.currentModalRecipeId);
+        };
+
+        // Placeholders para funções do Firebase (serão sobrescritas se o módulo carregar)
+        window.saveRecipeToFirebase = async (r) => { console.log("Modo Offline: Receita salva localmente."); };
+        window.syncGeneratedToFirebase = async () => { alert("Funcionalidade indisponível offline."); };
+        window.toggleSaveRecipeDB = async (id, isSaved) => { /* Offline: Faz nada */ };
+        window.subscribeData = () => {}; 
+
         // Categorias e Metadados
         const categories = {
             'brasileira': { label: '🇧🇷 Brasil', icon: 'https://cdn.lordicon.com/qhgmphtg.json', flavor: 'Tradicional' }, 
@@ -721,6 +762,7 @@
             };
             
             const cats = Object.keys(categories);
+            // Limit slightly to keep performance ok in browser
             const perCat = 60; 
             
             cats.forEach(cat => {
@@ -775,10 +817,10 @@
                 const el = document.createElement('div');
                 el.className = "bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden card-hover cursor-pointer group relative animate-fade-in";
                 el.style.animationDelay = `${i*0.02}s`;
-                // IMPORTANTE: Definir o onclick para usar o ID globalmente
                 el.onclick = () => window.openRecipe(r.id);
 
                 const isFav = window.savedRecipesSet.has(String(r.id));
+                // Fallback inteligente para imagem: Se não tiver imagem definida, usa o DEFAULT
                 const displayImage = (r.image && r.image.trim() !== "") ? r.image : window.DEFAULT_IMAGE;
 
                 el.innerHTML = `
@@ -836,6 +878,8 @@
                 } else {
                     authOverlay.classList.add('hidden');
                 }
+                
+                // Inicializa a lista admin se ainda não foi renderizada corretamente
                 window.renderAdminListLogic();
             } else {
                 modal.classList.add('hidden');
@@ -870,7 +914,7 @@
             status.classList.remove('hidden');
 
             try {
-                // 1. Gera Texto
+                // 1. Gera Texto usando Pollinations Text API (Model: OpenAI)
                 const systemPrompt = `Você é um chef gourmet especialista. Crie uma receita completa baseada em: "${prompt}". 
                 Retorne APENAS um JSON válido (sem markdown, sem blocos de código) com a seguinte estrutura:
                 {
@@ -883,6 +927,7 @@
                     "func": "perfil de sabor ex: Picante, Doce, Leve"
                 }`;
 
+                // Chamada à API de Texto do Pollinations
                 const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemPrompt)}?model=openai`);
                 const textData = await response.text();
                 
@@ -892,12 +937,13 @@
 
                 status.innerText = "Texto gerado! Criando imagem ilustrativa...";
 
-                // 2. Preenche o Formulário
+                // 2. Preenche o Formulário na Aba "Adicionar"
                 document.getElementById('addName').value = recipeData.name;
                 document.getElementById('addDesc').value = recipeData.desc;
                 document.getElementById('addIng').value = recipeData.ingredients.join('\n');
                 document.getElementById('addSteps').value = recipeData.steps.join('\n');
                 
+                // Tenta selecionar categoria correta, fallback para 'principal'
                 const select = document.getElementById('addCategory');
                 if(categories[recipeData.category]) {
                     select.value = recipeData.category;
@@ -905,10 +951,11 @@
                     select.value = 'principal';
                 }
 
-                // 3. Gera Imagem
+                // 3. Gera Imagem usando Pollinations Image API
                 const imageUrl = getPollinationsImage(`${recipeData.name} ${recipeData.desc}`);
                 document.getElementById('addImage').value = imageUrl;
                 
+                // Atualiza Preview
                 const imgPreview = document.getElementById('imagePreview');
                 imgPreview.src = imageUrl;
                 imgPreview.classList.remove('opacity-50');
@@ -955,6 +1002,7 @@
             const cat = document.getElementById('addCategory').value;
             const imgInput = document.getElementById('addImage').value;
             
+            // Lógica do botão mágico + imagem padrão se vazio
             const finalImage = (imgInput && imgInput.trim() !== "") ? imgInput : window.DEFAULT_IMAGE;
 
             const newRecipe = {
@@ -970,6 +1018,7 @@
                 func: categories[cat]?.flavor || "Especial"
             };
             
+            // Salva Local e Firebase
             window.firebaseRecipes.unshift(newRecipe);
             window.mergeAndRender();
             window.saveRecipeToFirebase(newRecipe);
@@ -988,15 +1037,16 @@
             window.switchAdminTab('add');
         };
 
-        // --- GESTÃO DE DADOS ---
+        // --- GESTÃO DE DADOS (ADMIN AVANÇADO) ---
         window.mergeAndRender = () => {
             const fbIds = new Set(window.firebaseRecipes.map(r => r.id));
             const uniqueGen = window.generatedRecipes.filter(r => !fbIds.has(r.id));
             window.finalRecipeList = [...window.firebaseRecipes, ...uniqueGen];
             window.filterRecipes();
-            window.renderAdminListLogic();
+            window.renderAdminListLogic(); // Atualiza a lista admin se aberta
         }
 
+        // Funções de Controle da Lista Admin
         window.setAdminView = (mode) => {
             window.adminState.view = mode;
             document.getElementById('btnViewList').className = `px-3 py-1 rounded transition ${mode === 'list' ? 'bg-gray-100 text-imperial-red border-gray-300' : 'text-gray-400 hover:bg-gray-50'}`;
@@ -1022,6 +1072,7 @@
         };
 
         window.renderAdminListLogic = () => {
+            // Container references
             const tableEl = document.getElementById('adminTableEl');
             const gridEl = document.getElementById('adminGridEl');
             const tbody = document.getElementById('adminRecipeTbody');
@@ -1029,16 +1080,19 @@
             const btnPrev = document.getElementById('btnAdminPrev');
             const btnNext = document.getElementById('btnAdminNext');
             
-            if(!tbody) return; 
+            if(!tbody) return; // Se a aba não estiver ativa/criada
 
+            // 1. Filter
             const term = document.getElementById('adminSearch').value.toLowerCase();
             window.filteredAdminList = window.finalRecipeList.filter(r => (r.name || "").toLowerCase().includes(term));
             
+            // 2. Pagination Logic
             const total = window.filteredAdminList.length;
             const perPage = window.adminState.perPage;
             const currentPage = window.adminState.page;
             const totalPages = Math.ceil(total / perPage);
             
+            // Adjust page if out of bounds
             if (currentPage > totalPages && totalPages > 0) window.adminState.page = totalPages;
             if (currentPage < 1) window.adminState.page = 1;
             
@@ -1046,6 +1100,7 @@
             const end = start + perPage;
             const paginatedItems = window.filteredAdminList.slice(start, end);
 
+            // 3. Update Controls
             pageInfo.innerText = total > 0 
                 ? `Mostrando ${start + 1}-${Math.min(end, total)} de ${total}` 
                 : 'Nenhum resultado';
@@ -1054,6 +1109,7 @@
 
             document.getElementById('adminTotalCount').innerText = window.finalRecipeList.length;
 
+            // 4. Render View
             if (window.adminState.view === 'list') {
                 tableEl.classList.remove('hidden');
                 gridEl.classList.add('hidden');
@@ -1076,6 +1132,7 @@
                 });
                 tbody.innerHTML = html;
             } else {
+                // Grid View
                 tableEl.classList.add('hidden');
                 gridEl.classList.remove('hidden');
                 
@@ -1094,6 +1151,9 @@
                 gridEl.innerHTML = html;
             }
         };
+
+        // Legacy function override to do nothing as we use renderAdminListLogic now
+        window.renderAdminList = () => {};
 
         window.downloadBackup = () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.finalRecipeList));
@@ -1119,9 +1179,7 @@
         };
 
         // --- GLOBAL START ---
-        // 1. Gera dados falsos imediatamente para garantir que o modal e o site funcionem
-        // mesmo se o Firebase falhar.
-        window.populate(); 
+        window.populate(); // RESTAURADO: Gera 1000 receitas
         window.mergeAndRender();
 
         document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
@@ -1129,14 +1187,8 @@
 
         // --- MODAL LÓGICA ---
         window.openRecipe = (id) => {
-            // Garante que o ID seja comparável (string/number)
             const r = window.finalRecipeList.find(x => x.id == id);
-            
-            if(!r) {
-                console.error("Receita não encontrada para ID:", id);
-                return;
-            }
-            
+            if(!r) return;
             window.currentModalRecipeId = id;
             document.getElementById('modalTitle').innerText = r.name;
             
@@ -1159,7 +1211,7 @@
             document.getElementById('modalTime').innerText = r.time || "30 min";
             document.getElementById('modalFunction').innerText = r.func || "Saboroso";
 
-            if(window.updateModalHeart) window.updateModalHeart(id);
+            window.updateModalHeart(id);
             document.getElementById('recipeModal').classList.remove('hidden');
         };
 
@@ -1189,6 +1241,7 @@
         };
 
         window.toggleTextZoom = () => {
+             // Simples toggle de classes
              const el = document.getElementById('modalSteps');
              el.classList.toggle('text-lg');
              el.classList.toggle('text-2xl');
@@ -1198,34 +1251,18 @@
             const url = window.location.href;
             navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
         };
-
-        // --- FAILSAFE PARA O LOADING ---
-        // Se o Firebase não carregar em 3 segundos, remove a mensagem "Conectando..."
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loginLoading');
-                if(loader && !loader.classList.contains('hidden')) {
-                    loader.innerText = "Modo Offline";
-                    setTimeout(() => loader.classList.add('hidden'), 2000);
-                    document.getElementById('loginBtn').classList.remove('hidden');
-                    document.getElementById('dbStatus').classList.remove('bg-green-500');
-                    document.getElementById('dbStatus').classList.add('bg-gray-400');
-                    document.getElementById('dbStatusText').innerText = "Modo Local";
-                }
-            }, 3000);
-        });
-
     </script>
 
     <!-- Firebase Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let app, auth, db, user;
         let firebaseConfig;
         
+        // Inicialização "Blindada" contra erros de config
         try {
             if (typeof __firebase_config !== 'undefined') {
                 firebaseConfig = JSON.parse(__firebase_config);
@@ -1255,8 +1292,9 @@
                 window.isUserAdmin = !!u && !u.isAnonymous; 
                 window.updateAuthUI(u);
                 
-                if(u) window.subscribeData(appId);
+                if(u) window.subscribeData(appId); // Pass appId safely
                 
+                // Atualiza Admin UI se estiver aberto
                 const authOverlay = document.getElementById('adminAuthOverlay');
                 if(authOverlay) {
                     if(window.isUserAdmin) authOverlay.classList.add('hidden');
@@ -1264,23 +1302,68 @@
                 }
             });
 
+            // Sobrescrevendo placeholders com funções reais
+            window.saveRecipeToFirebase = async (r) => {
+                if(!window.isUserAdmin || !db) return alert("Apenas Admins logados podem salvar (e verifique conexão).");
+                const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
+                await setDoc(ref, r);
+            };
+
+            window.syncGeneratedToFirebase = async () => {
+                if(!window.isUserAdmin || !db) return alert("Faça login para sincronizar.");
+                if(!confirm("Isso enviará suas receitas locais para o banco de dados. Continuar?")) return;
+                
+                const batchSize = 400;
+                const chunks = [];
+                for (let i = 0; i < window.finalRecipeList.length; i += batchSize) {
+                    chunks.push(window.finalRecipeList.slice(i, i + batchSize));
+                }
+
+                for(const chunk of chunks) {
+                    const batch = writeBatch(db);
+                    chunk.forEach(r => {
+                        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
+                        batch.set(ref, r);
+                    });
+                    await batch.commit();
+                }
+                alert("Sincronização completa!");
+            };
+
+            window.toggleSaveRecipeDB = async (id, isSaved) => {
+                if(!user || !db) return;
+                const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'favorites', id.toString());
+                if(isSaved) await setDoc(ref, { savedAt: new Date() });
+                else await deleteDoc(ref);
+            };
+
+            window.subscribeData = (currentAppId) => {
+                if(!db) return;
+                const col = collection(db, 'artifacts', currentAppId, 'public', 'data', 'recipes');
+                
+                onSnapshot(col, (snap) => {
+                    window.firebaseRecipes = [];
+                    snap.forEach(d => window.firebaseRecipes.push({id: d.id, ...d.data()}));
+                    window.mergeAndRender();
+                }, (error) => {
+                    console.error("Erro ao carregar receitas:", error);
+                });
+
+                if(user) {
+                    const favCol = collection(db, 'artifacts', currentAppId, 'users', user.uid, 'favorites');
+                    onSnapshot(favCol, (snap) => {
+                        window.savedRecipesSet.clear();
+                        snap.forEach(d => window.savedRecipesSet.add(d.id));
+                        window.updateSavedUI();
+                    }, (error) => { console.error("Erro favoritos", error); });
+                }
+            };
+
         } catch(e) { 
-            console.warn("Modo Offline ativado:", e);
+            console.warn("Modo Offline ativado por erro na inicialização:", e);
+            // Garante que a UI de loading suma mesmo com erro
             window.updateAuthUI(null); 
         }
-
-        // Login com Google
-        window.handleGoogleLogin = async () => {
-            if (!auth) return alert("Firebase não configurado.");
-            const provider = new GoogleAuthProvider();
-            try {
-                const result = await signInWithPopup(auth, provider);
-                // Listener handle resto
-            } catch (error) {
-                console.error(error);
-                alert("Erro ao logar com Google: " + error.message);
-            }
-        };
 
         // Exports para Login Email/Senha
         window.handleEmailLogin = async () => {
@@ -1291,6 +1374,7 @@
 
             if(!email || !pass) return alert("Por favor, preencha email e senha.");
             
+            // UI Loading
             btnText.innerText = "Entrando...";
             spinner.classList.remove('hidden');
 
@@ -1300,7 +1384,8 @@
             } catch(e) {
                 let msg = "Erro desconhecido.";
                 if(e.code === 'auth/wrong-password') msg = "Senha incorreta.";
-                else if(e.code === 'auth/user-not-found') msg = "Usuário não encontrado.";
+                else if(e.code === 'auth/user-not-found') msg = "Usuário não encontrado. Crie uma conta abaixo.";
+                else if(e.code === 'auth/invalid-email') msg = "Email inválido.";
                 else msg = e.message;
                 alert("Falha no Login: " + msg);
             } finally {
@@ -1309,117 +1394,27 @@
             }
         };
 
+        // Registro Explicito
         window.handleRegister = async () => {
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPass').value;
-            if(!email || !pass) return alert("Preencha email e senha.");
+            if(!email || !pass) return alert("Preencha email e senha para criar conta.");
             if(pass.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
 
             try {
                 if(!auth) throw new Error("Sistema offline.");
                 await createUserWithEmailAndPassword(auth, email, pass);
-                alert("Conta criada com sucesso!");
+                alert("Conta criada com sucesso! Você está logado como Admin.");
             } catch(e) {
-                alert("Erro ao Criar Conta: " + e.message);
+                let msg = e.message;
+                if(e.code === 'auth/email-already-in-use') msg = "Este email já está cadastrado.";
+                alert("Erro ao Criar Conta: " + msg);
             }
         };
 
         window.handleLogout = async () => { 
             try { if(auth) await signOut(auth); } catch(e){} 
             window.location.reload(); 
-        };
-
-        window.updateAuthUI = (u) => {
-            const loadEl = document.getElementById('loginLoading');
-            if(loadEl) loadEl.classList.add('hidden');
-            
-            if(u && !u.isAnonymous) {
-                document.getElementById('loginBtn').classList.add('hidden');
-                document.getElementById('userProfile').classList.remove('hidden');
-                
-                const safeEmail = u.email || 'admin'; 
-                const displayName = u.displayName || safeEmail.split('@')[0];
-
-                document.getElementById('userPhoto').src = u.photoURL || `https://ui-avatars.com/api/?name=${safeEmail}&background=8B0000&color=fff`;
-                document.getElementById('userName').innerText = displayName;
-            } else {
-                document.getElementById('loginBtn').classList.remove('hidden');
-                document.getElementById('userProfile').classList.add('hidden');
-            }
-        };
-
-        window.subscribeData = (currentAppId) => {
-            if(!db) return;
-            const col = collection(db, 'artifacts', currentAppId, 'public', 'data', 'recipes');
-            
-            onSnapshot(col, (snap) => {
-                window.firebaseRecipes = [];
-                snap.forEach(d => window.firebaseRecipes.push({id: d.id, ...d.data()}));
-                window.mergeAndRender();
-            }, (error) => {
-                console.error("Erro ao carregar receitas:", error);
-            });
-
-            if(user) {
-                const favCol = collection(db, 'artifacts', currentAppId, 'users', user.uid, 'favorites');
-                onSnapshot(favCol, (snap) => {
-                    window.savedRecipesSet.clear();
-                    snap.forEach(d => window.savedRecipesSet.add(d.id));
-                    window.updateSavedUI();
-                }, (error) => { console.error("Erro favoritos", error); });
-            }
-        };
-
-        window.saveRecipeToFirebase = async (r) => {
-            if(!window.isUserAdmin || !db) return alert("Apenas Admins logados podem salvar.");
-            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const ref = doc(db, 'artifacts', currentAppId, 'public', 'data', 'recipes', r.id.toString());
-            await setDoc(ref, r);
-        };
-
-        window.syncGeneratedToFirebase = async () => {
-            if(!window.isUserAdmin || !db) return alert("Faça login para sincronizar.");
-            if(!confirm("Isso enviará suas receitas locais para o banco de dados. Continuar?")) return;
-            
-            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const batchSize = 400;
-            const chunks = [];
-            for (let i = 0; i < window.finalRecipeList.length; i += batchSize) {
-                chunks.push(window.finalRecipeList.slice(i, i + batchSize));
-            }
-
-            for(const chunk of chunks) {
-                const batch = writeBatch(db);
-                chunk.forEach(r => {
-                    const ref = doc(db, 'artifacts', currentAppId, 'public', 'data', 'recipes', r.id.toString());
-                    batch.set(ref, r);
-                });
-                await batch.commit();
-            }
-            alert("Sincronização completa!");
-        };
-
-        window.toggleSaveRecipeDB = async (id, isSaved) => {
-            if(!user || !db) return;
-            const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-            const ref = doc(db, 'artifacts', currentAppId, 'users', user.uid, 'favorites', id.toString());
-            if(isSaved) await setDoc(ref, { savedAt: new Date() });
-            else await deleteDoc(ref);
-        };
-
-        window.updateSavedUI = () => {
-            document.getElementById('savedCountDropdown').innerText = window.savedRecipesSet.size;
-            window.filterRecipes();
-            if(window.currentModalRecipeId) window.updateModalHeart(window.currentModalRecipeId);
-        };
-
-        window.updateModalHeart = (id) => {
-             const btn = document.getElementById('modalSaveBtn');
-             if(!btn) return;
-             const icon = btn.querySelector('i');
-             const isFav = window.savedRecipesSet.has(String(id));
-             icon.className = isFav ? 'fas fa-heart text-xl text-imperial-red' : 'far fa-heart text-xl';
-             btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-imperial-red' : 'bg-stone-100 text-stone-600'}`;
         };
     </script>
 </body>
