@@ -66,6 +66,19 @@
             backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255,255,255,0.5);
         }
+
+        .magic-btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Grid View Admin Styles */
+        .admin-grid-card {
+            transition: transform 0.2s;
+        }
+        .admin-grid-card:hover {
+            transform: scale(1.02);
+            border-color: #8B0000;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -96,8 +109,8 @@
 
                     <!-- Auth -->
                     <div id="authContainer">
-                        <button id="loginBtn" onclick="handleLogin()" class="hidden bg-imperial-red text-white hover:bg-red-800 font-bold py-2 px-4 rounded-full text-sm shadow transition">
-                            <i class="fab fa-google mr-2"></i> Entrar
+                        <button id="loginBtn" onclick="toggleAdminPanel()" class="hidden bg-imperial-red text-white hover:bg-red-800 font-bold py-2 px-4 rounded-full text-sm shadow transition">
+                            <i class="fas fa-user mr-2"></i> Entrar
                         </button>
                         <div id="loginLoading" class="text-xs text-gray-400 animate-pulse">Conectando...</div>
                         
@@ -168,14 +181,8 @@
                         <h3 class="text-xl font-bold text-stone-100 serif-font">Enciclopédia Imperial</h3>
                     </div>
                     <p class="text-sm text-stone-400 mb-6 leading-relaxed">
-                        Sua fonte definitiva de receitas globais. Da culinária chinesa milenar aos clássicos brasileiros, explorando sabores e tradições.
+                        Sua fonte definitiva de receitas globais. Da culinária chinesa milenar aos clássicos brasileiros, explorando sabores e tradições com ajuda da IA.
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-youtube text-xl"></i></a>
-                        <a href="#" class="text-stone-500 hover:text-white transition transform hover:scale-110"><i class="fab fa-pinterest text-xl"></i></a>
-                    </div>
                 </div>
 
                 <!-- Categorias -->
@@ -185,7 +192,6 @@
                         <li><a href="#" onclick="window.setCategory('brasileira')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Receitas Brasileiras</a></li>
                         <li><a href="#" onclick="window.setCategory('chinesa')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Receitas Chinesas</a></li>
                         <li><a href="#" onclick="window.setCategory('sobremesa')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Doces & Sobremesas</a></li>
-                        <li><a href="#" onclick="window.setCategory('medicinal')" class="hover:text-imperial-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2 opacity-50"></i> Saúde & Bem-estar</a></li>
                     </ul>
                 </div>
 
@@ -193,8 +199,6 @@
                 <div>
                     <h4 class="text-white font-bold mb-6 uppercase text-xs tracking-widest border-b border-stone-800 pb-2 inline-block">Institucional</h4>
                     <ul class="space-y-3 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Sobre Nós</a></li>
-                        <li><a href="#" class="hover:text-white transition">Política de Privacidade</a></li>
                         <li><a href="#" class="hover:text-white transition">Termos de Uso</a></li>
                         <li><a href="#" onclick="toggleAdminPanel()" class="text-stone-600 hover:text-imperial-red transition text-xs"><i class="fas fa-lock mr-1"></i> Área Administrativa</a></li>
                     </ul>
@@ -219,14 +223,60 @@
 
     <!-- PAINEL ADMINISTRATIVO (Modal) -->
     <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-0 backdrop-blur-sm transition-all duration-300">
-        <div class="bg-white rounded-none md:rounded-xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in">
+        <div class="bg-white rounded-none md:rounded-xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
+            
+            <!-- AUTH OVERLAY - Email & Password -->
+            <div id="adminAuthOverlay" class="absolute inset-0 bg-white/95 z-50 flex flex-col items-center justify-center hidden">
+                <div class="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full">
+                    <div class="text-center mb-6">
+                        <i class="fas fa-lock text-4xl text-imperial-red mb-3"></i>
+                        <h3 class="text-xl font-bold text-gray-800">Acesso Restrito</h3>
+                        <p class="text-sm text-gray-500">Faça login para gerenciar a Enciclopédia</p>
+                    </div>
+
+                    <!-- Email/Senha Form -->
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">EMAIL</label>
+                            <input type="email" id="authEmail" class="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-imperial-red outline-none text-sm" placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">SENHA</label>
+                            <input type="password" id="authPass" class="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-imperial-red outline-none text-sm" placeholder="••••••••">
+                        </div>
+                        <button onclick="handleEmailLogin()" class="w-full bg-stone-800 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-lg">
+                            Entrar com Email
+                        </button>
+                    </div>
+
+                    <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-gray-200"></div>
+                        <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">OU</span>
+                        <div class="flex-grow border-t border-gray-200"></div>
+                    </div>
+
+                    <button onclick="handleGoogleLogin()" class="w-full mt-4 bg-white border border-gray-300 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">
+                        <i class="fab fa-google mr-2 text-red-500"></i> Google
+                    </button>
+                    
+                    <div class="text-center mt-4">
+                        <a href="#" onclick="handleRegister()" class="text-xs text-imperial-red hover:underline">Criar conta nova</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- Admin Header -->
             <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0 border-b border-gray-800">
                 <div class="flex items-center">
                     <h2 class="text-xl font-bold flex items-center"><i class="fas fa-tools mr-3 text-imperial-red"></i> Painel Administrativo</h2>
-                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.0 Fullscreen</span>
+                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.2</span>
                 </div>
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-4">
+                    <!-- BOTÃO DE SAIR -->
+                    <button onclick="handleLogout()" class="text-red-400 hover:text-red-500 transition text-sm font-bold flex items-center border border-gray-700 px-3 py-1 rounded hover:bg-gray-800">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                    </button>
+                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
                     <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-white transition"><i class="fas fa-compress text-xl"></i></button>
                     <button onclick="toggleAdminPanel()" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-times text-2xl"></i></button>
                 </div>
@@ -234,17 +284,14 @@
 
             <!-- Admin Tabs -->
             <div class="flex border-b border-gray-200 bg-gray-50 shrink-0 overflow-x-auto">
-                <button onclick="switchAdminTab('add')" id="btn-tab-add" class="admin-tab active flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
-                    <i class="fas fa-plus-circle mr-2"></i> Adicionar
+                <button onclick="switchAdminTab('magic')" id="btn-tab-magic" class="admin-tab active flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4 magic-text-gradient">
+                    <i class="fas fa-wand-magic-sparkles mr-2 text-purple-600"></i> IA & Pollinations
+                </button>
+                <button onclick="switchAdminTab('add')" id="btn-tab-add" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
+                    <i class="fas fa-plus-circle mr-2"></i> Adicionar/Editar
                 </button>
                 <button onclick="switchAdminTab('manage')" id="btn-tab-manage" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
                     <i class="fas fa-list mr-2"></i> Gerenciar (Sync)
-                </button>
-                <button onclick="switchAdminTab('magic')" id="btn-tab-magic" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
-                    <i class="fas fa-magic mr-2"></i> Mágico
-                </button>
-                <button onclick="switchAdminTab('bulk')" id="btn-tab-bulk" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
-                    <i class="fas fa-file-import mr-2"></i> Importar
                 </button>
                 <button onclick="switchAdminTab('backup')" id="btn-tab-backup" class="admin-tab flex-1 py-4 text-sm font-bold text-gray-600 hover:bg-white focus:outline-none whitespace-nowrap px-4">
                     <i class="fas fa-database mr-2"></i> Backup
@@ -254,9 +301,53 @@
             <!-- Admin Content -->
             <div class="p-6 overflow-y-auto bg-gray-50 flex-grow">
                 
+                <!-- TAB: Gerador Mágico (Pollinations) -->
+                <div id="tab-magic" class="admin-content space-y-4">
+                    <div class="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl border border-purple-100 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-purple-900 text-lg"><i class="fas fa-robot mr-2"></i> Gerador de Receitas com IA</h3>
+                            <div class="text-xs text-gray-500">Powered by Pollinations.ai</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">O QUE VOCÊ QUER CRIAR?</label>
+                            <input type="text" id="magicPrompt" class="w-full p-4 text-lg border-2 border-purple-200 rounded-lg focus:border-purple-500 focus:ring-0 outline-none" placeholder="Ex: Uma lasanha de berinjela vegetariana muito cremosa...">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-400 mb-1">CHAVE API (Opcional / Salva)</label>
+                            <input type="password" id="apiKeyInput" value="pk_9ufESLR0VsgQrg4U" class="w-full p-2 bg-white border rounded text-xs text-gray-500 font-mono">
+                            <p class="text-[10px] text-gray-400 mt-1">Chave API preservada para backend customizado. O padrão usa Pollinations Public API.</p>
+                        </div>
+
+                        <button onclick="generateRecipeAI()" id="btnGenerateAI" class="w-full magic-btn-gradient text-white py-4 rounded-lg font-bold shadow-lg hover:opacity-90 transition transform active:scale-95 flex justify-center items-center">
+                            <span id="aiBtnText"><i class="fas fa-wand-magic mr-2"></i> Criar Receita Mágica</span>
+                            <i id="aiSpinner" class="fas fa-circle-notch fa-spin ml-2 hidden"></i>
+                        </button>
+
+                        <div id="aiStatus" class="mt-4 text-center text-sm font-medium text-purple-700 hidden">
+                            Processando...
+                        </div>
+                    </div>
+
+                    <!-- Manual Paste Fallback -->
+                    <div class="mt-8 pt-8 border-t border-gray-200">
+                        <h4 class="text-sm font-bold text-gray-500 mb-2">Importação Manual de Texto</h4>
+                        <textarea id="magicPaste" class="w-full h-24 p-4 border rounded text-sm bg-white" placeholder="Cole o texto de uma receita aqui para tentar extrair dados automaticamente..."></textarea>
+                        <button onclick="parseMagicText()" class="mt-2 bg-gray-200 text-gray-700 px-4 py-1 rounded text-xs font-bold hover:bg-gray-300">
+                            Processar Texto Manualmente
+                        </button>
+                    </div>
+                </div>
+
                 <!-- TAB: Adicionar Manual -->
-                <div id="tab-add" class="admin-content space-y-4">
+                <div id="tab-add" class="admin-content hidden space-y-4">
                     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b">
+                            <h3 class="font-bold text-gray-800">Editor de Receita</h3>
+                            <button onclick="clearForm()" class="text-xs text-red-500 hover:underline">Limpar Formulário</button>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div class="col-span-2">
                                 <label class="block text-xs font-bold text-gray-500 mb-1">NOME DA RECEITA</label>
@@ -269,10 +360,21 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">URL DA IMAGEM</label>
-                            <input type="text" id="addImage" placeholder="https://..." class="p-3 border rounded w-full outline-none">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">URL DA IMAGEM</label>
+                                <div class="flex">
+                                    <input type="text" id="addImage" placeholder="https://..." class="p-3 border rounded-l w-full outline-none text-xs">
+                                    <button onclick="regenerateImage()" class="bg-gray-100 border border-l-0 px-3 rounded-r hover:bg-gray-200" title="Regerar Imagem com IA"><i class="fas fa-sync"></i></button>
+                                </div>
+                            </div>
+                            <div class="h-20 bg-gray-100 rounded overflow-hidden relative">
+                                <img id="imagePreview" src="" class="w-full h-full object-cover opacity-50">
+                                <span class="absolute inset-0 flex items-center justify-center text-xs text-gray-400">Preview</span>
+                            </div>
                         </div>
+
                         <div class="mb-4">
                             <label class="block text-xs font-bold text-gray-500 mb-1">DESCRIÇÃO CURTA</label>
                             <textarea id="addDesc" placeholder="Uma breve descrição do prato..." class="p-3 border rounded w-full h-20 outline-none resize-none"></textarea>
@@ -294,19 +396,44 @@
                     </div>
                 </div>
 
-                <!-- TAB: Gerenciar Receitas -->
-                <div id="tab-manage" class="admin-content hidden">
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                            <div class="relative w-full max-w-md">
-                                <input type="text" id="adminSearch" oninput="renderAdminList()" placeholder="Filtrar receitas..." class="pl-9 pr-4 py-2 border rounded-full w-full text-sm focus:outline-none focus:ring-1 focus:ring-imperial-red">
+                <!-- TAB: Gerenciar Receitas (REFORMULADA) -->
+                <div id="tab-manage" class="admin-content hidden flex flex-col h-full">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-full">
+                        
+                        <!-- Barra de Ferramentas -->
+                        <div class="p-4 border-b border-gray-200 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0">
+                            <!-- Busca -->
+                            <div class="relative w-full md:w-1/3">
+                                <input type="text" id="adminSearch" oninput="window.adminState.page=1; window.renderAdminListLogic()" placeholder="Filtrar por nome..." class="pl-9 pr-4 py-2 border rounded-full w-full text-sm focus:outline-none focus:ring-1 focus:ring-imperial-red">
                                 <i class="fas fa-search absolute left-3 top-2.5 text-gray-400 text-xs"></i>
                             </div>
-                            <span class="text-xs text-gray-500 font-bold" id="adminCountDisplay">0 receitas</span>
+
+                            <!-- Controles -->
+                            <div class="flex items-center space-x-3 w-full md:w-auto justify-end">
+                                <!-- View Mode -->
+                                <div class="bg-white border border-gray-300 rounded-lg p-1 flex">
+                                    <button onclick="setAdminView('list')" id="btnViewList" class="px-3 py-1 rounded text-gray-600 hover:bg-gray-100 transition"><i class="fas fa-list"></i></button>
+                                    <button onclick="setAdminView('grid')" id="btnViewGrid" class="px-3 py-1 rounded text-gray-400 hover:bg-gray-100 transition"><i class="fas fa-th-large"></i></button>
+                                </div>
+                                
+                                <!-- Paginação Select -->
+                                <div class="flex items-center space-x-2">
+                                    <label class="text-xs font-bold text-gray-500 hidden md:block">Mostrar:</label>
+                                    <select onchange="setAdminPerPage(this.value)" class="border border-gray-300 rounded-lg p-1.5 text-sm bg-white outline-none focus:border-imperial-red">
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="all">Todos</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="overflow-y-auto h-[60vh] custom-scroll">
-                            <table class="w-full text-sm text-left text-gray-500">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10">
+
+                        <!-- Area de Conteúdo Scrollável -->
+                        <div id="adminListContainer" class="overflow-y-auto flex-grow custom-scroll p-0 relative">
+                            <!-- Tabela ou Grid será injetado aqui -->
+                            <table class="w-full text-sm text-left text-gray-500" id="adminTableEl">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10 shadow-sm">
                                     <tr>
                                         <th scope="col" class="px-6 py-3">Imagem</th>
                                         <th scope="col" class="px-6 py-3">Nome</th>
@@ -314,35 +441,23 @@
                                         <th scope="col" class="px-6 py-3 text-right">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody id="adminRecipeList">
-                                    <!-- Lista injetada via JS -->
+                                <tbody id="adminRecipeTbody">
+                                    <!-- Rows -->
                                 </tbody>
                             </table>
+                            <div id="adminGridEl" class="hidden grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
+                                <!-- Cards -->
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- TAB: Gerador Mágico -->
-                <div id="tab-magic" class="admin-content hidden space-y-4">
-                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                        <h3 class="font-bold text-blue-900 mb-2">Cole qualquer texto de receita aqui!</h3>
-                        <p class="text-sm text-blue-700 mb-4">O sistema tentará identificar automaticamente o título, ingredientes e passos.</p>
-                        <textarea id="magicPaste" class="w-full h-64 p-4 border rounded shadow-inner" placeholder="Cole o texto da receita aqui..."></textarea>
-                        <button onclick="parseMagicText()" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 shadow">
-                            <i class="fas fa-wand-magic-sparkles mr-2"></i> Processar Texto
-                        </button>
-                    </div>
-                </div>
-
-                <!-- TAB: Importação em Massa -->
-                <div id="tab-bulk" class="admin-content hidden space-y-4">
-                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-200">
-                        <h3 class="font-bold text-purple-900 mb-2">Importar JSON</h3>
-                        <p class="text-sm text-purple-700 mb-4">Cole um array de objetos JSON para adicionar várias receitas de uma vez.</p>
-                        <textarea id="bulkJson" class="w-full h-64 p-4 border rounded font-mono text-xs bg-gray-900 text-green-400" placeholder='[{"name": "Bolo", "category": "bolo", ...}]'></textarea>
-                        <button onclick="importBulk()" class="mt-4 bg-purple-600 text-white px-6 py-2 rounded font-bold hover:bg-purple-700 shadow">
-                            <i class="fas fa-file-import mr-2"></i> Importar Dados
-                        </button>
+                        <!-- Rodapé de Paginação -->
+                        <div class="p-3 border-t border-gray-200 bg-white flex justify-between items-center shrink-0">
+                            <span class="text-xs text-gray-500" id="adminPageInfo">Carregando...</span>
+                            <div class="flex space-x-2">
+                                <button onclick="changeAdminPage(-1)" id="btnAdminPrev" class="px-3 py-1 border rounded hover:bg-gray-50 text-xs font-bold disabled:opacity-50">Anterior</button>
+                                <button onclick="changeAdminPage(1)" id="btnAdminNext" class="px-3 py-1 border rounded hover:bg-gray-50 text-xs font-bold disabled:opacity-50">Próximo</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -378,19 +493,13 @@
             
             <!-- Header Modal Imagem -->
             <div class="relative h-56 md:h-64 shrink-0 bg-stone-100 group">
-                <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('modalFallback').classList.remove('hidden')">
+                <img id="modalImage" src="" class="w-full h-full object-cover" onerror="this.src=window.DEFAULT_IMAGE">
                 
-                <!-- Fallback Animado -->
-                <div id="modalFallback" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-stone-50">
-                    <lord-icon id="modalLordIcon" src="" trigger="loop" delay="1000" colors="primary:#8B0000,secondary:#DAA520" style="width:100px;height:100px"></lord-icon>
-                </div>
-
                 <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent"></div>
                 <button onclick="event.stopPropagation(); window.closeModal()" class="absolute top-4 right-4 bg-black/40 hover:bg-black/80 text-white w-10 h-10 rounded-full flex items-center justify-center transition backdrop-blur-md z-20"><i class="fas fa-times text-lg"></i></button>
 
                 <div class="absolute bottom-0 left-0 w-full p-8 text-white z-10 pointer-events-none">
                     <div class="flex items-center space-x-3 mb-2">
-                        <!-- Removido 'Cat' tag -->
                         <div class="flex text-imperial-gold text-sm" id="modalRating"></div>
                     </div>
                     <h2 id="modalTitle" class="text-3xl md:text-5xl font-bold serif-font leading-tight drop-shadow-xl text-shadow">Título</h2>
@@ -422,56 +531,51 @@
             <!-- Conteúdo (Layout Sofisticado) -->
             <div class="flex flex-col md:flex-row overflow-hidden flex-grow bg-cream" id="modalScrollContainer">
                 
-                <!-- Coluna Esquerda: Vídeo e Ingredientes (Descrição estava aqui, removida) -->
+                <!-- Coluna Esquerda: Vídeo e Ingredientes -->
                 <div class="md:w-1/3 bg-white p-8 border-r border-stone-100 overflow-y-auto custom-scroll" id="modalLeftCol">
-                    <!-- Vídeo Embutido -->
-                    <div class="mb-8 rounded-xl overflow-hidden shadow-lg border border-stone-200 bg-black relative group">
-                        <video id="modalVideo" controls class="w-full aspect-video" poster="">
-                            <source src="https://videos.pexels.com/video-files/2882090/2882090-hd_1920_1080_24fps.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    
                     <h3 class="font-serif font-bold text-imperial-red text-2xl mb-4 border-b border-stone-200 pb-2">
                         Ingredientes
                     </h3>
                     <ul id="modalIngredients" class="space-y-3 text-sm text-stone-700"></ul>
                 </div>
 
-                <!-- Coluna Direita: Modo de Preparo (Exclusivo + Descrição abaixo) -->
+                <!-- Coluna Direita: Modo de Preparo -->
                 <div class="md:w-2/3 p-8 overflow-y-auto custom-scroll" id="modalRightCol">
                     <h3 class="font-serif font-bold text-imperial-red text-2xl mb-4 border-b border-stone-200 pb-2">
                         Modo de Preparo
                     </h3>
                     
-                    <!-- Steps -->
                     <div id="modalSteps" class="space-y-6 text-stone-800 leading-relaxed text-lg font-light mb-10"></div>
 
-                    <!-- Descrição Movida para o Final da Coluna Direita -->
                     <p id="modalDesc" class="text-stone-600 italic text-base bg-stone-50 p-6 rounded-lg border-l-4 border-imperial-gold shadow-sm mt-8"></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Zoom Lightbox -->
-    <div id="zoomModal" class="fixed inset-0 bg-black bg-opacity-95 z-[70] hidden flex items-center justify-center p-4" onclick="window.toggleZoom()">
-        <img id="zoomedImage" src="" class="max-w-full max-h-full object-contain rounded shadow-2xl">
-        <button class="absolute top-5 right-5 text-white text-4xl hover:text-gray-300">&times;</button>
-    </div>
-
-    <!-- SCRIPT PRINCIPAL (Lógica UI, Dados, Admin) -->
+    <!-- SCRIPT PRINCIPAL (Lógica UI, Dados, Admin, AI) -->
     <script>
+        // CONFIGURAÇÕES GLOBAIS
+        window.DEFAULT_IMAGE = "https://images.pexels.com/photos/31495671/pexels-photo-31495671.jpeg";
+        
         // ESTADO GLOBAL
         window.generatedRecipes = [];
         window.finalRecipeList = [];
         window.firebaseRecipes = [];
         window.savedRecipesSet = new Set();
-        window.isOffline = false;
         window.currentModalRecipeId = null;
         window.currentCategory = 'all';
-        window.textZoomLevel = 0; // 0=normal, 1=medium, 2=large
+        window.textZoomLevel = 0;
+        window.isUserAdmin = false;
 
-        // Configuração de Categorias e Ícones Animados (Lordicon URLs)
+        // ESTADO DO ADMIN
+        window.adminState = {
+            page: 1,
+            perPage: 20,
+            view: 'list', // 'list' | 'grid'
+        };
+
+        // Categorias e Metadados
         const categories = {
             'brasileira': { label: '🇧🇷 Brasil', icon: 'https://cdn.lordicon.com/qhgmphtg.json', flavor: 'Tradicional' }, 
             'chinesa': { label: '🇨🇳 China', icon: 'https://cdn.lordicon.com/ulnswmkk.json', flavor: 'Umami' },
@@ -491,7 +595,7 @@
             'principal': { label: '🥘 Pratos', icon: 'https://cdn.lordicon.com/xryjrepg.json', flavor: 'Completo' }
         };
 
-        // Renderiza Menu
+        // Renderiza Menu de Categorias
         const menuContainer = document.getElementById('navCategories');
         const menuKeys = ['all', 'brasileira', 'chinesa', 'natal', 'bolo', 'carne', 'massa', 'sobremesa', 'suco', 'sopa', 'ave', 'peixe', 'salada', 'medicinal', 'saved'];
         
@@ -518,12 +622,13 @@
             catSelect.appendChild(opt);
         });
 
-        // --- GERAÇÃO DE DADOS (1000 Receitas) ---
-        function getImageUrl(name, id) {
-            const clean = name.replace(/ /g, '%20');
-            return `https://image.pollinations.ai/prompt/professional%20food%20photography%20of%20${clean}%20on%20plate%20pexels%20style%20culinary%20magazine%20high%20detail?width=600&height=400&nologo=true&seed=${id}&model=flux`;
+        // --- GERAÇÃO DE IMAGEM IA (Pollinations) ---
+        function getPollinationsImage(prompt) {
+            const encoded = encodeURIComponent("professional food photography " + prompt + ", high detail, 8k, culinary magazine style");
+            return `https://image.pollinations.ai/prompt/${encoded}?nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
         }
 
+        // --- RESTAURAÇÃO: GERAÇÃO DE MOCK DATA (1000 Receitas) ---
         const ingredientsPool = {
             suco: ["Laranja", "Abacaxi", "Hortelã", "Gengibre", "Couve", "Limão", "Açúcar", "Gelo", "Água de Coco", "Morango"],
             sopa: ["Batata", "Cenoura", "Mandioquinha", "Cebola", "Alho", "Caldo de Carne", "Macarrão", "Frango Desfiado", "Azeite"],
@@ -533,14 +638,19 @@
             ave: ["Frango Inteiro", "Peito de Frango", "Coxa e Sobrecoxa", "Limão", "Curry", "Batatas", "Maionese"],
             peixe: ["Tilápia", "Salmão", "Camarão", "Leite de Coco", "Dendê", "Coentro", "Pimentão", "Tomate"],
             massa: ["Macarrão Espaguete", "Penne", "Molho de Tomate", "Queijo Parmesão", "Manjericão", "Carne Moída", "Creme de Leite"],
-            salada: ["Alface", "Rúcula", "Tomate Cereja", "Pepino", "Manga", "Queijo Branco", "Azeite", "Mostarda e Mel"]
+            salada: ["Alface", "Rúcula", "Tomate Cereja", "Pepino", "Manga", "Queijo Branco", "Azeite", "Mostarda e Mel"],
+            brasileira: ["Feijão Preto", "Arroz", "Farofa", "Couve", "Carne Seca"],
+            chinesa: ["Shoyu", "Gengibre", "Macarrão", "Amendoim", "Frango"],
+            sobremesa: ["Leite Condensado", "Chocolate", "Morango", "Creme de Leite", "Biscoito"]
         };
-
+        
         const nameModifiers = {
             adjectives: ['Supremo', 'Divino', 'Cremoso', 'da Vovó', 'Rústico', 'Imperial', 'Tradicional', 'Festivo', 'Suculento', 'Crocante', 'Especial', 'Caseiro', 'Fresco'],
             origins: ['Mineiro', 'Baiano', 'Carioca', 'Italiano', 'Chinês', 'Tailandês', 'do Campo', 'da Fazenda', 'do Mar', 'Serrano', 'Nordestino'],
             styles: ['ao Forno', 'Grelhado', 'Frito', 'Assado', 'Refogado', 'ao Molho', 'na Brasa', 'Vaporizado', 'Gratinado']
         };
+
+        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
         function generateUniqueName(category, type) {
             const patterns = [
@@ -553,46 +663,47 @@
             return pattern();
         }
 
-        function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
         function generateRecipe(id, category, type) {
+            const name = generateUniqueName(category, type);
+            // Default image logic
+            const image = window.DEFAULT_IMAGE; 
+            
+            // Random ingredients
             const catKey = (category === 'brasileira' || category === 'chinesa') ? 'carne' : (ingredientsPool[category] ? category : 'sopa');
             const ingSource = ingredientsPool[catKey] || ingredientsPool['carne'];
-            
             const ingredients = [];
             for(let i=0; i<5; i++) ingredients.push(ingSource[Math.floor(Math.random() * ingSource.length)]);
-
-            const rating = (Math.random() * (5.0 - 4.2) + 4.2).toFixed(1);
-            const name = generateUniqueName(category, type);
 
             return {
                 id: id,
                 name: name,
-                originalName: `Receita Exclusiva`,
                 category: category,
-                energy: Math.random() > 0.5 ? 'Yang' : 'Yin',
-                image: getImageUrl(name, id),
-                iconFallback: categories[category]?.icon || 'https://cdn.lordicon.com/qhgmphtg.json',
+                image: image,
                 desc: `Uma deliciosa e autêntica receita de ${category} para sua mesa. Sabor inigualável e preparo especial.`,
                 func: categories[category]?.flavor || 'Sabor',
                 time: `${Math.floor(Math.random() * 40) + 20} min`,
                 ingredients: ingredients,
-                steps: ["Separe os ingredientes.", "Prepare a base do prato.", "Cozinhe em fogo médio por 20 minutos.", "Tempere a gosto.", "Sirva imediatamente."],
-                rating: rating
+                steps: ["Passo 1: Prepare todos os ingredientes.", "Passo 2: Misture tudo com cuidado.", "Passo 3: Cozinhe em fogo médio por 20 minutos.", "Passo 4: Sirva quente e aproveite!"],
+                rating: (Math.random() * (5.0 - 4.2) + 4.2).toFixed(1)
             };
         }
-
+        
+        // Populate 1000 recipes
         let genId = 1000;
         function populate() {
-            const baseTypes = {
+             const baseTypes = {
                 suco: ['Suco', 'Vitamina', 'Smoothie', 'Refresco', 'Drink'],
                 sopa: ['Sopa', 'Caldo', 'Creme', 'Consomê'],
                 bolo: ['Bolo', 'Torta', 'Rocambole'], carne: ['Bife', 'Assado', 'Picadinho'],
-                brasileira: ['Feijoada', 'Vatapá', 'Moqueca'], chinesa: ['Yakisoba', 'Pato', 'Rolinho']
+                brasileira: ['Feijoada', 'Vatapá', 'Moqueca'], chinesa: ['Yakisoba', 'Pato', 'Rolinho'],
+                ave: ['Frango', 'Peru', 'Chester'], peixe: ['Peixe', 'Moqueca', 'Filé'],
+                massa: ['Macarrão', 'Lasanha', 'Nhoque'], salada: ['Salada', 'Mix', 'Bowl'],
+                sobremesa: ['Pudim', 'Mousse', 'Pavê'], medicinal: ['Chá', 'Xarope', 'Infusão']
             };
             
             const cats = Object.keys(categories);
-            const perCat = Math.ceil(1000 / cats.length);
+            // Limit slightly to keep performance ok in browser
+            const perCat = 60; 
             
             cats.forEach(cat => {
                 const types = baseTypes[cat] || ['Prato', 'Delícia', 'Especialidade'];
@@ -601,15 +712,6 @@
                     window.generatedRecipes.push(generateRecipe(genId++, cat, type));
                 }
             });
-            window.mergeAndRender();
-        }
-
-        window.mergeAndRender = () => {
-            const fbIds = new Set(window.firebaseRecipes.map(r => r.id));
-            const uniqueGen = window.generatedRecipes.filter(r => !fbIds.has(r.id));
-            window.finalRecipeList = [...window.firebaseRecipes, ...uniqueGen];
-            window.filterRecipes();
-            window.renderAdminList(); // Atualiza lista do admin
         }
 
         // --- RENDERIZAÇÃO ---
@@ -625,7 +727,7 @@
             grid.innerHTML = '';
             
             if(window.currentCategory === 'saved') {
-                filtered = window.finalRecipeList.filter(r => window.savedRecipesSet.has(r.id) || window.savedRecipesSet.has(String(r.id)));
+                filtered = window.finalRecipeList.filter(r => window.savedRecipesSet.has(String(r.id)));
             } else if(window.currentCategory === 'all') {
                 filtered = window.finalRecipeList;
             } else {
@@ -657,34 +759,28 @@
                 el.style.animationDelay = `${i*0.02}s`;
                 el.onclick = () => window.openRecipe(r.id);
 
-                const isFav = window.savedRecipesSet.has(r.id) || window.savedRecipesSet.has(String(r.id));
-                const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' }; 
+                const isFav = window.savedRecipesSet.has(String(r.id));
+                // Fallback inteligente para imagem: Se não tiver imagem definida, usa o DEFAULT
+                const displayImage = (r.image && r.image.trim() !== "") ? r.image : window.DEFAULT_IMAGE;
 
                 el.innerHTML = `
                     <div class="h-48 relative bg-stone-100 flex items-center justify-center overflow-hidden">
-                        <img src="${r.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')">
-                        
-                        <!-- Fallback Animado Lordicon -->
-                        <div class="hidden absolute inset-0 flex items-center justify-center bg-stone-50">
-                            <lord-icon src="${catInfo.icon}" trigger="loop" delay="2000" colors="primary:#8B0000,secondary:#DAA520" style="width:80px;height:80px"></lord-icon>
-                        </div>
-
+                        <img src="${displayImage}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 img-loading" 
+                             onerror="this.src=window.DEFAULT_IMAGE">
                         <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent opacity-60"></div>
                         <div class="absolute top-2 right-2 bg-white/90 px-1.5 rounded text-[10px] font-bold shadow flex items-center">
-                            <i class="fas fa-star text-imperial-gold mr-1"></i> ${r.rating}
+                            <i class="fas fa-star text-imperial-gold mr-1"></i> ${r.rating || 4.5}
                         </div>
-                        
                         <button onclick="window.toggleSaveRecipe('${r.id}', event)" class="absolute bottom-2 right-2 w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition z-10">
                             <i class="${isFav ? 'fas text-imperial-red' : 'far text-white'} fa-heart text-lg heart-icon transition transform hover:scale-110"></i>
                         </button>
                     </div>
                     <div class="p-4 bg-white">
-                        <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider mb-1">${r.category}</p>
+                        <p class="text-[10px] text-imperial-red font-bold uppercase tracking-wider mb-1">${r.category || 'Geral'}</p>
                         <h3 class="font-bold text-stone-800 text-sm leading-tight mb-2 font-serif group-hover:text-imperial-red transition line-clamp-2">${r.name}</h3>
                         <div class="flex items-center text-xs text-stone-500 pt-2 border-t border-stone-50">
                              <span class="flex items-center"><i class="fas fa-tag mr-1 text-orange-400"></i> ${r.func || 'Sabor'}</span>
-                             <span class="ml-auto flex items-center"><i class="fas fa-shopping-basket mr-1 text-green-500"></i> ${r.ingredients ? r.ingredients.length : 0}</span>
+                             <span class="ml-auto flex items-center"><i class="fas fa-clock mr-1 text-gray-400"></i> ${r.time || '30m'}</span>
                         </div>
                     </div>
                 `;
@@ -708,21 +804,25 @@
             window.filterRecipes(); 
         };
 
-        // --- PAINEL ADMIN ---
+        // --- PAINEL ADMIN E AUTH ---
         window.toggleAdminPanel = () => {
             const modal = document.getElementById('adminModal');
+            const authOverlay = document.getElementById('adminAuthOverlay');
+            
             if (modal.classList.contains('hidden')) {
                 modal.classList.remove('hidden');
-                // Solicitar Fullscreen
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen().catch(e => console.log(e));
+                
+                // Verifica autenticação Firebase
+                if(!window.isUserAdmin) {
+                    authOverlay.classList.remove('hidden');
+                } else {
+                    authOverlay.classList.add('hidden');
                 }
-                window.renderAdminList();
+                
+                // Inicializa a lista admin se ainda não foi renderizada corretamente
+                window.renderAdminListLogic();
             } else {
                 modal.classList.add('hidden');
-                if (document.exitFullscreen) {
-                    document.exitFullscreen().catch(e => console.log(e));
-                }
             }
         };
 
@@ -731,57 +831,141 @@
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
             document.querySelectorAll('.admin-tab').forEach(e => e.classList.remove('active'));
             document.getElementById(`btn-tab-${tab}`).classList.add('active');
+            
+            if(tab === 'manage') window.renderAdminListLogic();
         };
         
-        // Renderizar Lista de Gestão (Admin)
-        window.renderAdminList = () => {
-            const listContainer = document.getElementById('adminRecipeList');
-            if(!listContainer) return;
-            
-            const term = document.getElementById('adminSearch').value.toLowerCase();
-            const list = window.finalRecipeList.filter(r => r.name.toLowerCase().includes(term) || String(r.id).includes(term));
-            
-            let html = '';
-            // Renderizar apenas os primeiros 50 para performance
-            list.slice(0, 50).forEach(r => {
-                html += `
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-6 py-4">
-                            <img class="w-10 h-10 rounded-full object-cover" src="${r.image}" onerror="this.src='https://via.placeholder.com/40'">
-                        </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${r.name}</td>
-                        <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">${r.category}</span></td>
-                        <td class="px-6 py-4 text-right">
-                            <button onclick="alert('Funcionalidade de edição em desenvolvimento')" class="font-medium text-blue-600 hover:underline mr-3">Editar</button>
-                            <button onclick="alert('Exclusão simulada (recarregue para restaurar)')" class="font-medium text-red-600 hover:underline">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            listContainer.innerHTML = html;
-            document.getElementById('adminCountDisplay').innerText = `${list.length} receitas`;
-        }
+        // --- FUNÇÃO MÁGICA DE GERAÇÃO COM IA (POLLINATIONS) ---
+        window.generateRecipeAI = async () => {
+            const prompt = document.getElementById('magicPrompt').value;
+            const btn = document.getElementById('btnGenerateAI');
+            const btnText = document.getElementById('aiBtnText');
+            const spinner = document.getElementById('aiSpinner');
+            const status = document.getElementById('aiStatus');
+
+            if(!prompt) { alert("Por favor, digite o que deseja criar."); return; }
+
+            // UI Loading
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+            btnText.innerText = "Criando Receita...";
+            spinner.classList.remove('hidden');
+            status.innerText = "Aguarde, a IA está escrevendo a receita...";
+            status.classList.remove('hidden');
+
+            try {
+                // 1. Gera Texto usando Pollinations Text API (Model: OpenAI)
+                const systemPrompt = `Você é um chef gourmet especialista. Crie uma receita completa baseada em: "${prompt}". 
+                Retorne APENAS um JSON válido (sem markdown, sem blocos de código) com a seguinte estrutura:
+                {
+                    "name": "Nome do Prato",
+                    "category": "uma das chaves: brasileira, chinesa, natal, suco, sopa, bolo, carne, ave, peixe, massa, salada, sobremesa, entrada",
+                    "desc": "Uma descrição curta e apetitosa de 2 linhas",
+                    "ingredients": ["ingrediente 1", "ingrediente 2"],
+                    "steps": ["passo 1", "passo 2"],
+                    "time": "tempo ex: 45 min",
+                    "func": "perfil de sabor ex: Picante, Doce, Leve"
+                }`;
+
+                // Chamada à API de Texto do Pollinations
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemPrompt)}?model=openai`);
+                const textData = await response.text();
+                
+                // Limpeza e Parse do JSON
+                let jsonString = textData.replace(/```json/g, '').replace(/```/g, '').trim();
+                const recipeData = JSON.parse(jsonString);
+
+                status.innerText = "Texto gerado! Criando imagem ilustrativa...";
+
+                // 2. Preenche o Formulário na Aba "Adicionar"
+                document.getElementById('addName').value = recipeData.name;
+                document.getElementById('addDesc').value = recipeData.desc;
+                document.getElementById('addIng').value = recipeData.ingredients.join('\n');
+                document.getElementById('addSteps').value = recipeData.steps.join('\n');
+                
+                // Tenta selecionar categoria correta, fallback para 'principal'
+                const select = document.getElementById('addCategory');
+                if(categories[recipeData.category]) {
+                    select.value = recipeData.category;
+                } else {
+                    select.value = 'principal';
+                }
+
+                // 3. Gera Imagem usando Pollinations Image API
+                const imageUrl = getPollinationsImage(`${recipeData.name} ${recipeData.desc}`);
+                document.getElementById('addImage').value = imageUrl;
+                
+                // Atualiza Preview
+                const imgPreview = document.getElementById('imagePreview');
+                imgPreview.src = imageUrl;
+                imgPreview.classList.remove('opacity-50');
+
+                // Finaliza
+                status.innerText = "Receita criada com sucesso! Verifique na aba Adicionar.";
+                setTimeout(() => {
+                    window.switchAdminTab('add');
+                    status.classList.add('hidden');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75');
+                    btnText.innerHTML = '<i class="fas fa-wand-magic mr-2"></i> Criar Receita Mágica';
+                    spinner.classList.add('hidden');
+                }, 1500);
+
+            } catch (error) {
+                console.error(error);
+                status.innerText = "Erro ao gerar. Tente simplificar o pedido.";
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                spinner.classList.add('hidden');
+            }
+        };
+
+        window.regenerateImage = () => {
+            const name = document.getElementById('addName').value;
+            if(!name) return alert("Preencha o nome primeiro.");
+            const url = getPollinationsImage(name);
+            document.getElementById('addImage').value = url;
+            document.getElementById('imagePreview').src = url;
+        };
+
+        window.clearForm = () => {
+            document.getElementById('addName').value = '';
+            document.getElementById('addDesc').value = '';
+            document.getElementById('addImage').value = '';
+            document.getElementById('addIng').value = '';
+            document.getElementById('addSteps').value = '';
+            document.getElementById('imagePreview').src = '';
+        };
 
         window.saveRecipe = async () => {
             const name = document.getElementById('addName').value;
             const cat = document.getElementById('addCategory').value;
+            const imgInput = document.getElementById('addImage').value;
+            
+            // Lógica do botão mágico + imagem padrão se vazio
+            const finalImage = (imgInput && imgInput.trim() !== "") ? imgInput : window.DEFAULT_IMAGE;
+
             const newRecipe = {
                 id: Date.now(),
                 name: name,
                 category: cat,
-                image: document.getElementById('addImage').value || window.getImageUrl(name, Date.now()),
+                image: finalImage,
                 desc: document.getElementById('addDesc').value,
-                ingredients: document.getElementById('addIng').value.split('\n'),
-                steps: document.getElementById('addSteps').value.split('\n'),
-                rating: "5.0", time: "45 min",
+                ingredients: document.getElementById('addIng').value.split('\n').filter(x => x.trim()),
+                steps: document.getElementById('addSteps').value.split('\n').filter(x => x.trim()),
+                rating: "5.0", 
+                time: "45 min",
                 func: categories[cat]?.flavor || "Especial"
             };
             
+            // Salva Local e Firebase
             window.firebaseRecipes.unshift(newRecipe);
             window.mergeAndRender();
             window.saveRecipeToFirebase(newRecipe);
-            alert("Receita Adicionada!");
-            // window.toggleAdminPanel(); // Keep open to add more
+            
+            alert("Receita Adicionada com Sucesso!");
+            window.switchAdminTab('manage');
+            window.clearForm();
         };
 
         window.parseMagicText = () => {
@@ -790,36 +974,132 @@
             if(lines.length > 0) document.getElementById('addName').value = lines[0];
             const ings = lines.filter(l => l.includes('-') || l.match(/^\d/)).join('\n');
             document.getElementById('addIng').value = ings;
+            window.switchAdminTab('add');
         };
 
-        window.importBulk = async () => {
-            try {
-                const data = JSON.parse(document.getElementById('bulkJson').value);
-                if(!Array.isArray(data)) throw new Error("Deve ser um array");
-                const batch = [];
-                data.forEach(r => {
-                    const rNew = {...r, id: Date.now() + Math.random(), func: categories[r.category]?.flavor || "Sabor"};
-                    window.firebaseRecipes.push(rNew);
-                    batch.push(rNew);
+        // --- GESTÃO DE DADOS (ADMIN AVANÇADO) ---
+        window.mergeAndRender = () => {
+            const fbIds = new Set(window.firebaseRecipes.map(r => r.id));
+            const uniqueGen = window.generatedRecipes.filter(r => !fbIds.has(r.id));
+            window.finalRecipeList = [...window.firebaseRecipes, ...uniqueGen];
+            window.filterRecipes();
+            window.renderAdminListLogic(); // Atualiza a lista admin se aberta
+        }
+
+        // Funções de Controle da Lista Admin
+        window.setAdminView = (mode) => {
+            window.adminState.view = mode;
+            document.getElementById('btnViewList').className = `px-3 py-1 rounded transition ${mode === 'list' ? 'bg-gray-100 text-imperial-red border-gray-300' : 'text-gray-400 hover:bg-gray-50'}`;
+            document.getElementById('btnViewGrid').className = `px-3 py-1 rounded transition ${mode === 'grid' ? 'bg-gray-100 text-imperial-red border-gray-300' : 'text-gray-400 hover:bg-gray-50'}`;
+            window.renderAdminListLogic();
+        };
+
+        window.setAdminPerPage = (val) => {
+            window.adminState.perPage = val === 'all' ? 999999 : parseInt(val);
+            window.adminState.page = 1;
+            window.renderAdminListLogic();
+        };
+
+        window.changeAdminPage = (delta) => {
+            const total = window.filteredAdminList ? window.filteredAdminList.length : 0;
+            const maxPage = Math.ceil(total / window.adminState.perPage);
+            const newPage = window.adminState.page + delta;
+            
+            if (newPage >= 1 && newPage <= maxPage) {
+                window.adminState.page = newPage;
+                window.renderAdminListLogic();
+            }
+        };
+
+        window.renderAdminListLogic = () => {
+            // Container references
+            const tableEl = document.getElementById('adminTableEl');
+            const gridEl = document.getElementById('adminGridEl');
+            const tbody = document.getElementById('adminRecipeTbody');
+            const pageInfo = document.getElementById('adminPageInfo');
+            const btnPrev = document.getElementById('btnAdminPrev');
+            const btnNext = document.getElementById('btnAdminNext');
+            
+            if(!tbody) return; // Se a aba não estiver ativa/criada
+
+            // 1. Filter
+            const term = document.getElementById('adminSearch').value.toLowerCase();
+            window.filteredAdminList = window.finalRecipeList.filter(r => (r.name || "").toLowerCase().includes(term));
+            
+            // 2. Pagination Logic
+            const total = window.filteredAdminList.length;
+            const perPage = window.adminState.perPage;
+            const currentPage = window.adminState.page;
+            const totalPages = Math.ceil(total / perPage);
+            
+            // Adjust page if out of bounds
+            if (currentPage > totalPages && totalPages > 0) window.adminState.page = totalPages;
+            if (currentPage < 1) window.adminState.page = 1;
+            
+            const start = (window.adminState.page - 1) * perPage;
+            const end = start + perPage;
+            const paginatedItems = window.filteredAdminList.slice(start, end);
+
+            // 3. Update Controls
+            pageInfo.innerText = total > 0 
+                ? `Mostrando ${start + 1}-${Math.min(end, total)} de ${total}` 
+                : 'Nenhum resultado';
+            btnPrev.disabled = window.adminState.page <= 1;
+            btnNext.disabled = window.adminState.page >= totalPages;
+
+            document.getElementById('adminTotalCount').innerText = window.finalRecipeList.length;
+
+            // 4. Render View
+            if (window.adminState.view === 'list') {
+                tableEl.classList.remove('hidden');
+                gridEl.classList.add('hidden');
+                
+                let html = '';
+                paginatedItems.forEach(r => {
+                    const img = r.image || window.DEFAULT_IMAGE;
+                    html += `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <img class="w-10 h-10 rounded-full object-cover" src="${img}" onerror="this.src=window.DEFAULT_IMAGE">
+                            </td>
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${r.name}</td>
+                            <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">${r.category}</span></td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="alert('Funcionalidade simulada: Excluir ${r.name}')" class="font-medium text-red-600 hover:underline"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                    `;
                 });
-                window.mergeAndRender();
-                if(window.syncBatch) window.syncBatch(batch);
-                alert(`${data.length} importados!`);
-            } catch(e) { alert("Erro JSON: " + e.message); }
+                tbody.innerHTML = html;
+            } else {
+                // Grid View
+                tableEl.classList.add('hidden');
+                gridEl.classList.remove('hidden');
+                
+                let html = '';
+                paginatedItems.forEach(r => {
+                    const img = r.image || window.DEFAULT_IMAGE;
+                    html += `
+                        <div class="admin-grid-card bg-white border border-gray-200 rounded-lg p-3 flex flex-col items-center text-center shadow-sm relative group">
+                            <img class="w-20 h-20 rounded-full object-cover mb-2" src="${img}" onerror="this.src=window.DEFAULT_IMAGE">
+                            <h4 class="font-bold text-sm text-gray-800 line-clamp-2 h-10 leading-tight">${r.name}</h4>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded mt-2">${r.category}</span>
+                            <button class="absolute top-2 right-2 text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                });
+                gridEl.innerHTML = html;
+            }
         };
 
-        window.syncGeneratedToFirebase = async () => {
-            if(!confirm("Enviar 1000 receitas para a nuvem?")) return;
-            const batch = window.generatedRecipes.slice(0, 400); 
-            await window.syncBatch(batch);
-            alert("Sincronização iniciada!");
-        };
-        
+        // Legacy function override to do nothing as we use renderAdminListLogic now
+        window.renderAdminList = () => {};
+
         window.downloadBackup = () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.finalRecipeList));
             const a = document.createElement('a');
             a.setAttribute("href", dataStr);
-            a.setAttribute("download", "backup_receitas.json");
+            a.setAttribute("download", "imperial_backup.json");
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -833,19 +1113,19 @@
                 const data = JSON.parse(e.target.result);
                 window.firebaseRecipes = data;
                 window.mergeAndRender();
-                localStorage.setItem('backupData', JSON.stringify(data));
                 alert("Backup Restaurado!");
             };
             reader.readAsText(file);
         };
 
         // --- GLOBAL START ---
-        window.populate = populate;
-        window.populate();
+        window.populate(); // RESTAURADO: Gera 1000 receitas
+        window.mergeAndRender();
+
         document.getElementById('searchInput').addEventListener('input', window.filterRecipes);
         document.getElementById('recipeModal').addEventListener('click', (e) => { if(e.target.id === 'recipeModal') window.closeModal(); });
 
-        // --- MODAL ---
+        // --- MODAL LÓGICA ---
         window.openRecipe = (id) => {
             const r = window.finalRecipeList.find(x => x.id == id);
             if(!r) return;
@@ -853,17 +1133,9 @@
             document.getElementById('modalTitle').innerText = r.name;
             
             const img = document.getElementById('modalImage');
-            img.src = r.image;
-            img.style.display = 'block';
-            document.getElementById('modalFallback').classList.add('hidden');
+            img.src = r.image || window.DEFAULT_IMAGE;
             
-            // Set Fallback
-            const catInfo = categories[r.category] || { icon: 'https://cdn.lordicon.com/qhgmphtg.json' };
-            document.getElementById('modalLordIcon').setAttribute('src', catInfo.icon);
-
-            // Populate Modal Content
-            // Descrição movida para a coluna da direita, abaixo dos passos
-            document.getElementById('modalDesc').innerText = r.desc;
+            document.getElementById('modalDesc').innerText = r.desc || "Sem descrição.";
             
             const ingList = document.getElementById('modalIngredients');
             ingList.innerHTML = (r.ingredients || []).map(i => `<li class="border-b border-stone-100 py-3 flex items-start"><i class="fas fa-check text-green-600 mt-1 mr-3 text-xs"></i><span>${i}</span></li>`).join('');
@@ -881,21 +1153,9 @@
 
             window.updateModalHeart(id);
             document.getElementById('recipeModal').classList.remove('hidden');
-            
-            // RESET SCROLL
-            document.getElementById('modalLeftCol').scrollTop = 0;
-            document.getElementById('modalRightCol').scrollTop = 0;
-            
-            // RESET TEXT ZOOM
-            window.textZoomLevel = 0;
-            window.applyTextZoom();
         };
 
-        window.closeModal = () => {
-            document.getElementById('recipeModal').classList.add('hidden');
-            const v = document.getElementById('modalVideo');
-            if(v) v.pause();
-        };
+        window.closeModal = () => document.getElementById('recipeModal').classList.add('hidden');
         
         window.toggleSaveRecipe = (id, e) => {
             if(e) e.stopPropagation();
@@ -909,75 +1169,35 @@
         window.showSavedRecipes = () => window.setCategory('saved');
         window.resetApp = () => { window.setCategory('all'); document.getElementById('searchInput').value = ''; };
 
-        // --- TTS & TEXT ZOOM ---
-        let currentUtterance = null;
         window.toggleTTS = () => {
-            if (currentUtterance) { window.speechSynthesis.cancel(); currentUtterance = null; return; }
             const text = `${document.getElementById('modalTitle').innerText}. ${document.getElementById('modalDesc').innerText}`;
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'pt-BR';
             window.speechSynthesis.speak(u);
-            currentUtterance = u;
         };
 
-        window.textZoomLevel = 0; // 0=normal, 1=medium, 2=large
         window.toggleTextZoom = () => {
-            window.textZoomLevel = (window.textZoomLevel + 1) % 3;
-            window.applyTextZoom();
-        };
-        
-        window.applyTextZoom = () => {
-             const ingList = document.getElementById('modalIngredients');
-             const steps = document.getElementById('modalSteps');
-             const desc = document.getElementById('modalDesc');
-             
-             // Remove all zoom classes
-             [ingList, steps, desc].forEach(el => el.classList.remove('text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl'));
-             
-             if(window.textZoomLevel === 0) { // Normal
-                 ingList.classList.add('text-sm');
-                 desc.classList.add('text-base');
-                 steps.classList.add('text-lg');
-             } else if(window.textZoomLevel === 1) { // Medium
-                 ingList.classList.add('text-base');
-                 desc.classList.add('text-lg');
-                 steps.classList.add('text-xl');
-             } else { // Large
-                 ingList.classList.add('text-lg');
-                 desc.classList.add('text-xl');
-                 steps.classList.add('text-2xl');
-             }
+             // Simples toggle de classes
+             const el = document.getElementById('modalSteps');
+             el.classList.toggle('text-lg');
+             el.classList.toggle('text-2xl');
         };
 
-
-        // --- SHARE ---
         window.shareRecipeFromModal = () => {
-            const url = window.location.href + '?recipe=' + window.currentModalRecipeId;
-            if(navigator.share) navigator.share({url});
-            else navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => alert('Link copiado!'));
         };
-
-        // Placeholder
-        window.handleLogin = () => console.log("Auth Loading...");
-        window.toggleSaveRecipeDB = () => {};
     </script>
 
     <!-- Firebase Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBqSUJP7BOIZSCJai83L2h-PnoyXh0oon4",
-            authDomain: "culinariaimperial.firebaseapp.com",
-            projectId: "culinariaimperial",
-            storageBucket: "culinariaimperial.firebasestorage.app",
-            messagingSenderId: "103351782200",
-            appId: "1:103351782200:web:28bd29557dce703abb0fcd",
-            measurementId: "G-2WJEY05TJB"
-        };
+        // CONFIGURAÇÃO DINÂMICA
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         let app, auth, db, user;
 
@@ -985,86 +1205,142 @@
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-            const analytics = getAnalytics(app);
 
+            // INICIALIZAÇÃO DE AUTH ROBUSTA (Para corrigir erro de permissão)
             const initAuth = async () => {
-                try {
-                    if(typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-                    else if(!auth.currentUser) await signInAnonymously(auth);
-                } catch(e) { window.enableOfflineMode(); }
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
             };
             initAuth();
 
             onAuthStateChanged(auth, (u) => {
                 user = u;
+                // Admin se logado (para demo) ou se tiver flag específica
+                window.isUserAdmin = !!u && !u.isAnonymous; 
                 window.updateAuthUI(u);
+                
                 if(u) window.subscribeData();
+                
+                // Atualiza Admin UI se estiver aberto
+                const authOverlay = document.getElementById('adminAuthOverlay');
+                if(authOverlay) {
+                    if(window.isUserAdmin) authOverlay.classList.add('hidden');
+                    else if(!document.getElementById('adminModal').classList.contains('hidden')) authOverlay.classList.remove('hidden');
+                }
             });
 
-        } catch(e) { window.enableOfflineMode(); }
+        } catch(e) { console.log("Offline Mode", e); }
 
-        // Exports
-        window.handleLogin = async () => {
+        // Exports para Login Google
+        window.handleGoogleLogin = async () => {
             try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
-            catch(e) { if(e.code.includes('unauthorized')) alert("Domínio não autorizado."); }
+            catch(e) { alert("Erro ao logar com Google: " + e.message); }
+        };
+
+        // Exports para Login Email/Senha
+        window.handleEmailLogin = async () => {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            if(!email || !pass) return alert("Preencha email e senha.");
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch(e) {
+                alert("Erro Login: " + e.message);
+            }
+        };
+
+        // Novo: Registro (Básico)
+        window.handleRegister = async () => {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            if(!email || !pass) return alert("Preencha email e senha para criar conta.");
+            
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                alert("Conta criada com sucesso! Você está logado.");
+            } catch(e) {
+                alert("Erro Cadastro: " + e.message);
+            }
         };
 
         window.handleLogout = async () => { try { await signOut(auth); } catch(e){} window.location.reload(); };
-
-        window.enableOfflineMode = () => {
-            const local = localStorage.getItem('backupData');
-            if(local) window.firebaseRecipes = JSON.parse(local);
-            window.mergeAndRender();
-        };
 
         window.updateAuthUI = (u) => {
             document.getElementById('loginLoading').classList.add('hidden');
             if(u && !u.isAnonymous) {
                 document.getElementById('loginBtn').classList.add('hidden');
                 document.getElementById('userProfile').classList.remove('hidden');
-                document.getElementById('userPhoto').src = u.photoURL;
-                document.getElementById('userName').innerText = u.displayName;
+                document.getElementById('userPhoto').src = u.photoURL || `https://ui-avatars.com/api/?name=${u.email}&background=8B0000&color=fff`;
+                document.getElementById('userName').innerText = u.displayName || u.email;
             } else {
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
             }
         };
 
+        // CAMINHOS DE COLEÇÃO CORRIGIDOS (artifacts/{appId}/...)
         window.subscribeData = () => {
-            const col = collection(db, 'recipes');
+            // Caminho Seguro: artifacts/APP_ID/public/data/recipes
+            const col = collection(db, 'artifacts', appId, 'public', 'data', 'recipes');
+            
             onSnapshot(col, (snap) => {
                 window.firebaseRecipes = [];
                 snap.forEach(d => window.firebaseRecipes.push({id: d.id, ...d.data()}));
                 window.mergeAndRender();
+            }, (error) => {
+                console.error("Erro ao carregar receitas:", error);
             });
 
-            if(user && !user.isAnonymous) {
-                const favCol = collection(db, 'users', user.uid, 'favorites');
+            if(user) {
+                // Caminho Seguro: artifacts/APP_ID/users/USER_ID/favorites
+                const favCol = collection(db, 'artifacts', appId, 'users', user.uid, 'favorites');
                 onSnapshot(favCol, (snap) => {
                     window.savedRecipesSet.clear();
                     snap.forEach(d => window.savedRecipesSet.add(d.id));
                     window.updateSavedUI();
+                }, (error) => {
+                    console.error("Erro ao carregar favoritos:", error);
                 });
             }
         };
 
         window.saveRecipeToFirebase = async (r) => {
-            const ref = doc(db, 'recipes', r.id.toString());
+            if(!user) return;
+            // Caminho Seguro
+            const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
             await setDoc(ref, r);
         };
 
-        window.syncBatch = async (recipes) => {
-            const batch = writeBatch(db);
-            recipes.forEach(r => {
-                const ref = doc(db, 'recipes', r.id.toString());
-                batch.set(ref, r);
-            });
-            await batch.commit();
+        window.syncGeneratedToFirebase = async () => {
+            if(!window.isUserAdmin) return alert("Faça login para sincronizar.");
+            if(!confirm("Isso enviará suas receitas locais para o banco de dados. Continuar?")) return;
+            
+            const batchSize = 400;
+            const chunks = [];
+            for (let i = 0; i < window.finalRecipeList.length; i += batchSize) {
+                chunks.push(window.finalRecipeList.slice(i, i + batchSize));
+            }
+
+            for(const chunk of chunks) {
+                const batch = writeBatch(db);
+                chunk.forEach(r => {
+                    // Caminho Seguro
+                    const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
+                    batch.set(ref, r);
+                });
+                await batch.commit();
+            }
+            alert("Sincronização completa!");
         };
 
         window.toggleSaveRecipeDB = async (id, isSaved) => {
-            if(!user || user.isAnonymous) return;
-            const ref = doc(db, 'users', user.uid, 'favorites', id.toString());
+            if(!user) return;
+            // Caminho Seguro
+            const ref = doc(db, 'artifacts', appId, 'users', user.uid, 'favorites', id.toString());
             if(isSaved) await setDoc(ref, { savedAt: new Date() });
             else await deleteDoc(ref);
         };
@@ -1079,7 +1355,7 @@
              const btn = document.getElementById('modalSaveBtn');
              if(!btn) return;
              const icon = btn.querySelector('i');
-             const isFav = window.savedRecipesSet.has(String(id)) || window.savedRecipesSet.has(id);
+             const isFav = window.savedRecipesSet.has(String(id));
              icon.className = isFav ? 'fas fa-heart text-xl text-imperial-red' : 'far fa-heart text-xl';
              btn.className = `flex items-center space-x-2 px-5 py-2 rounded-full transition font-bold ${isFav ? 'bg-pink-50 text-imperial-red' : 'bg-stone-100 text-stone-600'}`;
         };
