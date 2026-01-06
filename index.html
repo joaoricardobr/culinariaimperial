@@ -109,9 +109,9 @@
 
                     <!-- Auth -->
                     <div id="authContainer">
-                        <!-- Botão modificado para abrir o modal de login (via admin panel overlay) -->
-                        <button id="loginBtn" onclick="toggleAdminPanel()" class="hidden bg-imperial-red text-white hover:bg-red-800 font-bold py-2 px-4 rounded-full text-sm shadow transition">
-                            <i class="fas fa-sign-in-alt mr-2"></i> Entrar / Admin
+                        <!-- Botão Principal: Login com Google -->
+                        <button id="loginBtn" onclick="handleGoogleLogin()" class="hidden bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-2 px-4 rounded-full text-sm shadow-sm transition flex items-center">
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4 mr-2"> Entrar
                         </button>
                         <div id="loginLoading" class="text-xs text-gray-400 animate-pulse">Conectando...</div>
                         
@@ -127,8 +127,9 @@
                                     <a href="#" onclick="showSavedRecipes()" class="block px-4 py-2 text-sm hover:bg-red-50 text-imperial-red font-bold">
                                         <i class="fas fa-heart mr-2"></i> Favoritos (<span id="savedCountDropdown">0</span>)
                                     </a>
-                                    <a href="#" onclick="toggleAdminPanel()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-gray-700">
-                                        <i class="fas fa-tools mr-2"></i> Painel Admin
+                                    <!-- Acesso ao Admin via Menu -->
+                                    <a href="#" onclick="toggleAdminPanel()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-gray-700 border-t border-gray-50">
+                                        <i class="fas fa-lock mr-2 text-xs"></i> Área Admin
                                     </a>
                                     <a href="#" onclick="handleLogout()" class="block px-4 py-2 text-sm hover:bg-gray-50 text-gray-700">Sair</a>
                                 </div>
@@ -229,42 +230,43 @@
     <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex items-center justify-center p-0 backdrop-blur-sm transition-all duration-300">
         <div class="bg-white rounded-none md:rounded-xl w-full max-w-6xl h-full md:h-[95vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in relative">
             
-            <!-- AUTH OVERLAY - Email & Password -->
+            <!-- AUTH OVERLAY - Apenas Email e Senha (Admin) -->
             <div id="adminAuthOverlay" class="absolute inset-0 bg-white/95 z-50 flex flex-col items-center justify-center hidden">
                 <div class="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100 max-w-md w-full relative">
                     <button onclick="toggleAdminPanel()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="fas fa-times"></i></button>
                     
                     <div class="text-center mb-6">
                         <i class="fas fa-user-shield text-4xl text-imperial-red mb-3"></i>
-                        <h3 class="text-xl font-bold text-gray-800">Login Seguro</h3>
-                        <p class="text-sm text-gray-500">Acesse para gerenciar receitas</p>
+                        <h3 class="text-xl font-bold text-gray-800">Acesso Administrativo</h3>
+                        <p class="text-sm text-gray-500">Faça login com sua conta de administrador</p>
+                        
+                        <!-- Aviso se estiver logado com Google -->
+                        <div id="googleAuthWarning" class="hidden mt-4 bg-orange-50 border-l-4 border-orange-500 p-3 text-left">
+                            <p class="text-xs text-orange-700 font-bold">Você está logado com Google.</p>
+                            <p class="text-xs text-orange-600">Para acessar o painel, faça logout e entre com email e senha de administrador.</p>
+                            <button onclick="handleLogout()" class="text-xs underline text-orange-800 mt-1">Fazer Logout</button>
+                        </div>
                     </div>
 
                     <!-- Email/Senha Form -->
                     <div class="space-y-4 mb-6">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">EMAIL</label>
-                            <input type="email" id="authEmail" class="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-imperial-red outline-none text-sm" placeholder="seu@email.com">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">EMAIL ADMIN</label>
+                            <input type="email" id="authEmail" class="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-imperial-red outline-none text-sm" placeholder="admin@imperial.com">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">SENHA</label>
                             <input type="password" id="authPass" class="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-imperial-red outline-none text-sm" placeholder="••••••••">
                         </div>
                         <button onclick="handleEmailLogin()" class="w-full bg-stone-800 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-lg flex justify-center items-center">
-                            <span id="btnLoginText">Entrar com Email</span>
+                            <span id="btnLoginText">Entrar no Painel</span>
                             <i id="authSpinner" class="fas fa-circle-notch fa-spin ml-2 hidden"></i>
                         </button>
-                    </div>
-
-                    <div class="relative flex py-2 items-center">
-                        <div class="flex-grow border-t border-gray-200"></div>
-                        <span class="flex-shrink-0 mx-4 text-gray-400 text-xs">Não tem conta?</span>
-                        <div class="flex-grow border-t border-gray-200"></div>
                     </div>
                     
                     <div class="text-center mt-4">
                         <a href="#" onclick="handleRegister()" class="text-sm font-bold text-imperial-red hover:underline">
-                            <i class="fas fa-user-plus mr-1"></i> Criar Nova Conta
+                            <i class="fas fa-user-plus mr-1"></i> Criar Conta Admin
                         </a>
                     </div>
                 </div>
@@ -274,7 +276,7 @@
             <div class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0 border-b border-gray-800">
                 <div class="flex items-center">
                     <h2 class="text-xl font-bold flex items-center"><i class="fas fa-tools mr-3 text-imperial-red"></i> Painel Administrativo</h2>
-                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.4</span>
+                    <span class="ml-4 text-xs bg-gray-800 px-2 py-1 rounded text-gray-400 hidden md:inline-block">v2.5</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <!-- BOTÃO DE SAIR -->
@@ -598,8 +600,8 @@
                 document.getElementById('loginBtn').classList.add('hidden');
                 document.getElementById('userProfile').classList.remove('hidden');
                 
-                const safeEmail = u.email || 'admin'; 
-                const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Administrador');
+                const safeEmail = u.email || 'Usuário'; 
+                const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Visitante');
 
                 const photoURL = u.photoURL || `https://ui-avatars.com/api/?name=${safeEmail}&background=8B0000&color=fff`;
                 const imgEl = document.getElementById('userPhoto');
@@ -630,6 +632,7 @@
         };
 
         // Placeholders para funções do Firebase (serão sobrescritas se o módulo carregar)
+        window.handleGoogleLogin = () => console.log("Google Login placeholder");
         window.saveRecipeToFirebase = async (r) => { console.log("Modo Offline: Receita salva localmente."); };
         window.syncGeneratedToFirebase = async () => { alert("Funcionalidade indisponível offline."); };
         window.toggleSaveRecipeDB = async (id, isSaved) => { /* Offline: Faz nada */ };
@@ -868,6 +871,7 @@
         window.toggleAdminPanel = () => {
             const modal = document.getElementById('adminModal');
             const authOverlay = document.getElementById('adminAuthOverlay');
+            const googleWarning = document.getElementById('googleAuthWarning');
             
             if (modal.classList.contains('hidden')) {
                 modal.classList.remove('hidden');
@@ -875,6 +879,14 @@
                 // Verifica autenticação Firebase
                 if(!window.isUserAdmin) {
                     authOverlay.classList.remove('hidden');
+                    
+                    // Se o usuário estiver logado com Google mas tentar acessar o admin
+                    // Mostra aviso específico
+                    if (window.currentUser && !window.currentUser.isAnonymous && !window.isUserAdmin) {
+                        if(googleWarning) googleWarning.classList.remove('hidden');
+                    } else {
+                        if(googleWarning) googleWarning.classList.add('hidden');
+                    }
                 } else {
                     authOverlay.classList.add('hidden');
                 }
@@ -1256,7 +1268,7 @@
     <!-- Firebase Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let app, auth, db, user;
@@ -1289,20 +1301,47 @@
             // LISTENER
             onAuthStateChanged(auth, (u) => {
                 user = u;
-                window.isUserAdmin = !!u && !u.isAnonymous; 
+                // Verificar se o usuário é Admin (Logado com senha)
+                const isPassword = u && u.providerData.some(p => p.providerId === 'password');
+                window.isUserAdmin = !!u && !u.isAnonymous && isPassword;
+                window.currentUser = u;
+                
                 window.updateAuthUI(u);
                 
                 if(u) window.subscribeData(appId); // Pass appId safely
                 
                 // Atualiza Admin UI se estiver aberto
                 const authOverlay = document.getElementById('adminAuthOverlay');
+                const googleWarning = document.getElementById('googleAuthWarning');
+                
                 if(authOverlay) {
-                    if(window.isUserAdmin) authOverlay.classList.add('hidden');
-                    else if(!document.getElementById('adminModal').classList.contains('hidden')) authOverlay.classList.remove('hidden');
+                    // Se for admin, esconde overlay
+                    if(window.isUserAdmin) {
+                        authOverlay.classList.add('hidden');
+                    } else if(!document.getElementById('adminModal').classList.contains('hidden')) {
+                        // Se não for admin e o modal estiver aberto, mostra o overlay
+                        authOverlay.classList.remove('hidden');
+                        // Se estiver logado com Google mas tentando acessar admin
+                        if(u && !u.isAnonymous) {
+                            if(googleWarning) googleWarning.classList.remove('hidden');
+                        } else {
+                            if(googleWarning) googleWarning.classList.add('hidden');
+                        }
+                    }
                 }
             });
 
             // Sobrescrevendo placeholders com funções reais
+            window.handleGoogleLogin = async () => {
+                const provider = new GoogleAuthProvider();
+                try {
+                    await signInWithPopup(auth, provider);
+                } catch (error) {
+                    console.error(error);
+                    alert("Erro no login Google: " + error.message);
+                }
+            };
+
             window.saveRecipeToFirebase = async (r) => {
                 if(!window.isUserAdmin || !db) return alert("Apenas Admins logados podem salvar (e verifique conexão).");
                 const ref = doc(db, 'artifacts', appId, 'public', 'data', 'recipes', r.id.toString());
@@ -1310,7 +1349,7 @@
             };
 
             window.syncGeneratedToFirebase = async () => {
-                if(!window.isUserAdmin || !db) return alert("Faça login para sincronizar.");
+                if(!window.isUserAdmin || !db) return alert("Faça login de Admin para sincronizar.");
                 if(!confirm("Isso enviará suas receitas locais para o banco de dados. Continuar?")) return;
                 
                 const batchSize = 400;
@@ -1365,7 +1404,7 @@
             window.updateAuthUI(null); 
         }
 
-        // Exports para Login Email/Senha
+        // Exports para Login Email/Senha (Admin)
         window.handleEmailLogin = async () => {
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPass').value;
