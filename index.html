@@ -221,7 +221,13 @@
             
             <div class="border-t border-stone-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-stone-600">
                 <p>&copy; 2024 Enciclopédia Imperial. Todos os direitos reservados.</p>
-                <p class="mt-2 md:mt-0">Feito com <i class="fas fa-heart text-imperial-red mx-1"></i> para o mundo.</p>
+                <div class="mt-4 md:mt-0 text-right">
+                    <p class="mb-1">Feito com <i class="fas fa-heart text-imperial-red mx-1"></i> para o mundo.</p>
+                    <p class="text-stone-500 font-medium">Desenvolvido por João Ricardo - Engenheiro de Computação</p>
+                    <a href="https://instagram.com/joaoricardo.pe" target="_blank" class="text-imperial-gold hover:text-white transition mt-1 inline-block">
+                        <i class="fab fa-instagram mr-1"></i> @joaoricardo.pe
+                    </a>
+                </div>
             </div>
         </div>
     </footer>
@@ -1279,7 +1285,16 @@
             if (typeof __firebase_config !== 'undefined') {
                 firebaseConfig = JSON.parse(__firebase_config);
             } else {
-                throw new Error("Configuração Firebase não encontrada.");
+                // FALLBACK CONFIGURATION (If environment variable fails)
+                firebaseConfig = {
+                    apiKey: "AIzaSyBqSUJP7BOIZSCJai83L2h-PnoyXh0oon4",
+                    authDomain: "culinariaimperial.firebaseapp.com",
+                    projectId: "culinariaimperial",
+                    storageBucket: "culinariaimperial.firebasestorage.app",
+                    messagingSenderId: "103351782200",
+                    appId: "1:103351782200:web:28bd29557dce703abb0fcd"
+                };
+                console.warn("Usando configuração Firebase de fallback.");
             }
             
             // Inicializa Firebase
@@ -1293,7 +1308,8 @@
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else if (!auth.currentUser) {
-                    await signInAnonymously(auth);
+                    // Tenta persistência anônima se nenhum usuário estiver logado
+                    // await signInAnonymously(auth); // Desativado para forçar login explícito se desejado, mas útil para leitura pública se regras permitirem
                 }
             };
             initAuth();
